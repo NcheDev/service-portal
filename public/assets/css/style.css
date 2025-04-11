@@ -9046,7 +9046,7 @@ progress {
   margin-top: -1rem;
   margin-bottom: 1rem;
   font-size: 0.875em;
-  color: #D56F6F;
+  color: #6c757d;
 }
 .blockquote-footer::before {
   content: "— ";
@@ -9745,7 +9745,6 @@ progress {
   .col-lg-4 {
     flex: 0 0 auto;
     width: 33.33333333%;
-    
   }
   .col-lg-5 {
     flex: 0 0 auto;
@@ -10700,7 +10699,6 @@ textarea.form-control-lg {
   min-height: 1.5rem;
   padding-left: 1.5em;
   margin-bottom: 0.125rem;
-  
 }
 .form-check .form-check-input {
   float: left;
@@ -10719,7 +10717,6 @@ textarea.form-control-lg {
 }
 
 .form-check-input {
-  
   --bs-form-check-bg: var(--bs-body-bg);
   flex-shrink: 0;
   width: 1em;
@@ -12209,7 +12206,6 @@ textarea.is-invalid.tt-hint, .select2-container--default .select2-selection--sin
   border-top-right-radius: 0;
 }
 
-
 .nav {
   --bs-nav-link-padding-x: 1rem;
   --bs-nav-link-padding-y: 0.5rem;
@@ -12831,7 +12827,6 @@ textarea.is-invalid.tt-hint, .select2-container--default .select2-selection--sin
   flex: 1 1 auto;
   padding: var(--bs-card-spacer-y) var(--bs-card-spacer-x);
   color: var(--bs-card-color);
-  background:#dd8027;
 }
 
 .card-title {
@@ -21040,7 +21035,6 @@ code {
   align-items: stretch;
   -webkit-justify-content: stretch;
   justify-content: stretch;
-
 }
 .stretch-card > .card {
   width: 100%;
@@ -24992,8 +24986,7 @@ dl li {
   color: #ffffff;
 }
 .auth .auth-form-light {
-  background: #dd8027;
-  color:white;
+  background: #ffffff;
 }
 .auth .auth-form-light select {
   color: #c9c8c8;
@@ -25188,20 +25181,12 @@ dl li {
   color: #1b2658;
 }
 .navbar .navbar-brand-wrapper .navbar-brand img {
-  width: 100px;           /* Set the width to 300px */
-  height: auto;           /* Maintain the aspect ratio of the image */
-  max-width: 100%;        /* Ensure it is responsive and doesn't exceed container width */
-  margin: auto;           /* Center the image */
-  vertical-align: middle; /* Align image vertically */
-  object-fit: contain;    /* Ensures the image fits within the container without clipping */
-  margin-top:2rem;
-  padding-bottom:2rem;
-  padding-top:1.5rem;
+  width: calc(260px - 120px);
+  max-width: 100%;
+  height: 28px;
+  margin: auto;
+  vertical-align: middle;
 }
-
-
-
-
 .navbar .navbar-brand-wrapper .navbar-brand.brand-logo-mini {
   display: none;
 }
@@ -25700,7 +25685,7 @@ dl li {
   font-size: 1.125rem;
   line-height: 1;
   margin-left: auto;
-  color: rgba(140, 3, 120);
+  color: rgba(187, 168, 191, 0.9607843137);
 }
 .rtl .sidebar .nav .nav-item .nav-link i.menu-icon {
   margin-left: 0;
@@ -26004,7 +25989,7 @@ dl li {
     width: calc(100% - 185px);
   }
   .sidebar-mini:not(.sidebar-icon-only) .sidebar .nav:not(.sub-menu) > .nav-item {
-    border-bottom: 1px solid rgba(245, 143, 42);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   }
   .sidebar-mini:not(.sidebar-icon-only) .sidebar .nav:not(.sub-menu) > .nav-item .nav-link {
     height: auto;
@@ -26225,7 +26210,7 @@ dl li {
 
 @media (min-width: 992px) {
   .boxed-layout .container-scroller {
-    background: #FFFFFF;
+    background: #e1d7ea;
     padding: 0 calc((100% - 1200px) / 2);
   }
   .boxed-layout .navbar.fixed-top {
@@ -26293,35 +26278,9 @@ dl li {
     width: 100%;
   }
 }
-.navbar.default-layout-navbar {
-  background: #52074f;//*nche purple*/
-}
-/* Apply a distinct background color for the navbar */
-.page-specificc .navbar.default-layout-navbar {
-  background: #52074f; /* Dark background for navbar */
-  border-bottom: 2px solid #000; /* Black line under navbar */
-  color:white;
-}
-
-/* Custom Button Gradient */
-.btn-gradient-primary {
-  background: #52074f; /* nche purple Solid background color */
-  border: 1px solid #f58f2a; /* Border color */
-  color: #fff; /* Text color */
-  transition: background 0.3s ease; /* Smooth transition effect */
-}
-
-.btn-gradient-primary:hover {
-  background: #e67e22; /* Slightly darker shade for hover effect */
-  border-color: #e67e22; /* Hover border color */
-}
-
-
-
-
 
 .content-wrapper {
-  background: white;
+  background: #f2edf3;
   padding: 2.75rem 2.25rem;
   width: 100%;
   -webkit-flex-grow: 1;
