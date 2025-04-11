@@ -64,5 +64,16 @@ public function logout(Request $request)
     $request->session()->regenerateToken();
     return redirect('/login');
 }
+public function dashboard()
+{
+    $user = Auth::user();
+
+    if ($user->role === 'admin') {
+        return view('admin-dashboard', compact('user'));
+    } else {
+        return view('user-dashboard', compact('user'));
+    }
+}
+
 
 }
