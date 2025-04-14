@@ -71,7 +71,16 @@
                 <span class="count-symbol bg-danger"></span>
               </a>
              
-        
+              @if ($errors->any())
+              <div class="alert alert-danger">
+                  <ul class="mb-0">
+                      @foreach ($errors->all() as $error)
+                          <li>{{ $error }}</li>
+                      @endforeach
+                  </ul>
+              </div>
+          @endif
+          
             
             </li>
             <li class="nav-item nav-logout d-none d-lg-block">
@@ -116,9 +125,12 @@
                       <input type="password" name="password" class="form-control form-control-lg" placeholder="Password" required>
                       @error('password')
                           <div class="text-danger">{{ $message }}</div>
-                      @enderror
+                       @enderror
                   </div>
-              
+                  <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}"></div>
+                  @error('g-recaptcha-response')
+                      <span class="text-danger">{{ $message }}</span>
+                  @enderror
                   <!-- Submit Button -->
                   <div class="mt-3 d-grid gap-2">
                       <button type="submit" class="btn btn-block btn-gradient-primary btn-lg font-weight-medium auth-form-btn">
@@ -164,6 +176,7 @@
     <script src="assets/js/todolist.js"></script>
     <script src="assets/js/jquery.cookie.js"></script>
     <!-- endinject -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
   </body>
   <style>
 

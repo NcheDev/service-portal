@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use Illuminate\Support\Facades\Http;
+
 
 class AuthController extends Controller
 {
@@ -20,6 +22,7 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users',
             'country' => 'required',
             'password' => 'required|min:6|confirmed',
+            'g-recaptcha-response' => 'required',
         ]);
         User::create([
             'name' => $request->username,
@@ -40,11 +43,37 @@ class AuthController extends Controller
     return view('login'); 
 }
 
+
 public function login(Request $request)
 {
+    // Step 1: Validate inputs including reCAPTCHA checkbox
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required',
+        'g-recaptcha-response' => 'required',
+    ], [
+        'g-recaptcha-response.required' => 'Please verify you are not a robot.',
+    ]);
+
+    // Step 2: Verify reCAPTCHA with Google
+    $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+        'secret' => config('services.recaptcha.secret_key'),
+        'response' => $request->input('g-recaptcha-response'),
+        'remoteip' => $request->ip(),
+    ]);
+
+    $body = $response->json();
+
+    if (!$body['success']) {
+        return back()->withErrors(['captcha' => 'reCAPTCHA verification failed. Please try again.'])->withInput();
+    }
+
+    // Step 3: Attempt login ONLY if reCAPTCHA passed
     $credentials = $request->only('email', 'password');
 
-    if (Auth::attempt($credentials)) {
+    if (Auth::attempt($credentials, $request->filled('remember'))) {
+        $request->session()->regenerate();
+
         $user = Auth::user();
 
         if ($user->role === 'admin') {
@@ -54,9 +83,10 @@ public function login(Request $request)
         }
     }
 
-    return back()->withErrors(['email' => 'Invalid email or password.']);
+    return back()->withErrors(['email' => 'Invalid email or password.'])->withInput();
 }
 
+    
 public function logout(Request $request)
 {
     Auth::logout();
