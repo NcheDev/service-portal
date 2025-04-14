@@ -1,0 +1,36 @@
+# Laravel & PHP
+/vendor
+/node_modules
+/public/storage
+/storage/*.key
+.env
+.env.backup
+.phpunit.result.cache
+
+# Laravel 8+ IDE helper files
+/_ide_helper.php
+/_ide_helper_models.php
+/.phpstorm.meta.php
+
+# Cache, logs, and compiled files
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/logs/*
+
+# NPM/Yarn files
+npm-debug.log
+yarn-error.log
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Composer PHAR
+composer.phar
+
+# IDEs and editors
+.idea
+.vscode
+*.sublime-project
+*.sublime-workspace

@@ -11,8 +11,7 @@ class VerificationController extends Controller
     {
         return view('user.register');
     }
-
-    public function submit(Request $request)
+    public function submitForm(Request $request)
     {
         $request->validate([
             'name' => 'required|string',
