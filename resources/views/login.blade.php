@@ -27,78 +27,56 @@
   </head>
   <body class="page-specificc">
     <div class="container-scroller">
-      <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+      <nav class="navbar navbar-expand-lg navbar-dark default-layout-navbar fixed-top">
 
-        <div class="navbar-menu-wrapper d-flex align-items-stretch">
-          <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
-            <span class="mdi mdi-menu"></span>
+        <div class="container-fluid">
+          <!-- Logo -->
+          <a class="navbar-brand d-flex align-items-center" href="#">
+            <img src="assets/images/logo1.png" alt="NCHE Logo" width="30" height="30" class="me-2">
+            <strong>NCHE</strong>
+          </a>
+      
+          <!-- Toggler: visible only on small screens -->
+          <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+            <span class="mdi mdi-menu text-white"></span>
           </button>
-          <div class="search-field d-none d-md-block">
-            <form class="d-flex align-items-center h-100" action="#">
-              <div class="input-group">
-                <div class="input-group-prepend bg-transparent">
-                  <i class="input-group-text border-0 mdi mdi-magnify"></i>
-                </div>
-                <input type="text" class="form-control bg-transparent border-0" placeholder="Search projects">
-              </div>
-            </form>
-          </div>
-          <ul class="navbar-nav navbar-nav-right">
-            <li class="nav-item nav-profile dropdown">
-              <a class="nav-link dropdown-toggle" id="profileDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-               
-                <div class="nav-profile-text">
-                  <p class="mb-1 text-white">Hello Guest</p>
-                </div>
-              </a>
-              <div class="dropdown-menu navbar-dropdown" aria-labelledby="profileDropdown">
-                <a class="dropdown-item" href="#">
-                  <i class="mdi mdi-cached me-2 text-success"></i> Activity Log </a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#">
-                  <i class="mdi mdi-logout me-2 text-primary"></i> Signout </a>
-              </div>
-            </li>
-            <li class="nav-item d-none d-lg-block full-screen-link">
-              <a class="nav-link">
-                <i class="mdi mdi-fullscreen" id="fullscreen-button"></i>
-              </a>
-            </li>
-          
-            <li class="nav-item dropdown">
-              <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#" data-bs-toggle="dropdown">
-                <i class="mdi mdi-bell-outline"></i>
-                <span class="count-symbol bg-danger"></span>
-              </a>
-             
-              @if ($errors->any())
-              <div class="alert alert-danger">
-                  <ul class="mb-0">
-                      @foreach ($errors->all() as $error)
-                          <li>{{ $error }}</li>
-                      @endforeach
-                  </ul>
-              </div>
-          @endif
-          
+      
+          <!-- Collapsible Content -->
+          <div class="collapse navbar-collapse justify-content-between" id="navbarContent">
             
-            </li>
-            <li class="nav-item nav-logout d-none d-lg-block">
-              <a class="nav-link" href="#">
-                <i class="mdi mdi-power"></i>
-              </a>
-            </li>
-            <li class="nav-item nav-settings d-none d-lg-block">
-              <a class="nav-link" href="#">
-                <i class="mdi mdi-format-line-spacing"></i>
-              </a>
-            </li>
-          </ul>
-          <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
-            <span class="mdi mdi-menu"></span>
-          </button>
+            <!-- Nav Links -->
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link text-white" href="#">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-white" href="#">About</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-white" href="#">Services</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-white" href="#">Contact Us</a>
+              </li>
+            </ul>
+      
+            <!-- Contact Info (wraps neatly on smaller screens) -->
+            <ul class="navbar-nav ms-auto flex-wrap">
+              <li class="nav-item d-flex align-items-center text-white me-4">
+                <i class="mdi mdi-phone me-1"></i> +265 111 755 884
+              </li>
+              <li class="nav-item d-flex align-items-center text-white me-4">
+                <i class="mdi mdi-cellphone me-1"></i> +265 99 450 3329
+              </li>
+              <li class="nav-item d-flex align-items-center text-white">
+                <i class="mdi mdi-email-outline me-1"></i> info@nche.ac.mw
+              </li>
+            </ul>
+      
+          </div>
         </div>
       </nav>
+      
       <div class="container-fluid page-body-wrapper full-page-wrapper">
         <div class="content-wrapper d-flex align-items-center auth" style="background-color=white">
           <div class="row flex-grow">

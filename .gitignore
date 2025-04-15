@@ -20,9 +20,11 @@
 /storage/framework/views/*
 /storage/logs/*
 
+
 # NPM/Yarn files
 npm-debug.log
 yarn-error.log
+/node_modules/
 
 # OS-specific
 .DS_Store
@@ -40,3 +42,13 @@ composer.phar
 /config/*
 /node_modules/
 /vendor/
+/node_modules/
+/public/assets/css/
+/public/assets/js/
+/public/assets/css/maps/
+/public/assets/vendors/
+/public/assets/fonts/
+/public/assets/images/faces/
+/bootstrap/cache/*
+!/bootstrap/cache/.gitignore
+/public/hot
