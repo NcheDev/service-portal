@@ -20,18 +20,25 @@ class AuthController extends Controller
         $request->validate([
             'username' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
-            'country' => 'required',
             'password' => 'required|min:6|confirmed',
             'g-recaptcha-response' => 'required',
         ]);
-        User::create([
+    
+        // Create the user
+        $user = User::create([
             'name' => $request->username,
             'email' => $request->email,
-            'country' => $request->country,
             'password' => Hash::make($request->password),
         ]);
-
-        return redirect('/login')->with('success', 'Registration successful!');
+    
+        // Automatically log them in
+        Auth::login($user);
+    
+        // Send the verification email
+        $user->sendEmailVerificationNotification();
+    
+        // Redirect to email verification notice
+        return redirect()->route('verification.notice')->with('success', 'Registration successful! Please check your email to verify your account.');
     }
     public function showLogin()
     {

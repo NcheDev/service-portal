@@ -79,7 +79,16 @@
         <div class="custom-rounded-box text-left p-5">
           <h4 class="mb-3">New here?</h4>
           <h6 class="font-weight-light mb-4">Signing up is easy. It only takes a few steps.</h6>
-
+          @if ($errors->any())
+          <div class="alert alert-danger">
+              <ul class="mb-0">
+                  @foreach ($errors->all() as $error)
+                      <li>{{ $error }}</li>
+                  @endforeach
+              </ul>
+          </div>
+      @endif
+      
           <form method="POST" action="{{ route('register') }}" class="pt-3">
             @csrf
             <div class="form-group">
@@ -95,6 +104,11 @@
               <input type="password" name="password_confirmation" class="form-control form-control-lg" placeholder="Confirm Password">
             </div>
             <div class="mb-4">
+               <!-- reCAPTCHA -->
+               <div class="g-recaptcha mb-3" data-sitekey="{{ config('services.recaptcha.site_key') }}"></div>
+               @error('g-recaptcha-response')
+                 <span class="text-danger">{{ $message }}</span>
+               @enderror
               <div class="form-check">
                 <label class="form-check-label text-muted">
                   <input type="checkbox" class="form-check-input" required> I agree to all Terms & Conditions
@@ -121,6 +135,8 @@
     <!-- container-scroller -->
     <!-- plugins:js -->
     <script src="assets/vendors/js/vendor.bundle.base.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
     <!-- endinject -->
     <!-- Plugin js for this page -->
     <!-- End plugin js for this page -->
