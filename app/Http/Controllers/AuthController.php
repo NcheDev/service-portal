@@ -20,9 +20,21 @@ class AuthController extends Controller
         $request->validate([
             'username' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
-            'password' => 'required|min:6|confirmed',
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).+$/',
+            ],
             'g-recaptcha-response' => 'required',
+        ], [
+            'email.unique' => 'This email is already registered. Please use a different one or log in instead.',
+            'password.regex' => 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.',
+            'g-recaptcha-response.required' => 'Please verify you are not a robot.',
         ]);
+        
+        
     
         // Create the user
         $user = User::create([
