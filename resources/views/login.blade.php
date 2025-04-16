@@ -153,6 +153,7 @@
     <script src="assets/js/jquery.cookie.js"></script>
     <!-- endinject -->
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    @include('partials.footer')
   </body>
   <style>
 

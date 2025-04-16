@@ -147,6 +147,7 @@
     <script src="assets/js/todolist.js"></script>
     <script src="assets/js/jquery.cookie.js"></script>
     <!-- endinject -->
+    @include('partials.footer')
   </body>
 
 
