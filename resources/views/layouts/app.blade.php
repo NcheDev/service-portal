@@ -80,8 +80,28 @@
         @yield('content') {{-- This gets replaced with the content from child views --}}
     </div>
 
-    <footer class="text-center mt-5">
-        <small>&copy; {{ date('Y') }} MyApp</small>
+    <footer style="background-color: #002147; color: white; padding: 2rem 1rem;">
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; max-width: 1200px; margin: 0 auto;">
+            <div style="flex: 1 1 300px; margin-bottom: 1rem;">
+                <h4 style="color: #FFD700;">Contact Us</h4>
+                <p>National Council for Higher Education</p>
+                <p>P.O. Box 0000, Capital City</p>
+                <p>Phone: +265 123 456 789</p>
+                <p>Email: <a href="mailto:info@nche.mw" style="color: #FFD700;">info@nche.mw</a></p>
+            </div>
+
+            <div style="flex: 1 1 200px; margin-bottom: 1rem;">
+                <h4 style="color: #FFD700;">Quick Links</h4>
+                <ul style="list-style: none; padding-left: 0;">
+                    <li><a href="/" style="color: white; text-decoration: none;">Home</a></li>
+                    <li><a href="/about" style="color: white; text-decoration: none;">About Us</a></li>
+                    <li><a href="/contact" style="color: white; text-decoration: none;">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+        <div style="text-align: center; margin-top: 1rem; font-size: 0.9rem; border-top: 1px solid #ccc; padding-top: 1rem;">
+            &copy; {{ date('Y') }} NCHE. All rights reserved.
+        </div>
     </footer>
 </body>
 </html>
