@@ -54,7 +54,7 @@ class AuthController extends Controller
     }
     public function showLogin()
     {
-        return view('login'); // or 'auth.login' if it's in a folder
+        return view('welcome'); // or 'auth.login' if it's in a folder
     }
 
     public function showLoginForm()
