@@ -7,65 +7,94 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
-            padding: 20px;
+            font-family: 'Arial', sans-serif;
+            background-color: #F9F9F9;
+            padding: 30px;
         }
 
         .form-container {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            max-width: 700px;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 800px;
             margin: auto;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #5C3D7D;
+            font-size: 1.8rem;
+            margin-bottom: 25px;
         }
 
         label {
-            display: block;
-            margin-top: 10px;
+            font-weight: bold;
+            color: #5C3D7D;
         }
 
         input, select {
             width: 100%;
-            padding: 8px;
-            margin-top: 5px;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            margin-top: 8px;
+            font-size: 1rem;
+        }
+
+        .form-control:focus {
+            border-color: #5C3D7D;
+            box-shadow: 0 0 5px rgba(92, 61, 125, 0.4);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-check-label {
+            margin-left: 10px;
+            font-size: 1rem;
         }
 
         .docs-section {
-            margin-top: 20px;
+            margin-top: 30px;
+        }
+
+        .btn-primary {
+            background-color: #5C3D7D;
+            border-color: #5C3D7D;
+            padding: 10px 20px;
+            font-size: 1rem;
+            width: 100%;
+            border-radius: 6px;
+        }
+
+        .btn-primary:hover {
+            background-color: #9274a6;
+            border-color: #9274a6;
         }
 
         .success {
             color: green;
-            margin-bottom: 10px;
+            font-weight: bold;
+            margin-bottom: 15px;
         }
 
         .error {
             color: red;
-            margin-bottom: 10px;
+            font-weight: bold;
+            margin-bottom: 15px;
         }
 
         .hidden {
             display: none;
         }
 
-        .form-group {
-            margin-bottom: 1.5rem;
+        .form-check-input {
+            margin-top: 8px;
         }
 
-        .form-check-label {
-            margin-left: 10px;
-        }
-
-        .btn-primary {
-            background-color: #52074f;
-            border-color: #52074f;
-        }
-
-        .btn-primary:hover {
-            background-color: #dd8027;
-            border-color: #dd8027;
+        .form-check {
+            margin-top: 15px;
         }
     </style>
 </head>
@@ -123,13 +152,13 @@
             <input type="text" name="other_qualification" class="form-control">
         </div>
 
-        
         <div id="documents" class="docs-section"></div>
 
         <div class="form-group">
             <label for="national_id_or_passport">Upload National ID or Passport:</label>
             <input type="file" name="national_id_or_passport" class="form-control" required>
         </div>
+
         <div class="form-group">
             <label>Choose Processing Option:</label>
             <div class="form-check">
@@ -151,8 +180,7 @@
             <input type="file" name="payment_proof" class="form-control" required>
         </div>
 
-
-        <button type="submit" class="btn btn-primary" style="margin-top: 20px;">Submit</button>
+        <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 </div>
 

@@ -23,6 +23,8 @@
     <link rel="shortcut icon" href="assets/images/logo2.png" />
   </head>
   <body class="page-specific">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <div class="container-scroller">
       
       <!-- partial:partials/_navbar.html -->
@@ -106,7 +108,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ route('register1.form') }}">
+              <a class="nav-link" href="#"  id="load-apply">
             <span class="menu-title">    Start Application</span>
             </a>
               
@@ -206,5 +208,23 @@
     <script src="assets/js/dashboard.js"></script>
     <!-- End custom js for this page -->
     @include('partials.footer')
+    <script>
+      $('#load-apply').on('click', function(e) {
+          e.preventDefault();
+  
+          $.ajax({
+              url: '/register1',
+              method: 'GET',
+              success: function(response) {
+                  $('.main-panel').html(response);
+              },
+              error: function(xhr) {
+                  alert('Error loading content.');
+                  console.log(xhr.responseText);
+              }
+          });
+      });
+  </script>
+  
   </body>
 </html>

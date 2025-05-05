@@ -119,7 +119,7 @@
 
             <div class="cta-buttons">
                 <a href="/login" class="cta-button">Upload Certificate</a>
-                <a href="/login" class="cta-button">Track Status</a>
+                <a href="/" class="cta-button">Track Status</a>
             </div>
         </div>
     </section>
