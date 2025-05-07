@@ -5,6 +5,12 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\VerificationController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
+//profile details
+use App\Http\Controllers\PersonalInformationController;
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/profile-details', [PersonalInformationController::class, 'showProfileDetails']);
+});
 
 // Index route
 Route::get('/', [AuthController::class, 'showLogin']);
@@ -17,11 +23,16 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // Registration
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
+//personal information routes
+Route::middleware(['auth'])->group(function () {
+    // Show the form
+    Route::get('/personal-info', [PersonalInformationController::class, 'showForm'])
+        ->name('personal.info');
 
-// Extra validation form after email verification
-Route::get('/register1', [VerificationController::class, 'showForm'])->name('register1.form');
-Route::post('/register1', [VerificationController::class, 'submitForm'])->name('register1.submit');
-
+    // Store or update the form
+    Route::post('/personal-info', [PersonalInformationController::class, 'storeOrUpdate'])
+        ->name('personal.storeOrUpdate');
+});
 // Dashboards (only for verified users)
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/admin-dashboard', function () {
@@ -32,6 +43,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return view('user-dashboard');
     });
 });
+
+
 
 // Email verification routes
 Route::middleware(['auth'])->group(function () {

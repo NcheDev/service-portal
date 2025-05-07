@@ -30,7 +30,10 @@
       <!-- partial:partials/_navbar.html -->
       <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
         <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-start">
-          <a class="navbar-brand brand-logo" ><img src="assets/images/logo1.png" alt="logo" /></a>
+          <a class="navbar-brand brand-logo">
+            <img src="/assets/images/logo1.png" alt="logo" style="height: 110px; width: auto; display: inline-block;" />
+          </a>
+          
           <a class="navbar-brand brand-logo-mini" href="index.html"><img src="assets/images/logo2.png" alt="logo" /></a>
         </div>
         <div class="navbar-menu-wrapper d-flex align-items-stretch">
@@ -109,20 +112,20 @@
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#"  id="load-apply">
-            <span class="menu-title">    Start Application</span>
+            <span class="menu-title">   Personal Info</span>
             </a>
               
             </li>
             <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="collapse" href="#icons" aria-expanded="false" aria-controls="icons">
-                <span class="menu-title">Edit Profile</span>
+              <a class="nav-link" id ="profile"data-bs-toggle="collapse" href="#icons" aria-expanded="false" aria-controls="icons">
+                <span class="menu-title">Apply</span>
                 <i class="mdi mdi-contacts menu-icon"></i>
               </a>
               
             </li>
             <li class="nav-item">
               <a class="nav-link" data-bs-toggle="collapse" href="#forms" aria-expanded="false" aria-controls="forms">
-                <span class="menu-title">Check Status</span>
+                <span class="menu-title">Payments</span>
                 <i class="mdi mdi-format-list-bulleted menu-icon"></i>
               </a>
               
@@ -205,26 +208,78 @@
     <script src="assets/js/jquery.cookie.js"></script>
     <!-- endinject -->
     <!-- Custom js for this page -->
-    <script src="assets/js/dashboard.js"></script>
-    <!-- End custom js for this page -->
-    @include('partials.footer')
     <script>
-      $('#load-apply').on('click', function(e) {
+      // Load the personal information form into .main-panel
+      $('#load-apply').on('click', function (e) {
           e.preventDefault();
   
           $.ajax({
-              url: '/register1',
+              url: '/personal-info',
               method: 'GET',
-              success: function(response) {
+              success: function (response) {
                   $('.main-panel').html(response);
               },
-              error: function(xhr) {
-                  alert('Error loading content.');
-                  console.log(xhr.responseText);
+              error: function (xhr) {
+                  alert('Error loading personal info.');
+                  console.error(xhr.responseText);
+              }
+          });
+      });
+  
+      // Load profile preview section
+      $('#profile').on('click', function (e) {
+          e.preventDefault();
+  
+          $.ajax({
+              url: '/profile-details',
+              method: 'GET',
+              success: function (response) {
+                  $('.main-panel').html(response);
+              },
+              error: function (xhr) {
+                  alert('Error loading profile details.');
+                  console.error(xhr.responseText);
+              }
+          });
+      });
+  
+      // Handle personal info form submission (new or update)
+      $(document).on('submit', '#personalInfoForm', function (e) {
+          e.preventDefault();
+  
+          let form = $(this);
+          let formData = new FormData(this);
+  
+          // Check for _method override (PUT for updates)
+          const methodOverride = form.find('input[name="_method"]').val();
+          if (methodOverride) {
+              formData.append('_method', methodOverride);
+          }
+  
+          $.ajax({
+              url: form.attr('action'),
+              method: 'POST', // Always POST when using method override
+              data: formData,
+              processData: false,
+              contentType: false,
+              success: function (response) {
+                  if (response.success) {
+                      alert('Information saved successfully.');
+                      $('.main-panel').html(response.html); // Re-render the form with new/updated data
+                  }
+              },
+              error: function (xhr) {
+                  alert('An error occurred while saving your information.');
+                  console.error(xhr.responseText);
               }
           });
       });
   </script>
+  
+
+  
+  
+  
   
   </body>
 </html>
