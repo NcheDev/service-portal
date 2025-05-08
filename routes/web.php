@@ -2,9 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\VerificationController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
+use App\Http\Controllers\QualificationController;
 //profile details
 use App\Http\Controllers\PersonalInformationController;
 
@@ -44,7 +44,26 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 });
 
+//APPLICATON ROUTES
+Route::post('/qualification/store', [QualificationController::class, 'store'])->name('qualification.store');
 
+Route::get('/application', [QualificationController::class, 'create'])->name('application.create');
+Route::post('/application/store', [QualificationController::class, 'store'])->name('application.store');
+
+//documentation routes
+// routes/web.php
+
+
+Route::get('/documentation', function () {
+    return view('user.documentation');
+})->name('documentation.view');
+
+// routes for downloading the PDF
+
+use App\Http\Controllers\DocumentationController;
+
+Route::get('/documentation', [DocumentationController::class, 'show'])->name('documentation.view');
+Route::get('/documentation/download', [DocumentationController::class, 'downloadPdf'])->name('documentation.download');
 
 // Email verification routes
 Route::middleware(['auth'])->group(function () {

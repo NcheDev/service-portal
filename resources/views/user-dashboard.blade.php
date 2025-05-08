@@ -73,23 +73,9 @@
                
               </div>
             </li>
-            <li class="nav-item d-none d-lg-block full-screen-link">
-              <a class="nav-link">
-                <i class="mdi mdi-fullscreen" id="fullscreen-button"></i>
-              </a>
-            </li>
-           
+          
             
-            <li class="nav-item nav-logout d-none d-lg-block">
-              <a class="nav-link" href="#">
-                <i class="mdi mdi-power"></i>
-              </a>
-            </li>
-            <li class="nav-item nav-settings d-none d-lg-block">
-              <a class="nav-link" href="#">
-                <i class="mdi mdi-format-line-spacing"></i>
-              </a>
-            </li>
+           
           </ul>
           <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
             <span class="mdi mdi-menu"></span>
@@ -135,7 +121,7 @@
             
             
             <li class="nav-item">
-              <a class="nav-link" href="docs/documentation.html" target="_blank">
+              <a class="nav-link" href="docs/documentation.html" target="_blank" id="documentation">
                 <span class="menu-title">Documentation</span>
                 <i class="mdi mdi-file-document-box menu-icon"></i>
               </a>
@@ -231,7 +217,7 @@
           e.preventDefault();
   
           $.ajax({
-              url: '/profile-details',
+              url: '/application',
               method: 'GET',
               success: function (response) {
                   $('.main-panel').html(response);
@@ -242,7 +228,23 @@
               }
           });
       });
+  //Load documentation section
+   // Load profile preview section
+   $('#documentation').on('click', function (e) {
+          e.preventDefault();
   
+          $.ajax({
+              url: '/documentation',
+              method: 'GET',
+              success: function (response) {
+                  $('.main-panel').html(response);
+              },
+              error: function (xhr) {
+                  alert('Error loading profile details.');
+                  console.error(xhr.responseText);
+              }
+          });
+      });
       // Handle personal info form submission (new or update)
       $(document).on('submit', '#personalInfoForm', function (e) {
           e.preventDefault();
@@ -275,11 +277,134 @@
           });
       });
   </script>
-  
 
-  
-  
-  
-  
   </body>
+<style>
+
+
+  /* Global Styles */
+body {
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f7fa;
+  color: #333;
+}
+.sidebar .nav-item a,
+.sidebar .nav-item i,
+.sidebar .nav-item .menu-title {
+  color: #ffffff !important;
+}
+
+/* Navbar */
+.navbar {
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0e6ed;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  padding: 0.75rem 1.5rem;
+  z-index: 10;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background-color: #52074f;
+  color: #fff;
+  position: fixed;
+  height: 100vh;
+  padding-top: 2rem;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.15);
+  transition: width 0.3s ease;
+}
+
+.sidebar .nav {
+  display: flex;
+  flex-direction: column;
+  padding: 0 1rem;
+}
+
+.sidebar .nav-item {
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  transition: background 0.3s ease;
+}
+
+.sidebar .nav-item a {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.sidebar .nav-item a:hover,
+.sidebar .nav-item.active a {
+  background-color: #dd8027;
+  color: #fff;
+}
+
+.sidebar .nav-item i {
+  margin-right: 0.75rem;
+  font-size: 1.2rem;
+}
+
+/* Main Content */
+.main-panel {
+  margin-left: 250px;
+  padding: 2rem;
+}
+
+.page-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 1rem;
+}
+
+/* Cards / Widgets */
+.card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: #dd8027;
+  border-color: #dd8027;
+  color: #fff;
+  font-weight: 500;
+  padding: 0.5rem 1.25rem;
+  border-radius: 6px;
+  transition: background 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #c86f1f;
+}
+
+/* Scrollbar (nice touch) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #b981af;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a3679e;
+}
+
+</style>
 </html>
