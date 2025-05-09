@@ -89,7 +89,8 @@
           <ul class="nav">
             
             <li class="nav-item">
-              <a class="nav-link" href="index.html">
+              <a class="nav-link" id="main-panel" >
+
                 <span class="menu-title" style="color: #8c0378;">Dashboard</span>
 
                 <i class="mdi mdi-home menu-icon" style="color: #8c0378;"></i>
@@ -130,45 +131,7 @@
         </nav>
         <!-- partial -->
         <div class="main-panel">
-          <div class="content-wrapper">
-            <div class="page-header">
-              <h3 class="page-title">
-                <span class="page-title-icon text-white me-2"style="background-color:#8c0378;" >
-                  <i class="mdi mdi-home" style="background-color: #8c0378;"></i>
-                </span> Dashboard
-              </h3>
-              
-            </div>
-            <div class="row">
-                <div class="col-md-3 stretch-card grid-margin">
-                  <div class="card  card-img-holder text-white" style="background-color:#d6a7d9">
-                    <div class="card-body">
-                      <img src="{{ asset('assets/images/dashboard/circle.svg') }}" class="card-img-absolute" alt="circle-image" />
-                      <h4 class="font-weight-normal mb-3">New Applications <i class="mdi mdi-file-document mdi-24px float-end"></i></h4>
-                      <h2 class="mb-5">2</h2>
-                      <h6 class="card-text">Received this week</h6>
-                    </div>
-                  </div>
-                </div>
-              
-                <div class="col-md-3 stretch-card grid-margin" >
-                  <div class="card bg-gradient-info card-img-holder text-white">
-                    <div class="card-body">
-                      <img src="{{ asset('assets/images/dashboard/circle.svg') }}" class="card-img-absolute" alt="circle-image" />
-                      <h4 class="font-weight-normal mb-3">Application Status <i class="mdi mdi-check-circle mdi-24px float-end"></i></h4>
-                      <h2 class="mb-5">1</h2>
-                      <h6 class="card-text">Processed successfully</h6>
-                    </div>
-                  </div>
-                </div>
-              
-                
-              
-        
-              
-            </div>
-           
-          </div>
+         
           <!-- content-wrapper ends -->
           <!-- partial:partials/_footer.html -->
          
@@ -245,6 +208,30 @@
               }
           });
       });
+      //main-panel
+      function loadMainPanel() {
+            $.ajax({
+                url: '/main-panel',
+                method: 'GET',
+                success: function (response) {
+                    $('.main-panel').html(response);
+                },
+                error: function (xhr) {
+                    alert('Error loading profile details.');
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            loadMainPanel();
+
+            $('#main-panel').on('click', function (e) {
+                e.preventDefault();
+                loadMainPanel();
+            });
+        });
+ 
       // Handle personal info form submission (new or update)
       $(document).on('submit', '#personalInfoForm', function (e) {
           e.preventDefault();

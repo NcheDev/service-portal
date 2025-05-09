@@ -51,13 +51,15 @@ Route::get('/application', [QualificationController::class, 'create'])->name('ap
 Route::post('/application/store', [QualificationController::class, 'store'])->name('application.store');
 
 //documentation routes
-// routes/web.php
 
 
 Route::get('/documentation', function () {
     return view('user.documentation');
 })->name('documentation.view');
-
+//main-panel route
+Route::get('/main-panel', function () {
+    return view('user.main-panel');
+})->name('main-panel.view');
 // routes for downloading the PDF
 
 use App\Http\Controllers\DocumentationController;
