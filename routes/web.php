@@ -27,11 +27,10 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::middleware(['auth'])->group(function () {
     // Show the form
     Route::get('/personal-info', [PersonalInformationController::class, 'showForm'])
-        ->name('personal.info');
+        ->name('personal.showForm');
 
     // Store or update the form
-    Route::post('/personal-info', [PersonalInformationController::class, 'storeOrUpdate'])
-        ->name('personal.storeOrUpdate');
+   Route::match(['post', 'put'], '/personal-info', [PersonalInformationController::class, 'storeOrUpdate'])->name('personal.storeOrUpdate');
 });
 // Dashboards (only for verified users)
 Route::middleware(['auth', 'verified'])->group(function () {

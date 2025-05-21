@@ -1,5 +1,4 @@
 <?php
-//app/Models/PersonalInformation.php
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,10 +11,13 @@ class PersonalInformation extends Model
     protected $fillable = [
         'user_id',
         'full_name',
-        'contact_address',
-        'physical_address',
         'email',
-        'national_id_path',
+        'physical_address',
+        'contact_address',
+        'gender',
         'personal_statement',
+        'profile_picture',
+        'cover_photo',
+        'national_id_path',
     ];
 }

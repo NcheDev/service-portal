@@ -121,7 +121,7 @@ span{
 }
 
 .auth-wrapper {
-    background: #dd8027; /* solid background color */
+    background: #fff; /* solid background color */
     min-height: 100vh;
     display: flex;
     align-items: center;

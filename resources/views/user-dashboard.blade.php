@@ -28,15 +28,11 @@
     <div class="container-scroller">
       
       <!-- partial:partials/_navbar.html -->
-      <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
-        <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-start">
-          <a class="navbar-brand brand-logo">
-            <img src="/assets/images/logo1.png" alt="logo" style="height: 110px; width: auto; display: inline-block;" />
-          </a>
-          
-          <a class="navbar-brand brand-logo-mini" href="index.html"><img src="assets/images/logo2.png" alt="logo" /></a>
-        </div>
+<nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row" style="background-color: white !important; color: black !important;">
+        
         <div class="navbar-menu-wrapper d-flex align-items-stretch">
+<img src="/assets/images/logo1.png" alt="logo" style="height: 59px; width: auto; display: inline-block; margin-top: 10px;" />
+
           <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
             <span class="mdi mdi-menu"></span>
           </button>
@@ -55,7 +51,7 @@
               <a class="nav-link dropdown-toggle" id="profileDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
                 
                 <div class="nav-profile-text">
-                  <p class="mb-1 text-white">Hello {{ Auth::user()->name }}</p>
+                  <p class="mb-1 text-black">Hello {{ Auth::user()->name }}</p>
                 </div>
               </a>
               <div class="dropdown-menu navbar-dropdown" aria-labelledby="profileDropdown">
@@ -175,7 +171,7 @@
           });
       });
   
-      // Load profile preview section
+      // Load application form into .main-panel
       $('#profile').on('click', function (e) {
           e.preventDefault();
   
@@ -191,8 +187,8 @@
               }
           });
       });
-  //Load documentation section
-   // Load profile preview section
+  
+   // Load documentation into .main-panel
    $('#documentation').on('click', function (e) {
           e.preventDefault();
   

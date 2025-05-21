@@ -25751,7 +25751,6 @@ dl li {
   content: "\f0140";
 }
 .sidebar .nav .nav-item.active {
-  background: #ffffff;
 }
 .sidebar .nav .nav-item.active > .nav-link .menu-title {
   color: #b66dff;
@@ -25761,8 +25760,12 @@ dl li {
   color: #b66dff;
 }
 .sidebar .nav .nav-item:hover {
-  background: #fcfcfc;
+  background: none;
+  border-left: 4px solid #dd8027; /* or your theme accent color */
+  padding-left: 16px; /* optional: to offset text after border appears */
+  transition: all 0.3s ease;
 }
+
 .sidebar .nav .nav-item.nav-profile .nav-link {
   height: auto;
   line-height: 1;
