@@ -4,23 +4,20 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>NCHE Admin user</title>
-    <!-- plugins:css -->
+
+    <!-- Plugin & Vendor CSS -->
     <link rel="stylesheet" href="assets/vendors/mdi/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="assets/vendors/ti-icons/css/themify-icons.css">
     <link rel="stylesheet" href="assets/vendors/css/vendor.bundle.base.css">
     <link rel="stylesheet" href="assets/vendors/font-awesome/css/font-awesome.min.css">
-    <!-- endinject -->
-    <!-- Plugin css for this page -->
-    <link rel="stylesheet" href="assets/vendors/font-awesome/css/font-awesome.min.css" />
     <link rel="stylesheet" href="assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css">
-    <!-- End plugin css for this page -->
-    <!-- inject:css -->
-    <!-- endinject -->
-    <!-- Layout styles -->
+<link rel="stylesheet" href="https://cdn.materialdesignicons.com/5.4.55/css/materialdesignicons.min.css">
+
+    <!-- Custom Layout Styles -->
     <link rel="stylesheet" href="assets/css/style.css">
-    <!-- End layout styles -->
-    <link rel="shortcut icon" href="assets/images/logo2.png" />
   </head>
   <body class="page-specific">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -29,55 +26,60 @@
       
       <!-- partial:partials/_navbar.html -->
 <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row" style="background-color: white !important; color: black !important;">
-        
-        <div class="navbar-menu-wrapper d-flex align-items-stretch">
-<img src="/assets/images/logo1.png" alt="logo" style="height: 59px; width: auto; display: inline-block; margin-top: 10px;" />
+  <div class="navbar-menu-wrapper d-flex align-items-center w-100 px-3">
 
-          <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
-            <span class="mdi mdi-menu"></span>
-          </button>
-          <div class="search-field d-none d-md-block">
-            <form class="d-flex align-items-center h-100" action="#">
-              <div class="input-group">
-                <div class="input-group-prepend bg-transparent">
-                  <i class="input-group-text border-0 mdi mdi-magnify"></i>
-                </div>
-                <input type="text" class="form-control bg-transparent border-0" placeholder="Search projects">
-              </div>
-            </form>
+    <!-- Logo container -->
+    <div class="d-flex align-items-center" style="flex-shrink: 0;">
+      <img src="/assets/images/logo1.png" alt="logo" style="height: 59px; width: auto;" />
+    </div>
+
+    <!-- Toggle Button -->
+    <button class="navbar-toggler align-self-center ms-3" type="button" data-toggle="minimize">
+      <span class="mdi mdi-menu"></span>
+    </button>
+
+    <!-- Search Field -->
+    <div class="search-field d-none d-md-block ms-4">
+      <form class="d-flex align-items-center h-100" action="#">
+        <div class="input-group">
+          <div class="input-group-prepend bg-transparent">
+            <i class="input-group-text border-0 mdi mdi-magnify"></i>
           </div>
-          <ul class="navbar-nav navbar-nav-right">
-            <li class="nav-item nav-profile dropdown">
-              <a class="nav-link dropdown-toggle" id="profileDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-                
-                <div class="nav-profile-text">
-                  <p class="mb-1 text-black">Hello {{ Auth::user()->name }}</p>
-                </div>
-              </a>
-              <div class="dropdown-menu navbar-dropdown" aria-labelledby="profileDropdown">
-                <a class="dropdown-item" href="#">
-                  <i class="mdi mdi-cached me-2 text-success"></i> Activity Log </a>
-                <div class="dropdown-divider"></div>
-
-                <form method="POST" action="{{ route('logout') }}" class="d-inline">
-                  @csrf
-                  <button type="submit" class="btn btn-link nav-link" style="border: none; background: none; padding: 0;">
-                    <i class="mdi mdi-logout me-2 text-primary"></i> Sign Out
-                  </button>
-              </form>
-              
-               
-              </div>
-            </li>
-          
-            
-           
-          </ul>
-          <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
-            <span class="mdi mdi-menu"></span>
-          </button>
+          <input type="text" class="form-control bg-transparent border-0" placeholder="Search projects" />
         </div>
-      </nav>
+      </form>
+    </div>
+
+    <!-- Profile - pushed to far right -->
+    <ul class="navbar-nav ms-auto d-flex align-items-center">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle d-flex align-items-center" id="profileDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+          <img src="{{ Auth::user()->personalInfo?->profile_picture ? Storage::url(Auth::user()->personalInfo->profile_picture) : 'https://via.placeholder.com/180' }}"
+               alt="Profile Picture"
+               style="width: 40px; height: 40px; object-fit: cover; border-radius: 50%; margin-right: 10px;">
+          <div class="nav-profile-text">
+            <p class="mb-0 text-black">Hello {{ Auth::user()->name }}</p>
+          </div>
+        </a>
+        <div class="dropdown-menu dropdown-menu-end navbar-dropdown" aria-labelledby="profileDropdown">
+          <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+            <button type="submit" class="btn btn-link nav-link p-0" style="border: none; background: none;">
+              <i class="mdi mdi-logout me-2 text-primary"></i> Sign Out
+            </button>
+          </a>
+
+          <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+            @csrf
+          </form>
+        </div>
+      </li>
+    </ul>
+
+  </div>
+</nav>
+
+
+
       <!-- partial -->
       <div class="container-fluid page-body-wrapper">
         <!-- partial:partials/_sidebar.html -->
@@ -85,7 +87,7 @@
           <ul class="nav">
             
             <li class="nav-item">
-              <a class="nav-link" id="main-panel" >
+              <a class="nav-link"  id="load-apply" >
 
                 <span class="menu-title" style="color: #8c0378;">Dashboard</span>
 
@@ -95,21 +97,43 @@
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#"  id="load-apply">
+
             <span class="menu-title">   Personal Info</span>
+           <i class="mdi mdi-contacts menu-icon"></i>
+
             </a>
               
             </li>
-            <li class="nav-item">
-              <a class="nav-link" id ="profile"data-bs-toggle="collapse" href="#icons" aria-expanded="false" aria-controls="icons">
-                <span class="menu-title">Apply</span>
-                <i class="mdi mdi-contacts menu-icon"></i>
-              </a>
-              
-            </li>
+ <li class="nav-item">
+  <a class="nav-link" data-bs-toggle="collapse" href="#qualifications-collapse" aria-expanded="false" aria-controls="qualifications-collapse" style="display: flex; justify-content: space-between; align-items: center;">
+    <div style="display: flex; align-items: center;">
+      <span class="menu-title">Qualifications & Verification</span>
+    </div>
+    <i class="mdi mdi-chevron-down" style="margin-left: 10px;"></i> <!-- Dropdown indicator -->
+  </a>
+</li>
+
+  <div class="collapse" id="qualifications-collapse">
+    <ul class="nav flex-column sub-menu" style="background-color: #52074f; padding-left: 20px;">
+      <li class="nav-item">
+        <a class="nav-link" href="#" id="profile" style="display: flex; align-items: center;">
+          <i class="mdi mdi-file-plus menu-icon" style="margin-right: 8px;"></i> Apply
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#" id="main-panel" style="display: flex; align-items: center;">
+          <i class="mdi mdi-file-multiple menu-icon" style="margin-right: 8px;"></i> My Applications
+        </a>
+      </li>
+    </ul>
+  </div>
+</li>
+
+
             <li class="nav-item">
               <a class="nav-link" data-bs-toggle="collapse" href="#forms" aria-expanded="false" aria-controls="forms">
                 <span class="menu-title">Payments</span>
-                <i class="mdi mdi-format-list-bulleted menu-icon"></i>
+<i class="mdi mdi-credit-card menu-icon"></i>
               </a>
               
             </li>
@@ -120,13 +144,28 @@
             <li class="nav-item">
               <a class="nav-link" href="docs/documentation.html" target="_blank" id="documentation">
                 <span class="menu-title">Documentation</span>
-                <i class="mdi mdi-file-document-box menu-icon"></i>
+                <i class="mdi mdi-file-document menu-icon"></i>
               </a>
             </li>
+            
+            <li class="nav-item">
+              <a class="nav-link" href="docs/documentation.html" target="_blank" id="documentation">
+                <span class="menu-title">FAQ</span>
+                <i class="mdi mdi-help-circle menu-icon"></i>
+              </a>
+            </li>
+            
+            <li class="nav-item">
+              <a class="nav-link" href="docs/documentation.html" target="_blank" id="documentation">
+                <span class="menu-title">Help</span>
+              <i class="mdi mdi-help-circle menu-icon"></i>
+              </a>
+            </li>
+
           </ul>
         </nav>
         <!-- partial -->
-        <div class="main-panel">
+        <div class="main-panel" >
          
           <!-- content-wrapper ends -->
           <!-- partial:partials/_footer.html -->
@@ -207,7 +246,7 @@
       //main-panel
       function loadMainPanel() {
             $.ajax({
-                url: '/main-panel',
+                url: '/personal-info',
                 method: 'GET',
                 success: function (response) {
                     $('.main-panel').html(response);

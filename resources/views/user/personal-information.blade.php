@@ -1,8 +1,3 @@
-<!-- Success Message Area -->
-
-
-<div class="container py-4">
-    <h2 class="mb-4 section-heading" id="personal">Personal Information</h2>
 
 
     @if(session('success'))
@@ -18,63 +13,97 @@
         
 
         <!-- Cover Photo -->
-<div class="mb-4">
-    <div class="d-block mb-2" 
-         style="height: 200px; overflow: hidden; border-radius: 8px; position: relative; border: 1px solid #ccc;">
-        <img src="{{ asset('assets/images/cover.jpg') }}" alt="Cover Photo"
-             class="w-100 h-100" style="object-fit: cover; display: block;">
+<div class="text-center">
+  <div class="d-block mb-2 position-relative"
+       style="height: 200px; border-radius: 8px; border: 1px solid #ccc;">
+
+    <img src="{{ asset('assets/images/cover.jpg') }}" alt="Cover Photo"
+         class="w-100 h-100" style="object-fit: cover; display: block;">
+
+    <!-- Profile Picture Label -->
+    <label for="profile_picture"
+           class="position-absolute"
+           style="left: 40px; bottom: -15px; width: 120px; height: 120px; cursor: pointer;">
+      <img
+          id="profile-picture-preview"
+          src="{{ $personalInfo?->profile_picture ? Storage::url($personalInfo->profile_picture) : 'https://via.placeholder.com/180' }}"
+          alt="Profile Picture"
+          style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; border: 4px solid white;">
+
+      <!-- Upload Icon Overlay -->
+      <div style="
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        background-color: rgba(0,0,0,0.6);
+        color: white;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        pointer-events: none;
+      ">
+        &#9998;
+      </div>
+    </label>
+
+    <!-- Full Name inside cover -->
+    <div style="
+      position: absolute;
+      left: 180px;  /* position to the right of the profile picture */
+      bottom: 10px;
+      color: white;
+      font-weight: 600;
+      font-size: 1.25rem;
+      text-shadow: 0 0 5px rgba(0,0,0,0.7);
+      ">
+      {{ $personalInfo?->full_name ?? 'Your Name Here' }}
     </div>
+
+    <!-- Hidden file input -->
+    <input type="file" id="profile_picture" name="profile_picture" class="d-none" accept="image/*" />
+  </div>
 </div>
 
-
-<!-- Profile Picture -->
-<div class="mb-4 text-center position-relative" style="margin-top: -90px;">
-    <label for="profile_picture" class="mx-auto d-block" style="width: 180px; height: 180px; position: relative; cursor: pointer;">
-        <img
-            id="profile-picture-preview"
-            src="{{ $personalInfo?->profile_picture ? Storage::url($personalInfo->profile_picture) : 'https://via.placeholder.com/180' }}"
-            alt="Profile Picture"
-            class="rounded-circle border border-white shadow"
-            style="width: 180px; height: 180px; object-fit: cover;"
-        >
-        <div style="position: absolute; bottom: 10px; right: 10px; background: rgba(0,0,0,0.5); color: white; padding: 6px 10px; border-radius: 50%; font-size: 18px;">
-            &#9998;
-        </div>
-    </label>
-    <input type="file" id="profile_picture" name="profile_picture" class="form-control d-none" accept="image/*">
+<div class="card-section">
+  <p class="section-heading mb-1">Personal Information</p>
+  <p class="text-muted mb-0">Please fill in your personal information below.</p>
 </div>
 
 
      <!-- Wrap these fields inside a flex container -->
-<div class="form-container">
+<div class="card p-4 mb-4 shadow-sm">
   <form action="#" method="POST" novalidate>
-    <div class="form-row">
+    <div class="row g-3">
       <!-- Full Name -->
-      <div class="form-group">
+      <div class="col-md-3">
         <label for="full_name" class="form-label">Full Name</label>
         <input type="text" name="full_name" id="full_name" class="form-control" value="{{ old('full_name', $personalInfo?->full_name) }}" required>
       </div>
 
       <!-- Email -->
-      <div class="form-group">
+      <div class="col-md-3">
         <label for="email" class="form-label">Email Address</label>
         <input type="email" name="email" id="email" class="form-control" value="{{ old('email', $personalInfo?->email) }}" required>
       </div>
 
       <!-- Physical Address -->
-      <div class="form-group">
+      <div class="col-md-3">
         <label for="physical_address" class="form-label">Physical Address</label>
         <input type="text" name="physical_address" id="physical_address" class="form-control" value="{{ old('physical_address', $personalInfo?->physical_address) }}" required>
       </div>
 
       <!-- Contact Address -->
-      <div class="form-group">
+      <div class="col-md-3">
         <label for="contact_address" class="form-label">Contact Address</label>
         <input type="text" name="contact_address" id="contact_address" class="form-control" value="{{ old('contact_address', $personalInfo?->contact_address) }}" required>
       </div>
 
       <!-- Gender -->
-      <div class="form-group">
+      <div class="col-md-3">
         <label for="gender" class="form-label">Gender</label>
         <select name="gender" id="gender" class="form-select" required>
           <option value="">Select</option>
@@ -85,137 +114,88 @@
       </div>
     </div>
 
-    <!-- Personal Statement -->
-    <div class="form-group personal-statement-group">
-      <label for="personal_statement" class="form-label">Purpose Of Application</label>
-      <textarea name="personal_statement" id="personal_statement" rows="5" class="form-control personal-statement" required>{{ old('personal_statement', $personalInfo?->personal_statement) }}</textarea>
-    </div>
-    <!-- National ID Upload -->
-<!-- National ID Upload -->
-<div class="form-group national-id-upload">
-    <label for="national_id" class="form-label">Upload National ID (JPG, PNG, PDF)</label>
+  
+    <div class="row ">
+  <!-- Purpose Of Application -->
+  <div class="col-12 col-md-3 mt-3">
+    <label for="personal_statement" class="form-label">Purpose Of Application</label>
+    <textarea name="personal_statement" id="personal_statement" class="form-control" style="height: 150px;" required>
+      {{ old('personal_statement', $personalInfo?->personal_statement) }}
+    </textarea>
+  </div>
+  
 
-    <!-- Preview Box -->
-    <label for="national_id" class="id-upload-box">
-        <div id="national_id_display">
-            @php
-                $nationalIdPath = $personalInfo?->national_id_path ? Storage::url($personalInfo->national_id_path) : null;
-                $isImage = $nationalIdPath && preg_match('/\.(jpg|jpeg|png)$/i', $nationalIdPath);
-            @endphp
+  <!-- National ID Upload -->
+  <div class="col-12 col-md-3 mt-3">
+    <label for="national_id" class="form-label">Upload National ID </label>
+    <label for="national_id" class="d-block" style="cursor: pointer;">
+      <div id="national_id_display" class="border rounded p-3 text-center" style="min-height: 150px;">
+        @php
+              $nationalIdPath = $personalInfo?->national_id_path ? Storage::url($personalInfo->national_id_path) : null;
+              $isImage = $nationalIdPath && preg_match('/\.(jpg|jpeg|png)$/i', $nationalIdPath);
+          @endphp
 
-            @if($nationalIdPath && $isImage)
-                <img src="{{ $nationalIdPath }}" id="national_id_preview" alt="National ID" class="preview-img">
-            @elseif($nationalIdPath)
-                <div class="pdf-placeholder" id="pdf_display_box">
-                    <i class="bi bi-file-earmark-pdf"></i>
-                    <span>PDF Uploaded</span>
-                </div>
-            @else
-                <div class="placeholder-text" id="upload_placeholder">Click to upload National ID</div>
-            @endif
+          @if($nationalIdPath && $isImage)
+              <img src="{{ $nationalIdPath }}" id="national_id_preview" alt="National ID" class="img-fluid" style="max-height: 100px;">
+          @elseif($nationalIdPath)
+              <div class="pdf-placeholder text-muted">
+                <i class="bi bi-file-earmark-pdf fs-1"></i>
+                <div>PDF Uploaded</div>
+              </div>
+          @else
+              <div class="placeholder-text text-muted">Click to upload National ID</div>
+          @endif
         </div>
-    </label>
+      </label>
 
-    <!-- File Input -->
-    <input type="file" name="national_id" id="national_id" accept=".jpg,.jpeg,.png,.pdf" class="form-control d-none">
-</div>
+      <!-- File Input -->
+      <input type="file" name="national_id" id="national_id" accept=".jpg,.jpeg,.png,.pdf" class="form-control d-none">
+    </div>
+    </div>
+    <h4 id="success-message-area" class="mt-3"></h4></div>
 
-
-<h4 id="success-message-area"></h4>
     <!-- Submit Button -->
-    <div class="form-submit-container">
-      <button type="submit" class="btn-submit">
+    <div class="mt-4 text-end">
+      <button type="submit" class="btn btn-primary">
         {{ isset($personalInfo) ? 'Update Information' : 'Save Information' }}
       </button>
     </div>
-  
   </form>
 </div>
 
 <style>
- .section-heading {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 1.8rem;
-  font-weight: 600;
-  color: #ffffff;
-  background-color: #52074f;
-  padding: 12px 20px;
-  border-left: 6px solid #dd8027;
-  border-radius: 8px;
-  margin-top: 0px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  width: 500px;
+.section-heading {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 0.25rem;
+  letter-spacing: 0.05em;
 }
 
-
-/* Container and row */
-.form-container {
-  max-width: 960px;
-  margin: 40px auto;
-  padding: 0 20px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #333;
-}
-
-.form-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 24px;
-  margin-bottom: 30px;
-}
-
-/* Form groups */
-.form-group {
-  flex: 1 1 220px;
-  min-width: 220px;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Labels */
-.form-label {
-  font-weight: 600;
-  margin-bottom: 8px;
-  font-size: 1.1rem;
-  color: #52074f;
-  user-select: none;
-}
-
-/* Inputs and selects */
-.form-control,
-.form-select {
-  padding: 12px 16px;
+.text-muted {
   font-size: 1rem;
-  border: 1.8px solid #ccc;
-  border-radius: 10px;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
-  transition: border 0.3s, box-shadow 0.3s;
+  color: #6c757d; /* Bootstrap muted gray */
+  margin-top: 0;
 }
-
-.form-control:focus,
-.form-select:focus {
-  border-color: #dd8027;
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(221, 128, 39, 0.25);
-}
-
-/* Submit Button */
-.btn-submit {
-  background-color: #52074f;
-  color: white;
-  font-weight: 600;
-  border: none;
-  padding: 12px 24px;
-  font-size: 1rem;
+.card-section {
+  background: #fff;
+  padding: 16px 24px;
   border-radius: 8px;
-  transition: background-color 0.3s;
-  cursor: pointer;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+  margin-bottom: 1.5rem;
 }
 
-.btn-submit:hover {
-  background-color: #dd8027;
-  color: #fff;
-}
+
+/* Makes the profile image look embedded into the cover */
+
+
+
+
+
+
+
+
+
 
 /* Upload Box */
 .id-upload-box {
@@ -244,26 +224,8 @@
   border-radius: 8px;
 }
 
-.pdf-placeholder {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: #52074f;
-  font-weight: 600;
-}
 
-.pdf-placeholder i {
-  font-size: 3rem;
-  color: #dd8027;
-  margin-bottom: 8px;
-}
 
-/* Placeholder text */
-.placeholder-text {
-  color: #999;
-  font-style: italic;
-}
 
 /* Responsive tweaks */
 @media (max-width: 600px) {
@@ -271,6 +233,7 @@
     flex-direction: column;
   }
 }
+
 </style>
 
 
