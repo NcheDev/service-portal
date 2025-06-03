@@ -5,8 +5,9 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use App\Http\Controllers\QualificationController;
-//profile details
 use App\Http\Controllers\PersonalInformationController;
+use App\Http\Controllers\Admin\UserManagementController;
+
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/profile-details', [PersonalInformationController::class, 'showProfileDetails']);
@@ -96,3 +97,15 @@ Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkE
 
 Route::get('reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
 Route::post('reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
+
+
+Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
+    Route::get('/users', [UserManagementController::class, 'index'])->name('admin.users.index');
+    Route::get('/users/{user}', [UserManagementController::class, 'show'])->name('admin.users.show'); // Added show route
+    Route::post('/users/{user}/toggle', [UserManagementController::class, 'toggleActive'])->name('admin.users.toggle');
+    Route::post('/users/{user}/assign-role', [UserManagementController::class, 'assignRole'])->name('admin.users.assignRole');
+    Route::post('/users/{user}/remove-role', [UserManagementController::class, 'removeRole'])->name('admin.users.removeRole');
+    Route::post('/users/{user}/give-permission', [UserManagementController::class, 'givePermission'])->name('admin.users.givePermission');
+    Route::post('/users/{user}/revoke-permission', [UserManagementController::class, 'revokePermission'])->name('admin.users.revokePermission');
+
+});

@@ -91,16 +91,16 @@ public function login(Request $request)
     $credentials = $request->only('email', 'password');
 
     if (Auth::attempt($credentials, $request->filled('remember'))) {
-        $request->session()->regenerate();
+    $request->session()->regenerate();
 
-        $user = Auth::user();
+    $user = Auth::user();
 
-        if ($user->role === 'admin') {
-            return redirect('/admin-dashboard');
-        } else {
-            return redirect('/user-dashboard');
-        }
+    if ($user->hasRole('admin')) {
+        return redirect('/admin-dashboard');
+    } else {
+        return redirect('/user-dashboard');
     }
+}
 
     return back()->withErrors(['email' => 'Invalid email or password.'])->withInput();
 }
@@ -117,7 +117,7 @@ public function dashboard()
 {
     $user = Auth::user();
 
-    if ($user->role === 'admin') {
+    if ($user->hasRole('admin')) {
         return view('admin-dashboard', compact('user'));
     } else {
         return view('user-dashboard', compact('user'));

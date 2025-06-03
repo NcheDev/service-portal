@@ -126,7 +126,7 @@
 
         <h2>Need Help?</h2>
         <p>
-            For inquiries, please contact the Evaluation Division via email at <strong>evaluation@nche.org</strong> or visit our office during working hours.
+            For inquiries, please contact the Evaluation Division via email at <strong>verification@nche.ac.mw</strong> or visit our office during working hours.
         </p>
     </div>
 </body>

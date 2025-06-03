@@ -181,6 +181,13 @@
                 <i class="mdi mdi-file-document-box menu-icon"></i>
               </a>
             </li>
+            <li class="nav-item">
+  <a class="nav-link" href="{{ route('admin.users.index') }}">
+    <span class="menu-title">User Management</span>
+    <i class="mdi mdi-file-document-box menu-icon"></i>
+  </a>
+</li>
+
           </ul>
         </nav>
         <!-- partial -->
