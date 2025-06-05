@@ -19,5 +19,12 @@ class PersonalInformation extends Model
         'profile_picture',
         'cover_photo',
         'national_id_path',
+        'country',
+    'date_of_birth',
+    'next_of_kin',
+    'title',
+    'previous_surnames',
+    'national_id_number',
+    'kin_contact',
     ];
 }

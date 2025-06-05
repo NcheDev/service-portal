@@ -33,6 +33,13 @@ class PersonalInformationController extends Controller
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'cover_photo' => 'nullable|image|mimes:jpeg,png,jpg|max:4096',
             'national_id' => 'nullable|file|mimes:pdf,jpeg,png,jpg|max:2048',
+            'country' => 'nullable|string|max:100',
+        'date_of_birth' => 'nullable|date',
+        'next_of_kin' => 'nullable|string|max:255',
+        'title' => 'nullable|string|max:100',
+        'previous_surnames' => 'nullable|string|max:255',
+        'national_id_number' => 'nullable|string|max:100',
+        'kin_contact'=> 'nullable|string|max:15',
         ]);
 
         $personalInfo = PersonalInformation::updateOrCreate(

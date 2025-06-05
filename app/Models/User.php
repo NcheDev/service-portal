@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\PersonalInformation;
+use App\Models\Qualification;
+use App\Models\Payment;
+
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -31,11 +34,24 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+// User.php
 
-   public function personalInfo()
+public function personalInformation()
 {
     return $this->hasOne(PersonalInformation::class);
 }
 
+public function qualifications()
+{
+    return $this->hasMany(Qualification::class); // once the table is created
+}
+
+public function payments()
+{
+    return $this->hasMany(Payment::class); // once the table is created
+}
+public function personalInfo()
+{
+return $this->hasOne(PersonalInformation::class);}
 
 }

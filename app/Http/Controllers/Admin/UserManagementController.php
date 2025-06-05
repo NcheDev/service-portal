@@ -73,7 +73,14 @@ public function assignRole(Request $request, User $user)
     }
     public function show($id)
 {
-    $user = User::with('roles', 'permissions')->findOrFail($id);
+   
+    $user = User::with([
+        'roles',
+        'permissions',
+        'personalInformation',
+        'qualifications',
+        'payments'
+    ])->findOrFail($id);
     $roles = Role::all(); // get all available roles
     $permissions = Permission::all(); // get all available permissions
 

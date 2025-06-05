@@ -73,8 +73,7 @@
   <p class="text-muted mb-0">Please fill in your personal information below.</p>
 </div>
 
-
-     <!-- Wrap these fields inside a flex container -->
+<!-- Wrap these fields inside a flex container -->
 <div class="card p-4 mb-4 shadow-sm">
   <form action="#" method="POST" novalidate>
     <div class="row g-3">
@@ -112,9 +111,67 @@
           <option value="Other" {{ old('gender', $personalInfo?->gender) === 'Other' ? 'selected' : '' }}>Other</option>
         </select>
       </div>
+      <!-- Previous Surnames -->
+  <div class="col-md-3">
+    <label for="previous_surnames" class="form-label">Previous Surname</label>
+    <input type="text" name="previous_surnames" id="previous_address" class="form-control"
+      value="{{ old('previous_surnames', $personalInfo?->previous_surnames) }}">
+  </div>
+  <!-- National ID Number -->
+<div class="col-md-3 mt-3">
+  <label for="national_id_number" class="form-label">National ID Number</label>
+  <input type="text" name="national_id_number" id="national_id_number" class="form-control"
+    value="{{ old('national_id_number', $personalInfo?->national_id_number) }}">
+</div>
+<!-- Kin Contact -->
+<div class="col-md-3 mt-3">
+  <label for="kin_contact" class="form-label">Next of Kin Phone Number</label>
+  <input 
+    type="text" 
+    name="kin_contact" 
+    id="kin_contact" 
+    class="form-control" 
+    value="{{ old('kin_contact', $personalInfo?->kin_contact) }}" 
+    placeholder="e.g. +1234567890"
+  >
+</div>
+
+
     </div>
 
+  <div class="row g-3 mt-3">
+  <!-- Country -->
+  <div class="col-md-3">
+    <label for="country" class="form-label">Country</label>
+    <input type="text" name="country" id="country" class="form-control"
+      value="{{ old('country', $personalInfo?->country) }}">
+  </div>
+
+  <!-- Date of Birth -->
+  <div class="col-md-3">
+    <label for="date_of_birth" class="form-label">Date of Birth</label>
+    <input type="date" name="date_of_birth" id="date_of_birth" class="form-control"
+      value="{{ old('date_of_birth', $personalInfo?->date_of_birth) }}">
+  </div>
+
+  <!-- Next of Kin -->
+  <div class="col-md-3">
+    <label for="next_of_kin" class="form-label">Next of Kin</label>
+    <input type="text" name="next_of_kin" id="next_of_kin" class="form-control"
+      value="{{ old('next_of_kin', $personalInfo?->next_of_kin) }}">
+  </div>
+
+  <!-- Title -->
+  <div class="col-md-3">
+    <label for="title" class="form-label">Title</label>
+    <input type="text" name="title" id="title" class="form-control"
+      value="{{ old('title', $personalInfo?->title) }}">
+  </div>
+
   
+</div>
+
+
     <div class="row ">
   <!-- Purpose Of Application -->
   <div class="col-12 col-md-3 mt-3">
@@ -147,13 +204,14 @@
           @endif
         </div>
       </label>
+      
 
       <!-- File Input -->
       <input type="file" name="national_id" id="national_id" accept=".jpg,.jpeg,.png,.pdf" class="form-control d-none">
     </div>
     </div>
-    <h4 id="success-message-area" class="mt-3"></h4></div>
-
+    <h4 id="success-message-area" class="mt-3"></h4></div>      
+ 
     <!-- Submit Button -->
     <div class="mt-4 text-end">
       <button type="submit" class="btn btn-primary">
