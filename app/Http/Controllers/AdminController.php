@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 {
     public function index()
     {
+
+          
         return view('index'); // Make sure this view exists
     }
 }

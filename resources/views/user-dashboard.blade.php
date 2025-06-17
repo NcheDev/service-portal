@@ -116,7 +116,8 @@
   <div class="collapse" id="qualifications-collapse">
     <ul class="nav flex-column sub-menu" style="background-color: #52074f; padding-left: 20px;">
       <li class="nav-item">
-        <a class="nav-link" href="#" id="profile" style="display: flex; align-items: center;">
+<a href="{{ route('application.create') }}" class="btn btn-success">
+    
           <i class="mdi mdi-file-plus menu-icon" style="margin-right: 8px;"></i> Apply
         </a>
       </li>

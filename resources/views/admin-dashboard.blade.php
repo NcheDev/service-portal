@@ -182,7 +182,7 @@
               </a>
             </li>
             <li class="nav-item">
-  <a class="nav-link" href="{{ route('admin.users.index') }}">
+  <a class="nav-link" href="{{ route('admin.users.index') }}" id="user-management-link">
     <span class="menu-title">User Management</span>
     <i class="mdi mdi-file-document-box menu-icon"></i>
   </a>
@@ -277,4 +277,24 @@
     <!-- End custom js for this page -->
     @include('partials.footer')
   </body>
+  <script>
+
+
+  $('#load-apply').on('click', function (e) {
+          e.preventDefault();
+  
+          $.ajax({
+              url: '/personal-info',
+              method: 'GET',
+              success: function (response) {
+                  $('.main-panel').html(response);
+              },
+              error: function (xhr) {
+                  alert('Error loading personal info.');
+                  console.error(xhr.responseText);
+              }
+          });
+      });
+  
+  </script>
 </html>

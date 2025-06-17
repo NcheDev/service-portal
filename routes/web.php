@@ -4,9 +4,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
-use App\Http\Controllers\QualificationController;
-use App\Http\Controllers\PersonalInformationController;
+ use App\Http\Controllers\PersonalInformationController;
 use App\Http\Controllers\Admin\UserManagementController;
+use App\Http\Controllers\ApplicationController;
+ use App\Http\Controllers\InvoiceController;
+
+
 
 
 Route::middleware(['auth'])->group(function () {
@@ -44,12 +47,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 });
 
-//APPLICATON ROUTES
-Route::post('/qualification/store', [QualificationController::class, 'store'])->name('qualification.store');
-
-Route::get('/application', [QualificationController::class, 'create'])->name('application.create');
-Route::post('/application/store', [QualificationController::class, 'store'])->name('application.store');
-
+ 
 //documentation routes
 
 
@@ -109,3 +107,22 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::post('/users/{user}/revoke-permission', [UserManagementController::class, 'revokePermission'])->name('admin.users.revokePermission');
 
 });
+ 
+// Show the form
+Route::get('/application', [ApplicationController::class, 'create'])->name('application.create');
+
+// Handle form submission
+Route::post('/application', [ApplicationController::class, 'store'])->name('application.store');
+
+
+// Invoice routes
+Route::get('/invoices/{invoice}', [InvoiceController::class, 'show'])->name('invoices.show');
+Route::get('/invoices/{invoice}/pdf', [InvoiceController::class, 'downloadPdf'])->name('invoices.pdf');
+// routes/web.php
+
+Route::get('/invoices/{invoice}/payment', [InvoiceController::class, 'paymentForm'])->name('invoices.payment');
+Route::post('/invoices/{invoice}/payment', [InvoiceController::class, 'submitPayment'])->name('invoices.payment.submit');
+ 
+Route::get('/invoices/{invoice}/payment', [InvoiceController::class, 'paymentForm'])->name('invoices.payment');
+
+Route::post('/invoices/{invoice}/payment', [InvoiceController::class, 'submitPayment'])->name('invoices.submitPayment');

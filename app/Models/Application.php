@@ -1,9 +1,10 @@
 <?php
+// app/Models/Application.php
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Application extends Model
 {
@@ -11,15 +12,32 @@ class Application extends Model
 
     protected $fillable = [
         'user_id',
-        'full_name',
-        'email',
-        'nationality',
-        'qualification_type',
         'processing_type',
+        'nationality',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function qualifications()
+    {
+        return $this->hasMany(Qualification::class);
+    }
+
+    public function educationHistories()
+    {
+        return $this->hasMany(EducationHistory::class);
+    }
 
     public function documents()
     {
-        return $this->hasMany(ApplicationDocument::class);
+        return $this->hasMany(Document::class);
+    }
+
+    public function invoice()
+    {
+        return $this->hasOne(Invoice::class);
     }
 }

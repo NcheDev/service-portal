@@ -1,21 +1,20 @@
 <?php
-// app/Models/Qualification.php
+
+// app/Models/Document.php
 
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Qualification extends Model
+class Document extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'application_id',
-        'name',
-        'year',
-        'institution',
-        'country',
+        'type',
+        'file_path',
     ];
 
     public function application()
