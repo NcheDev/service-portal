@@ -122,10 +122,11 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#" id="main-panel" style="display: flex; align-items: center;">
-          <i class="mdi mdi-file-multiple menu-icon" style="margin-right: 8px;"></i> My Applications
-        </a>
-      </li>
+  <a class="nav-link" href="{{ route('applications.my') }}"  style="display: flex; align-items: center;">
+    <i class="mdi mdi-file-multiple menu-icon" style="margin-right: 8px;"></i> My Applications
+  </a>
+</li>
+
     </ul>
   </div>
 </li>

@@ -12,9 +12,10 @@ return new class extends Migration
     public function up()
 {
     Schema::table('users', function (Blueprint $table) {
-        $table->string('role')->default('user'); // values: 'admin', 'user'
+        $table->string('status')->default('pending')->change(); // if it was enum
     });
 }
+
 
     /**
      * Reverse the migrations.

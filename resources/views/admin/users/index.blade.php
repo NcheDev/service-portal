@@ -67,14 +67,19 @@
                     @endif
                 </td>
 
-                {{-- Certificate Status Badge --}}
-                <td>
-                    @if ($user->certificate_validated ?? false)
-                        <span class="badge bg-success">Validated</span>
-                    @else
-                        <span class="badge bg-warning text-dark">Not Validated</span>
-                    @endif
-                </td>
+               {{-- Certificate Status Badge --}}
+<td>
+    @if ($user->status === 'validated')
+        <span class="badge bg-success">Recognised</span>
+    @elseif ($user->status === 'pending')
+        <span class="badge bg-warning text-dark">Pending</span>
+    @elseif ($user->status === 'invalid')
+        <span class="badge bg-danger">Un Recognised</span>
+    @else
+        <span class="badge bg-secondary">Unknown</span>
+    @endif
+</td>
+
 
                 {{-- Actions: View Profile --}}
                 <td class="text-center">

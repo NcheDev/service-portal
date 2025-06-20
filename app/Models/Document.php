@@ -21,4 +21,6 @@ class Document extends Model
     {
         return $this->belongsTo(Application::class);
     }
+   
+   
 }

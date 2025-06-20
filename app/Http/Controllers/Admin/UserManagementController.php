@@ -6,13 +6,15 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Illuminate\Support\Facades\Log;
+
 
 class UserManagementController extends Controller
 {
    public function index(Request $request)
     {
         // Eager‐load roles and permissions; paginate 10 users per page
-        $users = User::with('roles', 'permissions')->paginate(10);
+        $users = User::with('roles', 'permissions', 'applications.documents')->paginate(10);
 
         return view('admin.users.index', compact('users'));
     }
@@ -79,7 +81,7 @@ public function assignRole(Request $request, User $user)
         'permissions',
         'personalInformation',
         'qualifications',
-        'payments'
+        'invoices'
     ])->findOrFail($id);
     $roles = Role::all(); // get all available roles
     $permissions = Permission::all(); // get all available permissions
@@ -87,6 +89,40 @@ public function assignRole(Request $request, User $user)
     return view('admin.users.show', compact('user', 'roles', 'permissions'));
 }
 
- 
+ public function validateUser(Request $request, User $user)
+{
+    $request->validate([
+        'validation_report' => 'required|mimes:pdf|max:2048',
+        'action' => 'required|in:validated,invalid',
+    ]);
+
+    // Store the uploaded file
+    $path = $request->file('validation_report')->store('validation_reports', 'public');
+
+    // Set status based on action
+    $user->status = $request->action;
+    $user->response_report_path = $path;
+    $user->save();
+
+    return redirect()->back()->with('success', 'User has been marked as ' . $request->action . ' and report uploaded.');
+}
+
+public function validatedUsers()
+{
+    // Fetch all users with 'validated' status
+    // Eager load roles and permissions for performance
+$validatedUsers = User::where('status', 'validated')->paginate(10);
+
+    return view('admin.users.show2', compact('validatedUsers'));
+}
+public function revertStatus(User $user)
+{
+    $user->status = 'pending';
+    $user->save();
+
+    return back()->with('success', 'User status reverted to pending.');
+}
+
+
 
 }

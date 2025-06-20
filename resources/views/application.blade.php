@@ -143,6 +143,41 @@
                 </div>
             </div>
         </div>
+        <!-- Consent Form Section -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <strong>Consent Form</strong>
+    </div>
+    <div class="card-body">
+        <p class="mb-4">Please download the consent form, sign it, and upload the signed version below.</p>
+
+        <div class="row mb-3">
+            <div class="col-auto">
+                <!-- Download Button -->
+                <a href="{{ asset('assets/forms/consent_form.pdf') }}" download class="btn btn-outline-primary">
+                    <i class="bi bi-download"></i> Download Consent Form
+                </a>
+            </div>
+        </div>
+
+        <!-- Upload Form -->
+        {{-- Consent Form Upload --}}
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-white">
+            <h5 class="mb-0">Upload Signed Consent Form</h5>
+        </div>
+        <div class="card-body">
+            <div class="row g-3 align-items-center">
+                <div class="col-md-6">
+                    <label for="consent_form" class="form-label">Consent Form (PDF)</label>
+                    <input type="file" name="consent_form" id="consent_form" class="form-control" accept="application/pdf" required>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+
 
         {{-- Card: Notices --}}
         <div class="alert alert-info">

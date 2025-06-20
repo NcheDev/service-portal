@@ -9,9 +9,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\PersonalInformation;
 use App\Models\Qualification;
-use App\Models\Payment;
-
-
+use App\Models\Application;
+ 
 class User extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory, Notifiable, HasRoles;
@@ -36,6 +35,9 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 // User.php
 
+ 
+
+
 public function personalInformation()
 {
     return $this->hasOne(PersonalInformation::class);
@@ -46,12 +48,18 @@ public function qualifications()
     return $this->hasMany(Qualification::class); // once the table is created
 }
 
-public function payments()
-{
-    return $this->hasMany(Payment::class); // once the table is created
-}
+ 
 public function personalInfo()
 {
 return $this->hasOne(PersonalInformation::class);}
+public function Applications()
+{
+    return $this->hasMany(Application::class);
+}
+public function invoices()
+{
+    return $this->hasMany(\App\Models\Invoice::class);
+}
+
 
 }

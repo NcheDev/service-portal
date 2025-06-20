@@ -113,7 +113,10 @@ Route::get('/application', [ApplicationController::class, 'create'])->name('appl
 
 // Handle form submission
 Route::post('/application', [ApplicationController::class, 'store'])->name('application.store');
-
+    //consent form upload
+Route::post('/upload-consent-form', [ApplicationController::class, 'uploadConsentForm'])->name('documents.uploadConsent');
+// Show the user's applications
+Route::get('/my-applications', [ApplicationController::class, 'myApplications'])->name('applications.my');
 
 // Invoice routes
 Route::get('/invoices/{invoice}', [InvoiceController::class, 'show'])->name('invoices.show');
@@ -126,3 +129,23 @@ Route::post('/invoices/{invoice}/payment', [InvoiceController::class, 'submitPay
 Route::get('/invoices/{invoice}/payment', [InvoiceController::class, 'paymentForm'])->name('invoices.payment');
 
 Route::post('/invoices/{invoice}/payment', [InvoiceController::class, 'submitPayment'])->name('invoices.submitPayment');
+ Route::get('/my-applications', [ApplicationController::class, 'myApplications'])
+     ->name('applications.my')
+     ->middleware('auth');
+     Route::get('/applications/{id}', [ApplicationController::class, 'show'])->name('applications.show');
+
+Route::get('/applications/{id}', [ApplicationController::class, 'show'])->name('applications.show');
+Route::get('/applications/{id}', [ApplicationController::class, 'show'])->name('applications.show');
+Route::get('/my-applications', [ApplicationController::class, 'myApplications'])->name('applications.my');
+Route::post('/admin/users/{user}/validate', [UserManagementController::class, 'validateUser'])->name('admin.users.validate');
+Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
+    Route::get('/users/validated', [UserManagementController::class, 'validatedUsers'])->name('admin.users.validated');
+});
+Route::get('/admin/users/validated', [UserManagementController::class, 'validatedUsers'])->name('admin.users.validated');
+use App\Http\Controllers\Admin\ApplicantViewController;
+
+     Route::get('/applicants', [ApplicantViewController::class, 'all'])->name('admin.applicants.all');
+    Route::get('/applicants/validated', [ApplicantViewController::class, 'validated'])->name('admin.applicants.validated');
+    Route::get('/applicants/pending', [ApplicantViewController::class, 'pending'])->name('admin.applicants.pending');
+    Route::get('/applicants/rejected', [ApplicantViewController::class, 'rejected'])->name('admin.applicants.rejected');
+ Route::patch('/admin/users/{user}/revert', [UserManagementController::class, 'revertStatus'])->name('admin.users.revertStatus');

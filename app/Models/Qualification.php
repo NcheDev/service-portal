@@ -16,6 +16,7 @@ class Qualification extends Model
         'year',
         'institution',
         'country',
+        'user_id'
     ];
 
     public function application()

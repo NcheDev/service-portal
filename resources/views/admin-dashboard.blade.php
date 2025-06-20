@@ -152,20 +152,20 @@
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+              <a class="nav-link"   href="{{ route('admin.applicants.all') }}  ">
                 <span class="menu-title"> All Applicants</span>
               </a>
               
             </li>
+           <li class="nav-item">
+    <a class="nav-link" href="{{ route('admin.applicants.validated') }}">
+        <span class="menu-title">Approved Applications</span>
+     </a>
+</li>
+ 
+
             <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="collapse" href="#icons" aria-expanded="false" aria-controls="icons">
-                <span class="menu-title">Aproved Applications</span>
-                <i class="mdi mdi-contacts menu-icon"></i>
-              </a>
-              
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="collapse" href="#forms" aria-expanded="false" aria-controls="forms">
+              <a class="nav-link"  href="{{ route('admin.applicants.pending') }}" >
                 <span class="menu-title">Pending Applications</span>
                 <i class="mdi mdi-format-list-bulleted menu-icon"></i>
               </a>
@@ -176,8 +176,8 @@
             
             
             <li class="nav-item">
-              <a class="nav-link" href="docs/documentation.html" target="_blank">
-                <span class="menu-title">Rejected Applications</span>
+              <a class="nav-link" {{ route('admin.applicants.rejected') }} target="_blank">
+                <span class="menu-title">Invalid Applications</span>
                 <i class="mdi mdi-file-document-box menu-icon"></i>
               </a>
             </li>

@@ -21,6 +21,7 @@ return new class extends Migration
     $table->decimal('total_amount', 10, 2);
     $table->enum('currency', ['MWK', 'USD']);
     $table->enum('status', ['unpaid', 'paid'])->default('unpaid');
+      $table->decimal('fee', 10, 2); // ← ADD THIS if missing
     $table->timestamps();
 });
 

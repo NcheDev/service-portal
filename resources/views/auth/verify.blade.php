@@ -1,7 +1,4 @@
-@extends('layouts.app')
-
-@section('content')
-
+ 
 
 <div class="email-verification-container">
     <h2>Please Verify Your Email Address</h2>
@@ -95,4 +92,4 @@
         background-color: #c56e1f;
     }
 </style>
-@endsection
+ 
