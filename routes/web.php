@@ -39,8 +39,9 @@ Route::middleware(['auth'])->group(function () {
 // Dashboards (only for verified users)
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/admin-dashboard', function () {
-        return view('admin-dashboard');
-    });
+    return redirect()->route('admin.dashboard');
+});
+
 
     Route::get('/user-dashboard', function () {
         return view('user-dashboard');
@@ -137,7 +138,6 @@ Route::post('/invoices/{invoice}/payment', [InvoiceController::class, 'submitPay
 Route::get('/applications/{id}', [ApplicationController::class, 'show'])->name('applications.show');
 Route::get('/applications/{id}', [ApplicationController::class, 'show'])->name('applications.show');
 Route::get('/my-applications', [ApplicationController::class, 'myApplications'])->name('applications.my');
-Route::post('/admin/users/{user}/validate', [UserManagementController::class, 'validateUser'])->name('admin.users.validate');
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/users/validated', [UserManagementController::class, 'validatedUsers'])->name('admin.users.validated');
 });
@@ -147,5 +147,35 @@ use App\Http\Controllers\Admin\ApplicantViewController;
      Route::get('/applicants', [ApplicantViewController::class, 'all'])->name('admin.applicants.all');
     Route::get('/applicants/validated', [ApplicantViewController::class, 'validated'])->name('admin.applicants.validated');
     Route::get('/applicants/pending', [ApplicantViewController::class, 'pending'])->name('admin.applicants.pending');
-    Route::get('/applicants/rejected', [ApplicantViewController::class, 'rejected'])->name('admin.applicants.rejected');
- Route::patch('/admin/users/{user}/revert', [UserManagementController::class, 'revertStatus'])->name('admin.users.revertStatus');
+    Route::get('/applicants/invalid', [ApplicantViewController::class, 'rejected'])->name('admin.applicants.invalid');
+ Route::post('/users/{application}/validate', [UserManagementController::class, 'validateUser'])->name('admin.users.validate');
+Route::patch('/users/{application}/revert', [UserManagementController::class, 'revertStatus'])->name('admin.users.revertStatus');
+
+Route::get('/applications/{application}', [UserManagementController::class, 'show'])->name('applications.show');
+Route::get('/admin/applications/{application}/generate-letter', [UserManagementController::class, 'generateValidationLetter'])
+    ->name('applications.generateLetter');
+// routes/web.php
+
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
+    // Other admin routes...
+
+    Route::get('applications/{application}', [ApplicationController::class, 'show'])->name('applications.show');
+});
+// routes/web.php
+
+ Route::get('/db-check', function () {
+    try {
+        DB::connection()->getPdo();
+        return "✅ Connected to database: " . DB::connection()->getDatabaseName();
+    } catch (\Exception $e) {
+        return "❌ Could not connect: " . $e->getMessage();
+    }
+});
+Route::get('/db-check', function () {
+    return 'Connected to DB: ' . DB::connection()->getDatabaseName();
+});
+use App\Http\Controllers\AdminController;
+
+Route::get('/admin/dashboard', [UserManagementController::class, 'dashboard'])->name('admin.dashboard');
+Route::post('/users/{application}/validate', [UserManagementController::class, 'validateUser'])->name('admin.users.validate');
+Route::patch('/users/{application}/revert', [UserManagementController::class, 'revertStatus'])->name('admin.users.revertStatus');

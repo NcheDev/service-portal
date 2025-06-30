@@ -35,7 +35,16 @@
                             <td>{{ ucfirst($app->processing_type) }}</td>
                             <td>{{ $app->nationality }}</td>
                             <td>{{ $app->created_at->format('Y-m-d') }}</td>
-                            <td>{{ $app->status ?? 'Pending' }}</td> {{-- Adjust if you track status --}}
+                            <td>
+                                @if ($app->status === 'validated')
+                                    <span class="badge bg-success">Recognised</span>
+                                @elseif ($app->status === 'invalid')
+                                    <span class="badge bg-danger">Un Recognised</span>
+                                @else
+                                    <span class="badge bg-warning text-dark">Pending</span>
+                                @endif
+                            </td>
+
                             <td>
                                 <a href="{{ route('applications.show', $app->id) }}" class="btn btn-primary btn-sm">View Details</a>
                             </td>

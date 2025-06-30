@@ -118,11 +118,12 @@ public function dashboard()
     $user = Auth::user();
 
     if ($user->hasRole('admin')) {
-        return view('admin-dashboard', compact('user'));
+        return redirect()->route('admin.dashboard'); // 👈 this is the key change
     } else {
         return view('user-dashboard', compact('user'));
     }
 }
+
 
 
 }

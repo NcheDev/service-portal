@@ -16,7 +16,9 @@ class Qualification extends Model
         'year',
         'institution',
         'country',
-        'user_id'
+        'user_id',
+        'program_name', // Added program_name field
+
     ];
 
     public function application()

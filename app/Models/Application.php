@@ -10,11 +10,19 @@ class Application extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'user_id',
-        'processing_type',
-        'nationality',
-    ];
+   protected $fillable = [
+    'user_id',
+    'processing_type',
+    'nationality',
+    'status',
+    'response_report_path',  // Path to the response report
+    'validation_comment',
+];
+
+public function qualification()
+{
+    return $this->hasOne(Qualification::class);
+}
 
     public function user()
     {

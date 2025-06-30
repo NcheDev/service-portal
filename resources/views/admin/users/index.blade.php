@@ -3,10 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>User Management</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    >
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
 
@@ -20,7 +17,7 @@
                 <th scope="col">Full Name</th>
                 <th scope="col">Status</th>
                 <th scope="col">Role</th>
-                <th scope="col">Certificate</th>
+               
                 <th scope="col" class="text-center">Actions</th>
             </tr>
         </thead>
@@ -28,80 +25,82 @@
         <tbody>
         @foreach ($users as $user)
             <tr>
-                {{-- Profile Picture (use a placeholder if none) --}}
+                {{-- Profile Picture --}}
                 <td>
                     @if ($user->profile_picture)
                         <img src="{{ asset('storage/' . $user->profile_picture) }}"
-                             alt="Avatar"
-                             class="rounded-circle"
-                             width="40"
-                             height="40">
+                             alt="Avatar" class="rounded-circle" width="40" height="40">
                     @else
                         <img src="{{ asset('images/avatar-placeholder.png') }}"
-                             alt="Avatar"
-                             class="rounded-circle"
-                             width="40"
-                             height="40">
+                             alt="Avatar" class="rounded-circle" width="40" height="40">
                     @endif
                 </td>
 
                 {{-- Full Name --}}
                 <td>{{ $user->name }}</td>
 
-                {{-- Active / Inactive Status Badge --}}
+                {{-- Active / Inactive --}}
                 <td>
-                    @if ($user->is_active)
-                        <span class="badge bg-success">Active</span>
-                    @else
-                        <span class="badge bg-secondary">Inactive</span>
-                    @endif
+                    <span class="badge {{ $user->is_active ? 'bg-success' : 'bg-secondary' }}">
+                        {{ $user->is_active ? 'Active' : 'Inactive' }}
+                    </span>
                 </td>
 
-                {{-- Primary Role (first one) --}}
+                {{-- Role --}}
                 <td>
-                    @php $primaryRole = $user->getRoleNames()->first(); @endphp
-                    @if ($primaryRole)
-                        <span class="badge bg-primary text-uppercase">{{ $primaryRole }}</span>
+                    @php $role = $user->getRoleNames()->first(); @endphp
+                    @if ($role)
+                        <span class="badge bg-primary text-uppercase">{{ $role }}</span>
                     @else
                         <span class="text-muted">—</span>
                     @endif
                 </td>
 
-               {{-- Certificate Status Badge --}}
-<td>
-    @if ($user->status === 'validated')
-        <span class="badge bg-success">Recognised</span>
-    @elseif ($user->status === 'pending')
-        <span class="badge bg-warning text-dark">Pending</span>
-    @elseif ($user->status === 'invalid')
-        <span class="badge bg-danger">Un Recognised</span>
-    @else
-        <span class="badge bg-secondary">Unknown</span>
-    @endif
-</td>
+               
 
-
-                {{-- Actions: View Profile --}}
+                {{-- Actions --}}
                 <td class="text-center">
-                    <a href="{{ route('admin.users.show', $user->id) }}"
-                       class="btn btn-sm btn-info">
-                        View Profile
-                    </a>
+                <a href="#" class="btn btn-sm btn-info btn-view-user" data-user-id="{{ $user->id }}">
+    View Profile
+</a>
+
+
                 </td>
             </tr>
         @endforeach
         </tbody>
     </table>
 
-    {{-- Pagination Links --}}
+    {{-- Pagination --}}
     <div class="d-flex justify-content-center">
         {{ $users->links() }}
     </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<!-- Bootstrap JS Bundle (includes Popper) -->
-<script
-  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
-></script>
+<script>
+$(document).ready(function () {
+    $('.btn-view-user').on('click', function (e) {
+        e.preventDefault();
+
+        var userId = $(this).data('user-id');
+        var url = '/admin/users/' + userId;
+
+        $.ajax({
+            url: url,
+            method: 'GET',
+            success: function (response) {
+                $('.main-panel').html(response);
+            },
+            error: function (xhr) {
+                alert('Failed to load user profile.');
+                console.error(xhr);
+            }
+        });
+    });
+});
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

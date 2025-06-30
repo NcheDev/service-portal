@@ -8,64 +8,120 @@
 
         {{-- Card: Processing Type & Nationality --}}
         <div class="card mb-4 shadow-sm">
-            <div class="card-header bg-white">
-                <h5 class="mb-0">Applicant Info</h5>
-            </div>
-            <div class="card-body row">
-                <div class="col-md-6 mb-3">
-                    <label for="processing_type" class="form-label">Processing Type</label>
-                    <select class="form-control" name="processing_type" required>
-                        <option value="normal">Normal</option>
-                        <option value="express">Express</option>
-                    </select>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label for="nationality" class="form-label">Nationality</label>
-                    <select class="form-control" name="nationality" required>
-                        <option value="local">Local</option>
-                        <option value="foreigner">Foreigner</option>
-                    </select>
-                </div>
-            </div>
+    <div class="card-header bg-white">
+        <h5 class="mb-0">Applicant Info</h5>
+    </div>
+    <div class="card-body row">
+        {{-- Processing Type --}}
+        <div class="col-md-6 mb-3">
+            <label for="processing_type" class="form-label">Processing Type</label>
+            <select class="form-control" name="processing_type" id="processing_type" required>
+                <option value="normal">Normal</option>
+                <option value="express">Express</option>
+            </select>
+            <div class="mt-2 text-info small" id="processing_info">Normal takes 21 days.</div>
         </div>
+
+        {{-- Nationality --}}
+        <div class="col-md-6 mb-3">
+            <label for="nationality" class="form-label">Nationality</label>
+            <select class="form-control" name="nationality" id="nationality" required>
+                <option value="local">Local</option>
+                <option value="foreigner">Foreigner</option>
+            </select>
+            <div class="mt-2 text-info small" id="fee_info">Locals: MK 75,000 per qualification</div>
+        </div>
+    </div>
+</div>
 
         {{-- Card: Qualification to be Evaluated --}}
         <div class="card mb-4 shadow-sm">
             <div class="card-header bg-white">
                 <h5 class="mb-0">Qualification/Award to be Evaluated</h5>
             </div>
-            <div class="card-body">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Qualification Name</th>
-                            <th>Year Obtained</th>
-                            <th>Institution</th>
-                            <th>Country</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <input type="text" name="qualifications[0][name]" class="form-control" value="{{ old('qualifications.0.name') }}">
-                                @error('qualifications.0.name') <div class="text-danger small">{{ $message }}</div> @enderror
-                            </td>
-                            <td>
-                                <input type="text" name="qualifications[0][year]" class="form-control" value="{{ old('qualifications.0.year') }}">
-                                @error('qualifications.0.year') <div class="text-danger small">{{ $message }}</div> @enderror
-                            </td>
-                            <td>
-                                <input type="text" name="qualifications[0][institution]" class="form-control" value="{{ old('qualifications.0.institution') }}">
-                                @error('qualifications.0.institution') <div class="text-danger small">{{ $message }}</div> @enderror
-                            </td>
-                            <td>
-                                <input type="text" name="qualifications[0][country]" class="form-control" value="{{ old('qualifications.0.country') }}">
-                                @error('qualifications.0.country') <div class="text-danger small">{{ $message }}</div> @enderror
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+           <div class="card-body">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Qualification Name</th>
+                <th>Program Name</th> {{-- ✅ Added this --}}
+                <th>Date Obtained</th>
+                <th>Institution</th>
+                <th>Country</th>
+            </tr>
+        </thead>
+        <tbody>
+           <tr>
+    {{-- Qualification Name --}}
+    <td>
+        <input 
+            type="text" 
+            name="qualifications[0][name]" 
+            class="form-control" 
+            placeholder="Qualification name" 
+            value="{{ old('qualifications.0.name') }}"
+        >
+        <small class="text-muted">As it appears on certificate.</small>
+        @error('qualifications.0.name') <div class="text-danger small">{{ $message }}</div> @enderror
+    </td>
+
+    {{-- Program Name --}}
+    <td>
+        <input 
+            type="text" 
+            name="qualifications[0][program_name]" 
+            class="form-control" 
+            placeholder="e.g., Computer Science" 
+            value="{{ old('qualifications.0.program_name') }}"
+        >
+        <small class="text-muted">As it appears on certificate.</small>
+        @error('qualifications.0.program_name') <div class="text-danger small">{{ $message }}</div> @enderror
+    </td>
+
+    {{-- Date Awarded --}}
+    <td>
+        <input 
+            type="text" 
+            name="qualifications[0][year]" 
+            class="form-control" 
+            placeholder="e.g., 12 July 2020" 
+            value="{{ old('qualifications.0.year') }}"
+        >
+        <small class="text-muted">As it appears on certificate.</small>
+        @error('qualifications.0.year') <div class="text-danger small">{{ $message }}</div> @enderror
+    </td>
+
+    {{-- Institution --}}
+    <td>
+        <input 
+            type="text" 
+            name="qualifications[0][institution]" 
+            class="form-control" 
+            placeholder="Institution name" 
+            value="{{ old('qualifications.0.institution') }}"
+        >
+        <small class="text-muted">As it appears on certificate.</small>
+        @error('qualifications.0.institution') <div class="text-danger small">{{ $message }}</div> @enderror
+    </td>
+
+    {{-- Country --}}
+    <td>
+        <input 
+            type="text" 
+            name="qualifications[0][country]" 
+            class="form-control" 
+            placeholder="Country" 
+            value="{{ old('qualifications.0.country') }}"
+        >
+        <small class="text-muted">As it appears on certificate.</small>
+        @error('qualifications.0.country') <div class="text-danger small">{{ $message }}</div> @enderror
+    </td>
+</tr>
+
+        </tbody>
+    </table>
+</div>
+
         </div>
 
         {{-- Card: Education History --}}
@@ -197,26 +253,7 @@
     </form>
 </div>
 
-{{-- JavaScript for add/remove rows --}}
-<script>
-    function addEducationRow() {
-        const index = document.querySelectorAll('#education-history-body tr').length;
-        const row = `
-            <tr>
-                <td><input type="text" name="education_histories[${index}][name]" class="form-control"></td>
-                <td><input type="text" name="education_histories[${index}][year]" class="form-control"></td>
-                <td><input type="text" name="education_histories[${index}][institution]" class="form-control"></td>
-                <td><input type="text" name="education_histories[${index}][country]" class="form-control"></td>
-                <td><button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this)">Remove</button></td>
-            </tr>
-        `;
-        document.getElementById('education-history-body').insertAdjacentHTML('beforeend', row);
-    }
-
-    function removeRow(button) {
-        button.closest('tr').remove();
-    }
-</script>
+ 
 
 <script>
     let eduIndex = 1;
@@ -241,124 +278,90 @@
         button.closest('tr').remove();
     }
 </script>
-<style>
-    @import url('application-form.css');
-/* application-form.css */
+ 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.qualification-select').forEach(function(select) {
+            select.addEventListener('change', function () {
+                const wrapper = this.closest('td').querySelector('.other-qualification-wrapper');
 
-/* General Layout */
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f9f9f9;
-    color: #333;
-    padding: 20px;
-}
+                if (this.value === 'Other') {
+                    wrapper.classList.remove('d-none');
+                } else {
+                    wrapper.classList.add('d-none');
+                    wrapper.querySelector('input').value = '';
+                }
+            });
+        });
+    });
+</script>
+ 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const processingSelect = document.getElementById('processing_type');
+        const nationalitySelect = document.getElementById('nationality');
+        const processingInfo = document.getElementById('processing_info');
+        const feeInfo = document.getElementById('fee_info');
 
-/* Card Container */
-.card {
-    border: none;
-    box-shadow: 0 0 15px rgba(0,0,0,0.05);
-    border-radius: 10px;
-    margin-bottom: 20px;
-}
+        function updateProcessingInfo() {
+            const type = processingSelect.value;
 
-/* Card Header */
-.card-header {
-    background-color: #ffffff;
-    border-bottom: 1px solid #dee2e6;
-    font-weight: 600;
-    font-size: 16px;
-    padding: 10px 15px;
-}
+            if (type === 'normal') {
+                processingInfo.textContent = "Normal takes 21 days.";
+            } else if (type === 'express') {
+                processingInfo.textContent = "Express takes 10 days.";
+            }
+        }
 
-/* Card Body */
-.card-body {
-    padding: 15px;
-}
+        function updateFeeInfo() {
+            const type = processingSelect.value;
+            const nationality = nationalitySelect.value;
 
-/* Input Fields */
-.form-control,
-.form-select {
-    border-radius: 5px;
-    font-size: 14px;
-    padding: 6px 10px;
-    margin-bottom: 10px;
-}
+            if (type === 'normal' && nationality === 'local') {
+                feeInfo.textContent = "Locals: MK 75,000 per qualification";
+            } else if (type === 'normal' && nationality === 'foreigner') {
+                feeInfo.textContent = "Foreigners: US$ 150 per qualification";
+            } else if (type === 'express' && nationality === 'local') {
+                feeInfo.textContent = "Locals: MK 112,500 per qualification";
+            } else if (type === 'express' && nationality === 'foreigner') {
+                feeInfo.textContent = "Foreigners: US$ 225 per qualification";
+            }
+        }
 
-/* Labels */
-.form-label {
-    font-weight: 500;
-    font-size: 13px;
-    margin-bottom: 2px;
-}
+        // Initial load
+        updateProcessingInfo();
+        updateFeeInfo();
 
-/* Tabs Styling */
-.nav-tabs .nav-link {
-    font-weight: 500;
-    font-size: 14px;
-    color: #555;
-}
+        // On change
+        processingSelect.addEventListener('change', function () {
+            updateProcessingInfo();
+            updateFeeInfo();
+        });
 
-.nav-tabs .nav-link.active {
-    background-color: #ffffff;
-    border-color: #dee2e6 #dee2e6 #fff;
-    color: #000;
-}
-
-/* Section Headings */
-.section-title {
-    font-size: 15px;
-    font-weight: 600;
-    margin-top: 15px;
-    margin-bottom: 10px;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 5px;
-}
-
-/* Buttons */
-.btn {
-    font-size: 14px;
-    padding: 6px 12px;
-    border-radius: 5px;
-}
-
-.btn-primary {
-    background-color: #007bff;
-    border-color: #007bff;
-}
-
-/* Remove extra spacing */
-.row {
-    margin-bottom: 10px;
-}
-
-/* Reduce overall space to keep one-page fit */
-.container {
-    max-width: 960px;
-}
-
-/* Table section for educational background */
-.table td,
-.table th {
-    padding: 6px;
-    font-size: 13px;
-    vertical-align: middle;
-}
-
-/* Make sure it fits in one page on most screens */
-html, body {
-    overflow-y: auto;
-    max-height: 100vh;
-}
-
-/* Hide unused large spacing on smaller viewports */
-@media (max-width: 768px) {
-    .card-body, .card-header {
-        padding: 10px;
-    }
-
-    .form-label, .form-control, .form-select {
-        font-size: 13px;
-    }
-}
-
-</style>
+        nationalitySelect.addEventListener('change', function () {
+            updateFeeInfo();
+        });
+    });
+</script><script>
+$(document).on('submit', '#applicationForm', function(e) {
+    e.preventDefault();
+    var formData = new FormData(this);
+    
+    $.ajax({
+        url: $(this).attr('action'),
+        method: $(this).attr('method'),
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function(response) {
+            // Replace main panel content with invoice partial
+            $('.main-panel').html(response);
+        },
+        error: function(xhr) {
+            alert('Error submitting application');
+            console.error(xhr.responseText);
+        }
+    });
+});
+</script>
+ 

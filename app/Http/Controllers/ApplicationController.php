@@ -1,37 +1,55 @@
 <?php
-// app/Http/Controllers/ApplicationController.php
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Pdf;
+use App\Models\Invoice;
+use App\Models\Document;
 use App\Models\Application;
+use Illuminate\Http\Request;
 use App\Models\Qualification;
 use App\Models\EducationHistory;
-use App\Models\Document;
-use App\Models\Invoice;
 use Illuminate\Support\Facades\Auth;
 
 class ApplicationController extends Controller
 {
+    public function showForm()
+    {
+        return view('application');
+    }
+
+    public function create()
+    {
+        return view('application');
+    }
+
     public function store(Request $request)
     {
         $request->validate([
-            'processing_type' => 'required',
-            'nationality' => 'required',
-            'qualifications.*.name' => 'required',
-            'qualifications.*.year' => 'required|integer',
-            'qualifications.*.institution' => 'required',
-            'qualifications.*.country' => 'required',
-     'education_histories' => 'required|array|min:1',
-    'education_histories.*.name' => 'required|string|max:255',
-    'education_histories.*.year' => 'required|digits:4',
-    'education_histories.*.institution' => 'required|string|max:255',
-    'education_histories.*.country' => 'required|string|max:255',
-            'consent_form' => 'required|mimes:pdf|max:2048',
+            'processing_type' => 'required|in:normal,express',
+            'nationality' => 'required|in:local,foreigner',
 
-    
- 
-            'documents.*' => 'file|max:5120', // optional uploads, max 5MB
+            // Qualifications
+            'qualifications.*.name' => 'required|string',
+             'qualifications.*.program_name' => 'required|string|max:255',
+            'qualifications.*.year' => 'required|date|before_or_equal:today',
+            'qualifications.*.institution' => 'required|string|max:255',
+            'qualifications.*.country' => 'required|string|max:255',
+            'qualifications.*.custom_name' => 'nullable|required_if:qualifications.*.name,Other|string|max:255',
+
+            // Education History
+            'education_histories' => 'required|array|min:1',
+            'education_histories.*.name' => 'required|string|max:255',
+            'education_histories.*.year' => 'required|digits:4',
+            'education_histories.*.institution' => 'required|string|max:255',
+            'education_histories.*.country' => 'required|string|max:255',
+
+            // Files
+            'consent_form' => 'required|mimes:pdf|max:2048',
+            'certificates.*' => 'file|max:5120',
+            'academic_records.*' => 'file|max:5120',
+            'previous_evaluations.*' => 'file|max:5120',
+            'syllabi.*' => 'file|max:5120',
         ]);
 
         // Create Application
@@ -40,132 +58,145 @@ class ApplicationController extends Controller
             'processing_type' => $request->processing_type,
             'nationality' => $request->nationality,
         ]);
-// Save Qualifications
-if ($request->has('qualifications') && is_array($request->qualifications)) {
-    foreach ($request->qualifications as $qualificationData) {
-        Qualification::create([
-            'application_id' => $application->id,
-            'user_id' => Auth::id(),
-            'name' => $qualificationData['name'],
-            'year' => $qualificationData['year'],
-            'institution' => $qualificationData['institution'],
-            'country' => $qualificationData['country'],
-        ]);
-    }
-}
 
+        // Save Qualifications
+        if ($request->has('qualifications')) {
+            foreach ($request->qualifications as $qualificationData) {
+                Qualification::create([
+                    'application_id' => $application->id,
+                    'user_id' => Auth::id(),
+                    'name' => $qualificationData['name'],
+                    'custom_name' => $qualificationData['custom_name'] ?? null,
+                    'program_name' => $qualificationData['program_name'] ?? null,
+                    'year' => $qualificationData['year'],
+                    'institution' => $qualificationData['institution'],
+                    'country' => $qualificationData['country'],
+                ]);
+            }
+        }
 
-// Save Education Histories
- 
+        // Save Education History
+        if ($request->has('education_histories')) {
+            foreach ($request->education_histories as $history) {
+                $application->educationHistories()->create($history);
+            }
+        }
 
-if ($request->has('education_histories') && is_array($request->education_histories)) {
-    foreach ($request->education_histories as $edu) {
-        $application->educationHistories()->create($edu);
-    }
-}
-// Handle consent form
-    if ($request->hasFile('consent_form')) {
-        $file = $request->file('consent_form');
-        $path = $file->store('consent_forms', 'public');
+        // Save Consent Form
+        if ($request->hasFile('consent_form')) {
+            $path = $request->file('consent_form')->store('consent_forms', 'public');
 
-        // Optionally store in DB
-        Document::create([
-            'application_id' => $application->id,
-            'type' => 'consent_form',
-            'file_path' => $path,
-        ]);
-    }
-
-//save documents
-       $documentTypes = ['certificates', 'academic_records', 'previous_evaluations', 'syllabi',];
-
-foreach ($documentTypes as $type) {
-    if ($request->hasFile($type)) {
-        foreach ($request->file($type) as $file) {
-            $path = $file->store('documents','public');
-            $application->documents()->create([
-                'type' => $type,
+            Document::create([
+                'application_id' => $application->id,
+                'type' => 'consent_form',
                 'file_path' => $path,
             ]);
         }
-    }
-}
 
+        // Save Other Uploaded Documents
+        $documentTypes = ['certificates', 'academic_records', 'previous_evaluations', 'syllabi'];
+        foreach ($documentTypes as $type) {
+            if ($request->hasFile($type)) {
+                foreach ($request->file($type) as $file) {
+                    $path = $file->store('documents', 'public');
+                    $application->documents()->create([
+                        'type' => $type,
+                        'file_path' => $path,
+                    ]);
+                }
+            }
+        }
 
-        // Create Invoice
+        // Generate Invoice
+        $fee = match ([$request->processing_type, $request->nationality]) {
+            ['normal', 'local'] => 75000,
+            ['normal', 'foreigner'] => 150,
+            ['express', 'local'] => 112500,
+            ['express', 'foreigner'] => 225,
+        };
+
         $invoice = Invoice::create([
             'application_id' => $application->id,
             'user_id' => Auth::id(),
             'invoice_number' => 'INV-' . now()->timestamp . '-' . rand(1000, 9999),
             'processing_type' => $application->processing_type,
-            'fee' => $application->processing_type === 'standard' ? 100 : 200,
+            'fee' => $fee,
         ]);
 
         return redirect()->route('invoices.show', $invoice->id);
     }
-  public function showForm()
-{
-    return view('application'); // or whatever your Blade file is
-}
-    public function create()
-    {
-        return view('application'); // Return the view for creating an application
-    }
+
     public function uploadConsentForm(Request $request)
-{
-    $request->validate([
-        'consent_form' => 'required|mimes:pdf|max:2048',
-    ]);
+    {
+        $request->validate([
+            'consent_form' => 'required|mimes:pdf|max:2048',
+        ]);
 
-    $user = auth()->user();
+        $user = auth()->user();
+        $applicationId = $user->application()->latest()->first()?->id;
 
-    $path = $request->file('consent_form')->store('consent_forms', 'public');
+        $path = $request->file('consent_form')->store('consent_forms', 'public');
 
-    // Optionally link it to application or user
-    Document::create([
-'application_id' => $user->application()->latest()->first()?->id,
-        'type' => 'consent_form',
-        'file_path' => $path,
-    ]);
+        Document::create([
+            'application_id' => $applicationId,
+            'type' => 'consent_form',
+            'file_path' => $path,
+        ]);
 
-    return back()->with('success', 'Consent form uploaded successfully.');
-}
-
- public function myApplications()
-{
-    // Get the currently logged-in user
-    $user = Auth::user();
-
-    // If user is not logged in, redirect or abort
-    if (!$user) {
-        return redirect()->route('login')->with('error', 'You must be logged in to view your applications.');
+        return back()->with('success', 'Consent form uploaded successfully.');
     }
 
-    // Fetch all applications for this user (latest first)
-    $applications = Application::where('user_id', $user->id)
-                               ->latest()
-                               ->get();
+    public function myApplications()
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'You must be logged in to view your applications.');
+        }
 
-    // Count the applications
-    $applicationCount = $applications->count();
+        $applications = Application::where('user_id', $user->id)->latest()->get();
+        $applicationCount = $applications->count();
 
-    // Pass to view
-    return view('user.my-applications', compact('applications', 'applicationCount'));
-}
-public function show($id)
-{
-    $application = Application::with([
-        'documents', // assuming documents table has certificate, proof of payment, consent
-        'invoice',   // assuming you linked invoice to application
-    ])->findOrFail($id);
-
-    // Optional: Only allow user to view their own application
-    if (auth()->id() !== $application->user_id) {
-        abort(403, 'Unauthorized action.');
+        return view('user.my-applications', compact('applications', 'applicationCount'));
     }
-    return view('user.application-details', compact('application'));
-}
 
+    public function show($id)
+    {
+        $application = Application::with([
+            'documents',
+            'invoice',
+        ])->findOrFail($id);
 
+        if (auth()->id() !== $application->user_id) {
+            abort(403, 'Unauthorized action.');
+        }
 
+        return view('user.application-details', compact('application'));
+    }
+
+    public function generateValidationLetter($applicationId)
+    {
+        $application = Application::with(['user.personalInfo', 'qualifications'])->findOrFail($applicationId);
+
+        $user = $application->user;
+        $qualification = $application->qualifications->first(); // Adjusted for multiple
+
+        $data = [
+            'user' => $user,
+            'name' => $user->full_name,
+            'care_of' => $user->care_of ?? 'N/A',
+            'employer_address' => $user->employer_address ?? 'N/A',
+            'box_number' => $user->box_number ?? '---',
+            'city' => $user->city ?? '---',
+            'qualification_name' => $qualification->name ?? 'N/A',
+            'institution' => $qualification->institution ?? 'N/A',
+            'country' => $qualification->country ?? 'N/A',
+            'award_date' => $qualification ? \Carbon\Carbon::parse($qualification->year)->format('jS F, Y') : 'N/A',
+            'salutation' => optional($user->personalInfo)->gender === 'female' ? 'Madam' : 'Sir',
+            'date' => now()->format('jS F, Y'),
+        ];
+
+        $pdf = Pdf::loadView('pdfs.validation_letter', $data);
+
+        return $pdf->download("Validation_Letter_{$user->full_name}.pdf");
+    }
 }

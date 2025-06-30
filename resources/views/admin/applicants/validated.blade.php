@@ -2,15 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Validated Applicants</title>
+    <title>All Applicants</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
 
 <div class="container mt-5">
-    <h2 class="mb-4 text-success">Approved Applicants</h2>
+    <h2 class="mb-4 text-success">Recognised Applications</h2>
 
-    @if($users->count() > 0)
+    @php
+        // Filter users: Only those with applications and without the 'admin' role
+        $filteredUsers = $users->filter(function ($user) {
+            return $user->applications->count() > 0 && !$user->hasRole('admin');
+        });
+    @endphp
+
+    @if($filteredUsers->count() > 0)
         <table class="table table-bordered table-striped">
             <thead class="table-dark">
                 <tr>
@@ -22,31 +29,61 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($users as $index => $user)
+                @foreach($filteredUsers as $index => $user)
                     <tr>
-                        <td>{{ $loop->iteration + ($users->currentPage() - 1) * $users->perPage() }}</td>
+                        <td>{{ $loop->iteration }}</td>
                         <td>{{ $user->name }}</td>
                         <td>{{ $user->email }}</td>
                         <td>
-                            <span class="badge bg-{{ $user->status === 'validated' ? 'success' : ($user->status === 'pending' ? 'warning' : 'danger') }}">
-                                {{ ucfirst($user->status) }}
-                            </span>
+                            @foreach($user->applications as $app)
+                                <div class="mb-1">
+                                    <span class="badge bg-{{ 
+                                        $app->status === 'validated' ? 'success' : 
+                                        ($app->status === 'pending' ? 'warning text-dark' : 
+                                        ($app->status === 'invalid' ? 'danger' : 'secondary')) 
+                                    }}">
+                                        {{ ucfirst($app->status) }}
+                                    </span>
+                                </div>
+                            @endforeach
                         </td>
-                        <td><a href="{{ route('admin.users.show', $user->id) }}" class="btn btn-sm btn-primary">View</a></td>
+                        <td>
+    <a href="#" class="btn btn-sm btn-primary btn-view-user" data-user-id="{{ $user->id }}">View</a>
+                        </td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
-
-        <!-- Pagination -->
-        <div class="d-flex justify-content-center">
-            {{ $users->links() }}
-        </div>
     @else
-        <div class="alert alert-info">No applicants found.</div>
+        <div class="alert alert-info">No applications found.</div>
     @endif
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    $('.btn-view-user').on('click', function(e) {
+        e.preventDefault();
+
+        var userId = $(this).data('user-id');
+        var url = '/admin/users/' + userId;
+
+        $.ajax({
+            url: url,
+            method: 'GET',
+            success: function(response) {
+                $('.main-panel').html(response);
+            },
+            error: function(xhr) {
+                alert('Failed to load user details.');
+                console.error(xhr);
+            }
+        });
+    });
+});
+</script>
+
 </body>
 </html>

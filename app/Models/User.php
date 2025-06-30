@@ -36,7 +36,7 @@ class User extends Authenticatable implements MustVerifyEmail
 // User.php
 
  
-
+ 
 
 public function personalInformation()
 {
@@ -60,6 +60,7 @@ public function invoices()
 {
     return $this->hasMany(\App\Models\Invoice::class);
 }
+
 
 
 }
