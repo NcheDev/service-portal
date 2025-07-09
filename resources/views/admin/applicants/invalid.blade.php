@@ -8,7 +8,7 @@
 <body class="bg-light">
 
 <div class="container mt-5">
-    <h2 class="mb-4 text-success">Un Recognised Applications</h2>
+    <h2 class="mb-4 text-success">Unrecognised Applications</h2>
 
     @if($users->count() > 0)
         <table class="table table-bordered table-striped">
@@ -22,32 +22,42 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($users as $index => $user)
-                    <tr>
-                        <td>{{ $loop->iteration + ($users->currentPage() - 1) * $users->perPage() }}</td>
-                        <td>{{ $user->name }}</td>
-                        <td>{{ $user->email }}</td>
-                        <td>
-                            @if($user->applications->count())
-                                @foreach($user->applications as $app)
-                                    <div class="mb-1">
-                                        <span class="badge bg-{{ 
-                                            $app->status === 'validated' ? 'success' : 
-                                            ($app->status === 'pending' ? 'warning text-dark' : 
-                                            ($app->status === 'invalid' ? 'danger' : 'secondary')) 
-                                        }}">
-                                            {{ ucfirst($app->status) }}
-                                        </span>
-                                    </div>
-                                @endforeach
-                            @else
-                                <span class="badge bg-secondary">No Applications</span>
-                            @endif
-                        </td>
-                        <td>
-<a href="#" class="btn btn-sm btn-primary btn-view-user" data-user-id="{{ $user->id }}">View</a>
-                        </td>
-                    </tr>
+                @foreach($users as $user)
+                    @if($user->applications->count())
+                        @foreach($user->applications as $app)
+                            <tr>
+                                <td>{{ $loop->parent->iteration }}.{{ $loop->iteration }}</td>
+                                <td>{{ $user->name }}</td>
+                                <td>{{ $user->email }}</td>
+                                <td>
+                                    <span class="badge bg-{{ 
+                                        $app->status === 'validated' ? 'success' : 
+                                        ($app->status === 'pending' ? 'warning text-dark' : 
+                                        ($app->status === 'invalid' ? 'danger' : 'secondary')) 
+                                    }}">
+                                    {{ $app->status === 'invalid' ? 'Unrecognised' : ucfirst($app->status) }}
+                                    </span>
+                                </td>
+                                <td>
+                           <a href="{{ route('admin.applicants.viewApplication', [$user->id, $app->id]) }}" 
+                            class="btn btn-sm btn-primary btn-view-application" 
+                            data-url="{{ route('admin.applicants.viewApplication', [$user->id, $app->id]) }}">
+                            View Application
+                            </a>
+                                </td>
+                            </tr>
+                        @endforeach
+                    @else
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $user->name }}</td>
+                            <td>{{ $user->email }}</td>
+                            <td><span class="badge bg-secondary">No Applications</span></td>
+                            <td>
+                                <a href="#" class="btn btn-sm btn-secondary disabled">N/A</a>
+                            </td>
+                        </tr>
+                    @endif
                 @endforeach
             </tbody>
         </table>
@@ -80,6 +90,27 @@ $(document).ready(function() {
             },
             error: function(xhr) {
                 alert('Failed to load user details.');
+                console.error(xhr);
+            }
+        });
+    });
+});
+</script>
+<script>
+$(document).ready(function() {
+    $('.btn-view-application').on('click', function(e) {
+        e.preventDefault();
+
+        var url = $(this).data('url');
+
+        $.ajax({
+            url: url,
+            method: 'GET',
+            success: function(response) {
+                $('.main-panel').html(response);
+            },
+            error: function(xhr) {
+                alert('Failed to load application details.');
                 console.error(xhr);
             }
         });

@@ -179,3 +179,13 @@ use App\Http\Controllers\AdminController;
 Route::get('/admin/dashboard', [UserManagementController::class, 'dashboard'])->name('admin.dashboard');
 Route::post('/users/{application}/validate', [UserManagementController::class, 'validateUser'])->name('admin.users.validate');
 Route::patch('/users/{application}/revert', [UserManagementController::class, 'revertStatus'])->name('admin.users.revertStatus');
+
+ 
+Route::get('/admin/applicants/{userId}/application/{applicationId}', [UserManagementController::class, 'viewApplication'])
+    ->name('admin.applicants.viewApplication');
+Route::prefix('admin/applicants')->name('admin.applicants.')->group(function () {
+    Route::post('/{application}/validate', [UserManagementController::class, 'validateUser'])->name('validateUser');
+    Route::post('/{application}/revert', [UserManagementController::class, 'revertStatus'])->name('revertStatus');
+    Route::get('/{application}/generate-letter', [UserManagementController::class, 'generateValidationLetter'])->name('generateValidationLetter');
+    Route::get('/{user}/{application}/view', [UserManagementController::class, 'viewApplication'])->name('viewApplication');
+});

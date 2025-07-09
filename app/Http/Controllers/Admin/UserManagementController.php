@@ -39,7 +39,8 @@ class UserManagementController extends Controller
         return back()->with('status', 'User status updated.');
     }
 
-    // UserManagementController.php
+    // UserManagementController.php 
+
 public function assignRole(Request $request, User $user)
 {
     $request->validate([
@@ -47,16 +48,23 @@ public function assignRole(Request $request, User $user)
     ]);
 
     \Log::info('Assigning role', ['user_id' => $user->id, 'role' => $request->role]);
+    $user->syncRoles($request->role);
 
-    $user->syncRoles($request->role); // Assigns and replaces existing role(s)
-    return back()->with('success', 'Role assigned successfully.');
+    // If AJAX, return JSON with rendered HTML
+    if ($request->ajax()) {
+        $roles = Role::all();
+        $permissions = Permission::all();
+        $html = view('admin.users.show', compact('user', 'roles', 'permissions'))->render();
+        return response()->json(['html' => $html]);
+    }
+
+    // Otherwise normal redirect
+    return redirect()
+        ->route('admin.users.show', $user)
+        ->with('success', 'Role assigned successfully.');
 }
 
-
-
-
-
- public function removeRole(Request $request, User $user) 
+public function removeRole(Request $request, User $user)
 {
     $request->validate([
         'role' => 'required|string|exists:roles,name',
@@ -64,22 +72,59 @@ public function assignRole(Request $request, User $user)
 
     $user->removeRole($request->role);
 
-    return back()->with('success', 'Role removed successfully.');
+    if ($request->ajax()) {
+        $roles = Role::all();
+        $permissions = Permission::all();
+        $html = view('admin.users.show', compact('user', 'roles', 'permissions'))->render();
+        return response()->json(['html' => $html]);
+    }
+
+    return redirect()
+        ->route('admin.users.show', $user)
+        ->with('success', 'Role removed successfully.');
+}
+
+public function givePermission(Request $request, User $user)
+{
+    $request->validate([
+        'permission' => 'required|string|exists:permissions,name',
+    ]);
+
+    $user->givePermissionTo($request->permission);
+
+    if ($request->ajax()) {
+        $roles = Role::all();
+        $permissions = Permission::all();
+        $html = view('admin.users.show', compact('user', 'roles', 'permissions'))->render();
+        return response()->json(['html' => $html]);
+    }
+
+    return redirect()
+        ->route('admin.users.show', $user)
+        ->with('success', 'Permission assigned successfully.');
+}
+
+public function revokePermission(Request $request, User $user)
+{
+    $request->validate([
+        'permission' => 'required|string|exists:permissions,name',
+    ]);
+
+    $user->revokePermissionTo($request->permission);
+
+    if ($request->ajax()) {
+        $roles = Role::all();
+        $permissions = Permission::all();
+        $html = view('admin.users.show', compact('user', 'roles', 'permissions'))->render();
+        return response()->json(['html' => $html]);
+    }
+
+    return redirect()
+        ->route('admin.users.show', $user)
+        ->with('success', 'Permission removed successfully.');
 }
 
 
-
-    public function givePermission(Request $request, User $user)
-    {
-        $user->givePermissionTo($request->permission);
-        return back()->with('status', 'Permission assigned.');
-    }
-
-    public function revokePermission(Request $request, User $user)
-    {
-        $user->revokePermissionTo($request->permission);
-        return back()->with('status', 'Permission removed.');
-    }
 public function show($id)
 {
     $user = User::with([
@@ -194,6 +239,17 @@ public function dashboard()
         'rejectedApplications'
     ));
 }
+public function viewApplication($userId, $applicationId)
+{
+    $user = User::with('personalInformation')->findOrFail($userId);
+
+    $application = $user->applications()
+        ->with(['qualifications', 'documents', 'invoice'])
+        ->findOrFail($applicationId);
+
+    return view('admin.applicants.show', compact('user', 'application'));
+}
+
 
 
 }

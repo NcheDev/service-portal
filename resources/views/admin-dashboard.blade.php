@@ -30,12 +30,16 @@
     <!-- NAVBAR -->
    <nav class="navbar default-layout-navbar fixed-top navbar-expand-lg d-flex align-items-center justify-content-between px-3">
   <div class="d-flex align-items-center gap-3">
-    <a class="navbar-brand" href="{{ url('/') }}">
-      <img src="{{ asset('assets/images/logo1.png') }}" alt="logo" class="logo-lg">
-    </a>
-    <a class="navbar-brand d-lg-none" href="{{ url('/') }}">
-      <img src="{{ asset('assets/images/logo2.png') }}" alt="logo" class="logo-mini">
-    </a>
+    {{-- Big logo - only visible on large screens and up --}}
+<a class="navbar-brand d-none d-lg-block" href="{{ url('/') }}">
+  <img src="{{ asset('assets/images/logo1.png') }}" alt="Logo" style="height: 50px;">
+</a>
+
+{{-- Mini logo - only visible on small and medium screens --}}
+<a class="navbar-brand d-lg-none" href="{{ url('/') }}">
+  <img src="{{ asset('assets/images/logo1.png') }}" alt="Mini Logo" style="height: 30px;">
+</a>
+
     <button class="btn text-white d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar">
       <i class="mdi mdi-menu mdi-24px"></i>
     </button>
@@ -148,56 +152,57 @@
               Dashboard
             </h3>
           </div>
+<div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
+  <!-- New Applications -->
+  <div class="col">
+    <div class="card text-white h-100" style="background-color:#d6a7d9">
+      <div class="card-body position-relative">
+        <img src="{{ asset('assets/images/dashboard/circle.svg') }}" class="card-img-absolute" alt="circle-image" />
+        <h4 class="mb-3">New Applications <i class="mdi mdi-file-document float-end"></i></h4>
+        <h2 class="mb-4">{{ $newApplications }}</h2>
+        <p class="card-text">Received this week</p>
+      </div>
+    </div>
+  </div>
 
-          <div class="row">
-            <!-- New Applications -->
-            <div class="col-md-3 stretch-card grid-margin">
-              <div class="card card-img-holder text-white" style="background-color:#d6a7d9">
-                <div class="card-body">
-                  <img src="{{ asset('assets/images/dashboard/circle.svg') }}" class="card-img-absolute" alt="circle-image" />
-                  <h4 class="font-weight-normal mb-3">New Applications <i class="mdi mdi-file-document mdi-24px float-end"></i></h4>
-                  <h2 class="mb-5">{{ $newApplications }}</h2>
-                  <h6 class="card-text">Received this week</h6>
-                </div>
-              </div>
-            </div>
+  <!-- Completed Applications -->
+  <div class="col">
+    <div class="card bg-gradient-info text-white h-100">
+      <div class="card-body position-relative">
+        <img src="{{ asset('assets/images/dashboard/circle.svg') }}" class="card-img-absolute" alt="circle-image" />
+        <h4 class="mb-3">Completed Applications <i class="mdi mdi-check-circle float-end"></i></h4>
+        <h2 class="mb-4">{{ $completedApplications }}</h2>
+        <p class="card-text">Processed successfully</p>
+      </div>
+    </div>
+  </div>
 
-            <!-- Completed Applications -->
-            <div class="col-md-3 stretch-card grid-margin">
-              <div class="card bg-gradient-info card-img-holder text-white">
-                <div class="card-body">
-                  <img src="{{ asset('assets/images/dashboard/circle.svg') }}" class="card-img-absolute" alt="circle-image" />
-                  <h4 class="font-weight-normal mb-3">Completed Applications <i class="mdi mdi-check-circle mdi-24px float-end"></i></h4>
-                  <h2 class="mb-5">{{ $completedApplications }}</h2>
-                  <h6 class="card-text">Processed successfully</h6>
-                </div>
-              </div>
-            </div>
+  <!-- Approved Applications -->
+  <div class="col">
+    <div class="card bg-gradient-success text-white h-100">
+      <div class="card-body position-relative">
+        <img src="{{ asset('assets/images/dashboard/circle.svg') }}" class="card-img-absolute" alt="circle-image" />
+        <h4 class="mb-3">Approved Applications <i class="mdi mdi-thumb-up float-end"></i></h4>
+        <h2 class="mb-4">{{ $approvedApplications }}</h2>
+        <p class="card-text">Approved this month</p>
+      </div>
+    </div>
+  </div>
 
-            <!-- Approved Applications -->
-            <div class="col-md-3 stretch-card grid-margin">
-              <div class="card bg-gradient-success card-img-holder text-white">
-                <div class="card-body">
-                  <img src="{{ asset('assets/images/dashboard/circle.svg') }}" class="card-img-absolute" alt="circle-image" />
-                  <h4 class="font-weight-normal mb-3">Approved Applications <i class="mdi mdi-thumb-up mdi-24px float-end"></i></h4>
-                  <h2 class="mb-5">{{ $approvedApplications }}</h2>
-                  <h6 class="card-text">Approved this month</h6>
-                </div>
-              </div>
-            </div>
+  <!-- Rejected Applications -->
+  <div class="col">
+    <div class="card bg-gradient-warning text-white h-100">
+      <div class="card-body position-relative">
+        <img src="{{ asset('assets/images/dashboard/circle.svg') }}" class="card-img-absolute" alt="circle-image" />
+        <h4 class="mb-3">Rejected Applications <i class="mdi mdi-thumb-down float-end"></i></h4>
+        <h2 class="mb-4">{{ $rejectedApplications }}</h2>
+        <p class="card-text">Rejected this month</p>
+      </div>
+    </div>
+  </div>
+</div>
 
-            <!-- Rejected Applications -->
-            <div class="col-md-3 stretch-card grid-margin">
-              <div class="card bg-gradient-warning card-img-holder text-white">
-                <div class="card-body">
-                  <img src="{{ asset('assets/images/dashboard/circle.svg') }}" class="card-img-absolute" alt="circle-image" />
-                  <h4 class="font-weight-normal mb-3">Rejected Applications <i class="mdi mdi-thumb-down mdi-24px float-end"></i></h4>
-                  <h2 class="mb-5">{{ $rejectedApplications }}</h2>
-                  <h6 class="card-text">Rejected this month</h6>
-                </div>
-              </div>
-            </div>
-          </div>
+
         </div>
       </div> <!-- End main panel -->
     </div> <!-- End page-body-wrapper -->
@@ -287,4 +292,54 @@ $(document).ready(function () {
       });
   
   </script>
+  
+  <!-- Add this spinner element somewhere in your blade, e.g. right inside .main-panel container -->
+<div id="loadingSpinner" style="display:none; position:fixed; top:50%; left:50%; transform: translate(-50%, -50%);
+     z-index:1050;" class="spinner-border text-primary" role="status">
+  <span class="visually-hidden">Loading...</span>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+  document.addEventListener('submit', async function(e) {
+    const form = e.target;
+    if (!form.classList.contains('ajax-form')) return;
+
+    e.preventDefault();
+
+    // Show a loading state if you like...
+    const submitBtn = form.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+
+    // Build form data
+    const data = new FormData(form);
+
+    try {
+      const res = await fetch(form.action, {
+        method: form.method.toUpperCase(),
+        headers: {
+          'X-CSRF-TOKEN': csrfToken,
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: data
+      });
+      if (!res.ok) throw new Error(await res.text());
+
+      const json = await res.json();
+      // Replace the dashboard panel with refreshed HTML
+      document.querySelector('.main-panel').innerHTML = json.html;
+
+      // Re‑show any toasts in the newly injected HTML
+      document.querySelectorAll('.toast').forEach(t => new bootstrap.Toast(t).show());
+    } catch (err) {
+      console.error(err);
+      alert('Failed to update. See console for details.');
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+});
+</script>
+
 </body>

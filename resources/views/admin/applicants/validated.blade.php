@@ -29,28 +29,30 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($filteredUsers as $index => $user)
-                    <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>{{ $user->name }}</td>
-                        <td>{{ $user->email }}</td>
-                        <td>
-                            @foreach($user->applications as $app)
-                                <div class="mb-1">
-                                    <span class="badge bg-{{ 
-                                        $app->status === 'validated' ? 'success' : 
-                                        ($app->status === 'pending' ? 'warning text-dark' : 
-                                        ($app->status === 'invalid' ? 'danger' : 'secondary')) 
-                                    }}">
-                                        {{ ucfirst($app->status) }}
-                                    </span>
-                                </div>
-                            @endforeach
-                        </td>
-                        <td>
-    <a href="#" class="btn btn-sm btn-primary btn-view-user" data-user-id="{{ $user->id }}">View</a>
-                        </td>
-                    </tr>
+                @foreach($filteredUsers as $user)
+                    @foreach($user->applications as $app)
+                        <tr>
+                            <td>{{ $loop->parent->iteration }}.{{ $loop->iteration }}</td>
+                            <td>{{ $user->name }}</td>
+                            <td>{{ $user->email }}</td>
+                            <td>
+                                <span class="badge bg-{{ 
+                                    $app->status === 'validated' ? 'success' : 
+                                    ($app->status === 'pending' ? 'warning text-dark' : 
+                                    ($app->status === 'invalid' ? 'danger' : 'secondary')) 
+                                }}">
+                                {{ $app->status === 'validated' ? 'Recognised' : ucfirst($app->status) }}
+                                </span>
+                            </td>
+                            <td>
+                                       <a href="{{ route('admin.applicants.viewApplication', [$user->id, $app->id]) }}" 
+   class="btn btn-sm btn-primary btn-view-application" 
+   data-url="{{ route('admin.applicants.viewApplication', [$user->id, $app->id]) }}">
+   View Application
+</a>
+                            </td>
+                        </tr>
+                    @endforeach
                 @endforeach
             </tbody>
         </table>
@@ -78,6 +80,28 @@ $(document).ready(function() {
             },
             error: function(xhr) {
                 alert('Failed to load user details.');
+                console.error(xhr);
+            }
+        });
+    });
+});
+</script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('.btn-view-application').on('click', function(e) {
+        e.preventDefault();
+
+        var url = $(this).data('url');
+
+        $.ajax({
+            url: url,
+            method: 'GET',
+            success: function(response) {
+                $('.main-panel').html(response);
+            },
+            error: function(xhr) {
+                alert('Failed to load application details.');
                 console.error(xhr);
             }
         });

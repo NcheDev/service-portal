@@ -11,7 +11,7 @@
     <h2 class="mb-4">User Management</h2>
 
     <table class="table table-hover align-middle bg-white shadow-sm rounded">
-        <thead class="table-light">
+        <thead class="table-dark">
             <tr>
                 <th scope="col">Profile</th>
                 <th scope="col">Full Name</th>
@@ -25,16 +25,17 @@
         <tbody>
         @foreach ($users as $user)
             <tr>
-                {{-- Profile Picture --}}
-                <td>
-                    @if ($user->profile_picture)
-                        <img src="{{ asset('storage/' . $user->profile_picture) }}"
-                             alt="Avatar" class="rounded-circle" width="40" height="40">
-                    @else
-                        <img src="{{ asset('images/avatar-placeholder.png') }}"
-                             alt="Avatar" class="rounded-circle" width="40" height="40">
-                    @endif
-                </td>
+               {{-- Profile Picture --}}
+<td>
+    @if ($user->personalInfo && $user->personalInfo->profile_picture && file_exists(public_path('storage/' . $user->personalInfo->profile_picture)))
+        <img src="{{ asset('storage/' . $user->personalInfo->profile_picture) }}"
+             alt="Avatar" class="rounded-circle border" width="40" height="40">
+    @else
+        <img src="{{ asset('images/avatar.png') }}"
+             alt="Avatar" class="rounded-circle border" width="40" height="40">
+    @endif
+</td>
+
 
                 {{-- Full Name --}}
                 <td>{{ $user->name }}</td>

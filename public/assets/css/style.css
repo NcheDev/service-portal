@@ -356,12 +356,11 @@ body.page-specific {
    main content
 =========================== */
 .main-panel {
-  margin-left: 240px;
-  padding: 30px 20px;
-  background: #f8f7fb;
-  min-height: 100vh;
-  transition: margin-left 0.3s ease;
+  width: calc(100% - 240px); /* or smaller if sidebar is smaller */
+  margin-left: 240px;         /* matches your sidebar width */
+  padding: 1rem;
 }
+
 
 @media (max-width: 768px) {
   .main-panel {
@@ -370,22 +369,14 @@ body.page-specific {
 }
 
 .content-wrapper .row {
-  justify-content: center;
-  gap: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -0.5rem;
+  margin-right: -0.5rem;
 }
+ 
 
-.col-md-3 {
-  max-width: 280px;
-  flex: 1 1 auto;
-}
 
-.card {
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
+ 
 
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.2);
-}
+ 
