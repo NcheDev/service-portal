@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.materialdesignicons.com/5.4.55/css/materialdesignicons.min.css">
   <style>
+    
     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -99,39 +100,44 @@
 
   <!-- Sidebar -->
   <nav class="sidebar d-flex flex-column">
-    <a href="#" class="nav-link" id="load-apply">
-      <i class="mdi mdi-home menu-icon"></i>
-      Dashboard
-    </a>
-    <a href="#" class="nav-link" id="load-apply">
-      <i class="mdi mdi-contacts menu-icon"></i>
-      Personal Info
-    </a>
-    <a class="nav-link" data-bs-toggle="collapse" href="#qualifications-collapse">
-      <i class="mdi mdi-school menu-icon"></i>
-      Qualifications & Verification
-    </a>
-    <div class="collapse" id="qualifications-collapse">
-  <a href="{{ route('application.create') }}" class="nav-link ajax-link">Apply</a>
-  <a href="{{ route('applications.my') }}" class="nav-link ajax-link">My Applications</a>
-</div>
+   <a href="#" class="nav-link load-apply">
+  <i class="mdi mdi-home menu-icon"></i>
+  Dashboard
+</a>
 
-    <a class="nav-link" href="#">
-      <i class="mdi mdi-credit-card menu-icon"></i>
-      Payments
-    </a>
-    <a class="nav-link" href="#" id="documentation">
-      <i class="mdi mdi-file-document menu-icon"></i>
-      Documentation
-    </a>
-    <a class="nav-link" href="#">
-      <i class="mdi mdi-help-circle menu-icon"></i>
-      FAQ
-    </a>
-    <a class="nav-link" href="#">
-      <i class="mdi mdi-help-circle menu-icon"></i>
-      Help
-    </a>
+<a href="#" class="nav-link load-apply">
+  <i class="mdi mdi-contacts menu-icon"></i>
+  Personal Info
+</a>
+
+   <a href="{{ route('application.create') }}" class="nav-link ajax-link">
+  <i class="mdi mdi-school menu-icon"></i>
+  Apply
+</a>
+<a href="{{ route('applications.my') }}" class="nav-link ajax-link">
+  <i class="mdi mdi-school menu-icon"></i>
+  My Applications
+</a>
+
+<a href="{{ route('invoices.index') }}" class="nav-link ajax-link">
+  <i class="mdi mdi-credit-card menu-icon"></i>
+  My Payments
+</a>
+
+   <a href="#" class="nav-link load-documentation">
+  <i class="mdi mdi-file-document menu-icon"></i>
+  Documentation
+</a>
+    <a href="{{ route('faq') }}" class="nav-link ajax-link">
+  <i class="mdi mdi-help-circle menu-icon"></i>
+  FAQ
+</a>
+
+    <a class="nav-link nav-link-help" href="#" id="load-help">
+  <i class="mdi mdi-help-circle menu-icon"></i>
+  Help
+</a>
+
   </nav>
 
   <!-- Main Panel -->
@@ -148,29 +154,32 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
-    $(document).ready(function () {
-      function loadPanel(url) {
-        $.get(url, function (response) {
-          $('.main-panel').html(response);
-        }).fail(function () {
-          alert('Failed to load content.');
-        });
-      }
-
-      $('#load-apply').on('click', function (e) {
-        e.preventDefault();
-        loadPanel('/personal-info');
+  $(document).ready(function () {
+    function loadPanel(url) {
+      $.get(url, function (response) {
+        $('.main-panel').html(response);
+      }).fail(function () {
+        alert('Failed to load content.');
       });
+    }
 
-      $('#documentation').on('click', function (e) {
-        e.preventDefault();
-        loadPanel('/documentation');
-      });
-
-      // Load default panel on page load
+    // For Personal Info (class-based)
+    $('.load-apply').on('click', function (e) {
+      e.preventDefault();
       loadPanel('/personal-info');
     });
-  </script>
+
+    // For Documentation (class-based)
+    $('.load-documentation').on('click', function (e) {
+      e.preventDefault();
+      loadPanel('/documentation');
+    });
+
+    // Optional: Load default panel on page load
+    loadPanel('/personal-info');
+  });
+</script>
+
   <script>
   $(document).ready(function() {
     // Intercept clicks on links with class .ajax-link
@@ -196,7 +205,99 @@
     });
   });
 </script>
+<script>
 
+
+  function loadPanel(url) {
+    $.get(url, function(response) {
+        $('.main-panel').html(response);
+        initProcessingFeeScript(); // Initialize your script here
+    }).fail(function() {
+        alert('Failed to load content.');
+    });
+}
+
+</script>
+
+<script>
+$(document).ready(function () {
+    // Load AJAX content into .main-panel
+    $(document).on('click', '.ajax-link', function (e) {
+        e.preventDefault();
+
+        const url = $(this).attr('href');
+
+        // Show loading spinner or message
+        $('.main-panel').html(`
+            <div class="text-center py-5">
+                <div class="spinner-border text-warning" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-3">Loading...</p>
+            </div>
+        `);
+
+        // Load the content
+        $.get(url, function (response) {
+            $('.main-panel').html(response);
+        }).fail(function () {
+            $('.main-panel').html('<div class="alert alert-danger">Failed to load content.</div>');
+        });
+    });
+});
+</script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function () {
+  function loadPanel(url) {
+    $.get(url, function (response) {
+      $('.main-panel').html(response);
+    }).fail(function () {
+      alert('Failed to load content.');
+    });
+  }
+
+  // Attach click event for all links with class ajax-link
+  $('.ajax-link').on('click', function (e) {
+    e.preventDefault();
+    const url = $(this).attr('href');
+    loadPanel(url);
+  });
+
+  // Optionally, load a default panel on page load
+  loadPanel('/personal-info');
+});
+</script>
+<script>
+$(document).ready(function () {
+    function loadPanel(url) {
+        $.get(url, function(response) {
+            $('.main-panel').html(response);
+        }).fail(function () {
+            alert('Failed to load content.');
+        });
+    }
+
+  
+
+    // Handle all ajax-link clicks
+    $('.ajax-link').on('click', function (e) {
+        e.preventDefault();
+        const url = $(this).attr('href');
+        loadPanel(url);
+    });
+});
+</script>
+
+<script>
+  $('.nav-link-help').on('click', function (e) {
+    e.preventDefault();
+    $.get('/help', function (response) {
+        $('.main-panel').html(response);
+    });
+});
+
+</script>
 </body>
 
 </html>

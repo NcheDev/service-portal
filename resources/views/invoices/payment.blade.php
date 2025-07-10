@@ -26,8 +26,8 @@
                     </div>
 
                     {{-- Payment Form --}}
-                    <form action="{{ route('invoices.submitPayment', $invoice->id) }}" method="POST" enctype="multipart/form-data">
-                        @csrf
+                  <form id="payment-form" action="{{ route('invoices.submitPayment', $invoice->id) }}" method="POST" enctype="multipart/form-data">
+    @csrf
 
                         {{-- Payment Method --}}
                         <div class="mb-3">
@@ -64,5 +64,37 @@
     </div>
 </div>
  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+ <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function () {
+    $('#payment-form').on('submit', function (e) {
+        e.preventDefault();
+
+        let form = $(this)[0];
+        let formData = new FormData(form);
+        let url = $(this).attr('action');
+
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function () {
+                alert('✅ Payment processed successfully. Please wait as we work on processing your application.');
+
+                // Load the invoices.index page into .main-panel
+                $.get("{{ route('invoices.index') }}", function (response) {
+                    $('.main-panel').html(response);
+                });
+            },
+            error: function () {
+                alert('❌ Payment submission failed. Please check your input and try again.');
+            }
+        });
+    });
+});
+</script>
+
 </body>
 </html>

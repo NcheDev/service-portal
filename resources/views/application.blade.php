@@ -1,9 +1,9 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-<div class="container py-4">
+<br>
+<div class="container pt-5 pb-4">
     <h2 class="mb-4 text-center">Qualification Evaluation Application</h2>
 
-    <form action="{{ route('application.store') }}" method="POST" enctype="multipart/form-data">
+    <form  id="application-form" action="{{ route('application.store') }}"  method="POST" enctype="multipart/form-data">
         @csrf
 
         {{-- Card: Processing Type & Nationality --}}
@@ -363,5 +363,84 @@ $(document).on('submit', '#applicationForm', function(e) {
         }
     });
 });
-</script>
  
+</script>
+
+ 
+
+   <script>
+    // Initialize the processing fee script
+   initProcessingFeeScript();
+function initProcessingFeeScript() {
+    const processingSelect = document.getElementById('processing_type');
+    const nationalitySelect = document.getElementById('nationality');
+    const processingInfo = document.getElementById('processing_info');
+    const feeInfo = document.getElementById('fee_info');
+
+    if (!processingSelect || !nationalitySelect || !processingInfo || !feeInfo) return;
+
+    function updateProcessingInfo() {
+        const type = processingSelect.value;
+        if (type === 'normal') {
+            processingInfo.textContent = "Normal takes 21 days.";
+        } else if (type === 'express') {
+            processingInfo.textContent = "Express takes 10 days.";
+        }
+    }
+
+    function updateFeeInfo() {
+        const type = processingSelect.value;
+        const nationality = nationalitySelect.value;
+        if (type === 'normal' && nationality === 'local') {
+            feeInfo.textContent = "Locals: MK 75,000 per qualification";
+        } else if (type === 'normal' && nationality === 'foreigner') {
+            feeInfo.textContent = "Foreigners: US$ 150 per qualification";
+        } else if (type === 'express' && nationality === 'local') {
+            feeInfo.textContent = "Locals: MK 112,500 per qualification";
+        } else if (type === 'express' && nationality === 'foreigner') {
+            feeInfo.textContent = "Foreigners: US$ 225 per qualification";
+        }
+    }
+
+    updateProcessingInfo();
+    updateFeeInfo();
+
+    processingSelect.addEventListener('change', () => {
+        updateProcessingInfo();
+        updateFeeInfo();
+    });
+
+    nationalitySelect.addEventListener('change', updateFeeInfo);
+}
+
+ </script>
+ <script>
+$(document).ready(function () {
+    $('form#application-form').on('submit', function (e) {
+        e.preventDefault(); // Prevent full page reload
+
+        var form = $(this);
+        var url = form.attr('action');
+        var formData = new FormData(this);
+
+        $.ajax({
+            url: url,
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function () {
+                // Load invoice list into main-panel
+                $('.main-panel').load('{{ route("invoices.index") }}', function () {
+                    alert('Application submitted! Please proceed to payment.');
+                });
+            },
+            error: function (xhr) {
+                alert('Error: ' + xhr.responseText);
+            }
+        });
+    });
+});
+</script>
+
+</body>

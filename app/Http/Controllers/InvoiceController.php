@@ -54,8 +54,8 @@ class InvoiceController extends Controller
         $invoice->proof_path = $cleanPath;
         $invoice->save();
 
-        return redirect()->route('invoices.show', $invoice->id)
-            ->with('success', 'Proof of payment uploaded successfully!');
+      return response()->json(['message' => 'Payment submitted.']);
+
     }
 
 

@@ -189,3 +189,15 @@ Route::prefix('admin/applicants')->name('admin.applicants.')->group(function () 
     Route::get('/{application}/generate-letter', [UserManagementController::class, 'generateValidationLetter'])->name('generateValidationLetter');
     Route::get('/{user}/{application}/view', [UserManagementController::class, 'viewApplication'])->name('viewApplication');
 });
+
+Route::get('/invoices', function () {
+    $invoices = \App\Models\Invoice::with('application')->where('user_id', auth()->id())->latest()->get();
+    return view('invoices.index', compact('invoices'));
+})->middleware(['auth'])->name('invoices.index');
+Route::get('/faq', function () {
+    return view('faq');
+})->name('faq');
+
+Route::get('/help', function () {
+    return view('help');
+});

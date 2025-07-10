@@ -74,9 +74,10 @@
                     <i class="bi bi-download"></i> Download PDF
                 </a>
 
-                <a href="{{ route('invoices.payment', $invoice->id) }}" class="btn btn-success">
-                    💰 Proceed to Payment
-                </a>
+                <a href="{{ route('invoices.payment', $invoice->id) }}" class="btn btn-success ajax-link">
+    💰 Proceed to Payment
+</a>
+
             </div>
 
         </div>
@@ -84,4 +85,23 @@
 </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+<script>
+$(document).ready(function () {
+    function loadPanel(url) {
+        $.get(url, function (response) {
+            $('.main-panel').html(response);
+        }).fail(function () {
+            alert('Failed to load content.');
+        });
+    }
+
+    // AJAX link handler
+    $(document).on('click', 'a.ajax-link', function (e) {
+        e.preventDefault();
+        const url = $(this).attr('href');
+        loadPanel(url);
+    });
+});
+</script>
+
 </html>

@@ -7,8 +7,8 @@
     <!-- Bootstrap 5 CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 </head>
-<body>
-    <div class="container py-4">
+<body><br>
+<div class="container pt-5 pb-4">
         <h2 class="mb-4">My Applications</h2>
 
         <p>You have submitted <strong>{{ $applicationCount }}</strong> application{{ $applicationCount !== 1 ? 's' : '' }}.</p>
@@ -46,7 +46,8 @@
                             </td>
 
                             <td>
-                                <a href="{{ route('applications.show', $app->id) }}" class="btn btn-primary btn-sm">View Details</a>
+<a href="{{ route('applications.show', $app->id) }}" 
+   class="btn btn-primary btn-sm ajax-link">View Details</a>
                             </td>
                         </tr>
                         @endforeach
@@ -55,6 +56,22 @@
             </div>
         @endif
     </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function () {
+    // Listen to all .ajax-link clicks
+    $(document).on('click', '.ajax-link', function (e) {
+        e.preventDefault();
+        const url = $(this).attr('href');
+
+        $.get(url, function (data) {
+            $('.main-panel').html(data);
+        }).fail(function () {
+            alert('❌ Failed to load content.');
+        });
+    });
+});
+</script>
 
     <!-- Bootstrap 5 JS Bundle (Popper + JS) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

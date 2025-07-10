@@ -57,20 +57,7 @@
   </div>
 
   <ul class="navbar-nav d-flex align-items-center gap-3 ms-auto">
-    <!-- Notifications -->
-    <li class="nav-item dropdown">
-      <a class="nav-link dropdown-toggle" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown">
-        <i class="mdi mdi-bell-outline fs-4 text-white position-relative">
-          <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
-        </i>
-      </a>
-      <ul class="dropdown-menu dropdown-menu-end bg-dark text-white" aria-labelledby="notificationDropdown">
-        <li class="dropdown-header">Notifications</li>
-        <li><hr class="dropdown-divider"></li>
-        <li><a class="dropdown-item text-white" href="#"><i class="mdi mdi-calendar text-success me-2"></i> Event today</a></li>
-      </ul>
-    </li>
-
+     
     <!-- Profile Dropdown -->
     <li class="nav-item dropdown">
       <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown">
@@ -88,10 +75,7 @@
       </ul>
     </li>
 
-    <!-- Fullscreen Icon -->
-    <li class="nav-item d-none d-lg-block">
-      <a class="nav-link text-white" href="#"><i class="mdi mdi-fullscreen fs-4"></i></a>
-    </li>
+  
   </ul>
 </nav>
 
