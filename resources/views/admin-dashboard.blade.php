@@ -64,7 +64,11 @@
         <span class="text-white fw-semibold">Hello {{ Auth::user()->name }}</span>
       </a>
       <ul class="dropdown-menu dropdown-menu-end bg-dark text-white" aria-labelledby="profileDropdown">
-        <li><a class="dropdown-item text-white" href="#"><i class="mdi mdi-cached me-2 text-success"></i> Activity Log</a></li>
+<li>
+    <a class="dropdown-item text-white ajax-link" href="#" data-url="{{ route('audit.index') }}">
+        <i class="mdi mdi-cached me-2 text-success"></i> Activity Log
+    </a>
+</li>
         <li><hr class="dropdown-divider"></li>
         <li>
           <form method="POST" action="{{ route('logout') }}">
@@ -121,6 +125,13 @@
         <span class="menu-title">User Management</span>
       </a>
     </li>
+    <li class="nav-item">
+    <a class="nav-link ajax-link" href="#" data-url="{{ route('audit.index') }}" id="activity-log-link">
+        <i class="mdi mdi-cached menu-icon text-success"></i>
+        <span class="menu-title">Activity Log</span>
+    </a>
+</li>
+
   </ul>
 </nav>
 
@@ -323,6 +334,33 @@ document.addEventListener('DOMContentLoaded', function() {
       submitBtn.disabled = false;
     }
   });
+});
+</script>
+<script>
+$('.ajax-link').on('click', function (e) {
+    e.preventDefault();
+    let url = $(this).data('url');
+    $.get(url, function (data) {
+        $('.main-panel').html(data);
+    });
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.ajax-link').forEach(link => {
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
+            const url = this.dataset.url;
+
+            fetch(url)
+                .then(res => res.text())
+                .then(html => {
+                    document.querySelector('.main-panel').innerHTML = html;
+                    window.history.pushState(null, '', url);
+                })
+                .catch(err => console.error('Failed to load content:', err));
+        });
+    });
 });
 </script>
 

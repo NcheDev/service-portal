@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Http\Controllers\Admin;
+use App\Models\AuditTrail;
 
 use App\Models\User;
 use App\Models\Application;
@@ -35,6 +37,7 @@ class UserManagementController extends Controller
     {
         $user->is_active = !$user->is_active;
         $user->save();
+            $this->logTrail("Toggled user ID {$user->id} active status to " . ($user->is_active ? 'active' : 'inactive'));
 
         return back()->with('status', 'User status updated.');
     }
@@ -49,6 +52,8 @@ public function assignRole(Request $request, User $user)
 
     \Log::info('Assigning role', ['user_id' => $user->id, 'role' => $request->role]);
     $user->syncRoles($request->role);
+    $this->logTrail("Assigned role '{$request->role}' to user ID {$user->id}");
+
 
     // If AJAX, return JSON with rendered HTML
     if ($request->ajax()) {
@@ -71,6 +76,8 @@ public function removeRole(Request $request, User $user)
     ]);
 
     $user->removeRole($request->role);
+    $this->logTrail("Removed role '{$request->role}' from user ID {$user->id}");
+
 
     if ($request->ajax()) {
         $roles = Role::all();
@@ -91,6 +98,8 @@ public function givePermission(Request $request, User $user)
     ]);
 
     $user->givePermissionTo($request->permission);
+    $this->logTrail("Gave permission '{$request->permission}' to user ID {$user->id}");
+
 
     if ($request->ajax()) {
         $roles = Role::all();
@@ -111,6 +120,8 @@ public function revokePermission(Request $request, User $user)
     ]);
 
     $user->revokePermissionTo($request->permission);
+    $this->logTrail("Revoked permission '{$request->permission}' from user ID {$user->id}");
+
 
     if ($request->ajax()) {
         $roles = Role::all();
@@ -159,6 +170,7 @@ public function show($id)
     $application->response_report_path = $path;
     $application->validation_comment = $request->validation_comment; // New line
     $application->save();
+$this->logTrail("Marked application ID {$application->id} as {$request->action}", "Validation report uploaded: {$path}");
 
     // Notify the user
     $user = $application->user;
@@ -173,6 +185,8 @@ public function revertStatus(Application $application)
 {
     $application->status = 'pending';
     $application->save();
+    $this->logTrail("Reverted application ID {$application->id} status to pending");
+
 
     return back()->with('success', 'Application status reverted to pending.');
 }
@@ -211,8 +225,11 @@ public function generateValidationLetter(Application $application)
 
     // Generate and download PDF
     $pdf = Pdf::loadView('pdfs.validation_letter', $data);
+$this->logTrail("Generated validation letter for application ID {$application->id}");
+
 
     return $pdf->download("Validation_Letter_{$personalInfo->full_name}.pdf");
+    
 }
 public function dashboard()
 {
@@ -247,8 +264,32 @@ public function viewApplication($userId, $applicationId)
         ->with(['qualifications', 'documents', 'invoice'])
         ->findOrFail($applicationId);
 
+    $this->logTrail("Viewed application ID {$applicationId} for user ID {$userId}");
+
+ 
     return view('admin.applicants.show', compact('user', 'application'));
 }
+
+
+public function logTrail($action)
+{
+    try {
+        \DB::table('audit_trails')->insert([
+            'user_id' => auth()->id(),
+            'action' => $action,
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        \Log::info('✅ Audit log inserted successfully');
+    } catch (\Exception $e) {
+        \Log::error('❌ Failed to insert audit trail: ' . $e->getMessage());
+        dd($e->getMessage()); // temporary for debug
+    }
+}
+
 
 
 

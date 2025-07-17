@@ -8,8 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\ApplicationController;
  use App\Http\Controllers\InvoiceController;
-
-
+ 
 
 
 Route::middleware(['auth'])->group(function () {
@@ -201,3 +200,6 @@ Route::get('/faq', function () {
 Route::get('/help', function () {
     return view('help');
 });
+use App\Http\Controllers\Admin\AuditTrailController;
+// Audit Trail route
+Route::get('/audit-trail', [\App\Http\Controllers\Admin\AuditTrailController::class, 'index'])->name('audit.index');
