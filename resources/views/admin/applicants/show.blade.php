@@ -3,6 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Application Details</title>
+    <!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
+      rel="stylesheet" 
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
+      crossorigin="anonymous">
+
+<!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
+        crossorigin="anonymous"></script>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <style>
@@ -245,7 +256,54 @@
                         <i class="bi bi-x-circle"></i> Unrecognise
                     </button>
                 </div>
+
+                
             </form>
+            <hr class="my-4">
+
+<h5 class="fw-semibold text-primary">
+    <i class="bi bi-info-circle me-2"></i> Request Additional Info
+</h5>
+
+<form action="{{ route('applications.request-info', $application->id) }}" method="POST">
+    @csrf
+    <textarea name="message" class="form-control mb-2" rows="3" placeholder="Describe what additional info you need..." required></textarea>
+    <button type="submit" class="btn btn-warning">
+        <i class="bi bi-envelope-plus"></i> Send Request
+    </button>
+</form>
+
+<hr class="my-4">
+
+<h5 class="fw-semibold text-primary">
+    <i class="bi bi-clock-history me-2"></i> Requests History
+</h5>
+
+@forelse($application->additionalInfoRequests as $req)
+    <div class="border rounded p-3 mb-3 bg-light">
+        <p><strong>Admin:</strong> {{ $req->admin->name }}</p>
+        <p><strong>Request:</strong> {{ $req->message }}</p>
+        <p><strong>Status:</strong> <span class="badge bg-secondary">{{ ucfirst($req->status) }}</span></p>
+
+          {{-- Applicant Response --}}
+        @if($req->response || $req->response_file_path)
+            <div class="mt-2">
+                <p><strong>Applicant Response:</strong> {{ $req->response ?? 'No text response' }}</p>
+
+                @if($req->response_file_path)<a href="{{ Storage::url($req->response_file_path) }}" target="_blank" class="btn btn-sm btn-outline-primary mt-1">
+    View File
+</a>
+
+                @endif
+            </div>
+        @else
+            <p class="text-muted mt-2">Awaiting applicant response...</p>
+        @endif
+    </div>
+@empty
+    <p class="text-muted">No additional info requests yet.</p>
+@endforelse
+
 
             {{-- Existing report --}}
             @if ($application->response_report_path)
@@ -272,6 +330,9 @@
             </div>
         </div>
     </div>
+
+
+
 </div>
 
 </div>

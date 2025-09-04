@@ -60,7 +60,7 @@ public function invoices()
 {
     return $this->hasMany(\App\Models\Invoice::class);
 }
-
+ 
 
 
 }

@@ -48,4 +48,9 @@ public function qualification()
     {
         return $this->hasOne(Invoice::class);
     }
+    public function additionalInfoRequests()
+{
+    return $this->hasMany(AdditionalInfoRequest::class, 'application_id');
+}
+
 }

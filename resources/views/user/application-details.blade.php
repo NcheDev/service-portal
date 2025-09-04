@@ -34,6 +34,12 @@
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="feedback-tab" data-bs-toggle="tab" data-bs-target="#feedback" type="button" role="tab">Admin Feedback</button>
             </li>
+            <li class="nav-item" role="presentation">
+    <button class="nav-link" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab">
+        Additional Info Requests
+    </button>
+</li>
+
         </ul>
 
         <div class="tab-content" id="docTabContent">
@@ -124,6 +130,55 @@
 
         </div>
     </div>
+
+
+    {{-- Additional Info Requests --}}
+<div class="tab-pane fade" id="info" role="tabpanel">
+    <div class="card mb-3">
+        <div class="card-header bg-warning text-dark">Additional Information Requests</div>
+        <div class="card-body">
+
+            @forelse($application->additionalInfoRequests as $req)
+                <div class="border rounded p-3 mb-3">
+                    <p><strong>Admin Request:</strong> {{ $req->message }}</p>
+                    <p><strong>Status:</strong>
+                        <span class="badge bg-{{ $req->status == 'pending' ? 'warning text-dark' : ($req->status == 'responded' ? 'info' : 'success') }}">
+                            {{ ucfirst($req->status) }}
+                        </span>
+                    </p>
+
+                    {{-- Response form if still pending --}}
+                    @if($req->status == 'pending')
+                        <form action="{{ route('applications.respond-info', $req->id) }}" method="POST" enctype="multipart/form-data" class="mt-2">
+                            @csrf
+                            @method('PUT')
+
+                            <div class="mb-2">
+                                <textarea name="response" class="form-control" rows="2" placeholder="Type your response (optional)"></textarea>
+                            </div>
+                            <div class="mb-2">
+                                <input type="file" name="response_file" class="form-control">
+                            </div>
+
+                            <button type="submit" class="btn btn-success btn-sm">Submit Response</button>
+                        </form>
+                    @else
+                        <p><strong>Your Response:</strong> {{ $req->response ?? 'N/A' }}</p>
+                        @if($req->response_file)
+                            <a href="{{ asset('storage/'.$req->response_file) }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                View Uploaded File
+                            </a>
+                        @endif
+                    @endif
+                </div>
+            @empty
+                <p class="text-muted">No additional information requested by admin.</p>
+            @endforelse
+
+        </div>
+    </div>
+</div>
+
 </div>
 
 <style>

@@ -137,6 +137,12 @@ Route::post('/invoices/{invoice}/payment', [InvoiceController::class, 'submitPay
 Route::get('/applications/{id}', [ApplicationController::class, 'show'])->name('applications.show');
 Route::get('/applications/{id}', [ApplicationController::class, 'show'])->name('applications.show');
 Route::get('/my-applications', [ApplicationController::class, 'myApplications'])->name('applications.my');
+// in web.php
+Route::post('/applications/{application}/request-info', [ApplicationController::class, 'requestInfo'])->name('applications.request-info');
+Route::put('/applications/respond-info/{infoRequest}', [ApplicationController::class, 'respondInfo'])->name('applications.respond-info');
+Route::post('/applications/{application}/request-info', [ApplicationController::class, 'requestInfo'])
+    ->name('applications.request-info');
+
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/users/validated', [UserManagementController::class, 'validatedUsers'])->name('admin.users.validated');
 });
@@ -203,3 +209,29 @@ Route::get('/help', function () {
 use App\Http\Controllers\Admin\AuditTrailController;
 // Audit Trail route
 Route::get('/audit-trail', [\App\Http\Controllers\Admin\AuditTrailController::class, 'index'])->name('audit.index');
+
+
+use App\Notifications\ResponseReportUploaded;
+ Route::middleware(['auth'])->group(function () {
+    Route::get('/applications/{application}', [ApplicationController::class, 'show'])
+        ->name('user.application.details');
+});
+Route::post('/notifications/mark-all-read', function () {
+    auth()->user()->unreadNotifications->markAsRead();
+    return back();
+})->name('notifications.markAllRead');
+// web.php
+Route::get('/notifications/read/{id}', function($id) {
+    $notification = auth()->user()->notifications()->find($id);
+    if ($notification) {
+        $notification->markAsRead();
+        return redirect($notification->data['url'] ?? '/');
+    }
+    return redirect('/');
+})->name('notifications.read');
+
+Route::get('/user/applications/{application}', [ApplicationController::class, 'show'])
+    ->name('user.application.details');Route::get('admin/applicants/{user}/{application}/view', 
+    [App\Http\Controllers\Admin\UserManagementController::class, 'viewApplication']
+)->name('admin.applicants.viewApplication');
+  

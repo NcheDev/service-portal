@@ -56,8 +56,46 @@
     </form>
   </div>
 
+
+
+
+
+
   <ul class="navbar-nav d-flex align-items-center gap-3 ms-auto">
-     
+  <li class="nav-item dropdown">
+    @php $unread = auth()->user()?->unreadNotifications->count() ?? 0; @endphp
+    <a class="nav-link position-relative {{ $unread ? 'ring' : '' }}" href="#" id="notificationsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-bell fs-4 text-white"></i>
+        @if($unread)
+            <span class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-pill">
+                {{ $unread }}
+            </span>
+        @endif
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end p-2" aria-labelledby="notificationsDropdown" style="min-width: 300px;">
+        @forelse(auth()->user()?->unreadNotifications ?? [] as $notification)
+            <li class="border-bottom mb-1">
+                <a class="dropdown-item small d-flex flex-column" href="{{ $notification->data['url'] ?? '#' }}">
+                    <span class="text-truncate" style="max-width: 250px;">
+                        {{ is_array($notification->data['message']) 
+                            ? implode(', ', $notification->data['message']) 
+                            : $notification->data['message'] }}
+                    </span>
+                    <small class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
+                </a>
+            </li>
+        @empty
+            <li><span class="dropdown-item small text-muted">No new notifications</span></li>
+        @endforelse
+        <li>
+            <form action="{{ route('notifications.markAllRead') }}" method="POST" class="text-center mt-1">
+                @csrf
+                <button type="submit" class="btn btn-sm btn-outline-primary w-100">Mark all as read</button>
+            </form>
+        </li>
+    </ul>
+</li>
+
     <!-- Profile Dropdown -->
     <li class="nav-item dropdown">
       <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown">
@@ -203,13 +241,17 @@
     </div> <!-- End page-body-wrapper -->
   </div> <!-- End container-scroller -->
 
+
+  <style>
+    
+  </style>
   <!-- JavaScript -->
   <script src="{{ asset('assets/vendors/js/vendor.bundle.base.js') }}"></script>
   <script src="{{ asset('assets/vendors/chart.js/chart.umd.js') }}"></script>
   <script src="{{ asset('assets/js/dashboard.js') }}"></script>
   <script src="{{ asset('assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js') }}"></script>
 
-  @include('partials.footer')
+   
   <!-- Before </body> -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <!-- Bootstrap 5.3 Bundle JS (includes Popper) -->

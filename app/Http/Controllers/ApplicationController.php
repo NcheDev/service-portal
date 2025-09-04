@@ -10,6 +10,10 @@ use Illuminate\Http\Request;
 use App\Models\Qualification;
 use App\Models\EducationHistory;
 use Illuminate\Support\Facades\Auth;
+use App\Models\AdditionalInfoRequest;
+use App\Notifications\AdditionalInfoNotification;
+use App\Notifications\ResponseReportUploaded;
+use App\Models\User;
 
 class ApplicationController extends Controller
 {
@@ -202,4 +206,79 @@ class ApplicationController extends Controller
 
         return $pdf->download("Validation_Letter_{$user->full_name}.pdf");
     }
+public function requestInfo(Request $request, Application $application)
+{
+    $request->validate([
+        'message' => 'required|string|max:1000',
+    ]);
+
+    // Create the request
+    $infoRequest = AdditionalInfoRequest::create([
+        'application_id' => $application->id,
+        'requested_by'   => auth()->id(), // admin id
+        'message'        => $request->message,
+        'status'         => 'pending',
+    ]);
+
+    // Notify the applicant
+    $user = $application->user; // applicant
+    $user->notify(new AdditionalInfoNotification(
+        "Admin has requested additional info: {$request->message}",
+        route('user.application.details', $application->id)
+    ));
+
+    return back()->with('success', 'Request for additional info sent.');
+}
+
+ 
+
+public function respondInfo(Request $request, AdditionalInfoRequest $infoRequest)
+{
+    // Validate user input
+    $request->validate([
+        'response' => 'required|string|max:1000',
+        'response_file' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+    ]);
+
+    // Handle file upload if present
+    $filePath = $infoRequest->response_file_path;
+    if ($request->hasFile('response_file')) {
+        $filePath = $request->file('response_file')->store('responses', 'public');
+    }
+
+    // Update the info request record
+    $infoRequest->update([
+        'response'           => $request->response,
+        'response_file_path' => $filePath,
+        'status'             => 'responded',
+    ]);
+
+    // Retrieve the related application and applicant
+    $application = $infoRequest->application;
+
+    // Generate a URL for admins to view the application
+    $url = route('admin.applicants.viewApplication', [
+        'user' => $application->user_id,       // matches {user} in the route
+        'application' => $application->id     // matches {application} in the route
+    ]);
+
+    // Notify all admin users
+    $admins = \App\Models\User::where('role', 'admin')->get();
+
+    foreach ($admins as $admin) {
+        $admin->notify(new \App\Notifications\AdditionalInfoNotification(
+            "User has responded to your request for additional info.",
+            $url
+        ));
+    }
+
+    // Optional: Log for auditing purposes
+    \Log::info("Additional info response submitted for application ID {$application->id} by user ID {$application->user_id}");
+
+    return back()->with('success', 'Response submitted successfully and admins have been notified.');
+}
+
+
+
+
 }
