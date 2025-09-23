@@ -22,26 +22,14 @@
     }
 
     .navbar .navbar-brand img {
-      height: 60px;
+      height: 30px;
     }
-
-  .sidebar {
+.sidebar {
   position: fixed;
-  top: 70px; /* or match navbar height (e.g., 56px or 60px if your logo is taller) */
-  left: 0;
-  height: calc(100vh - 70px); /* subtract navbar height */
-  width: 250px;
-  background-color: #52074f !important;
-  color: white;
-  overflow-y: auto;
-  padding-top: 1rem;
-  box-sizing: border-box;
-  z-index: 1020; /* lower than navbar, but enough to be on top of content */
+  top: 56px; /* Bootstrap default navbar height */
+  height: calc(100vh - 56px);
 }
 
-.sidebar nav, .sidebar > div, .sidebar > a:first-child {
-  padding-top: 0.5rem;
-}
 
 .main-panel {
   margin-left: 250px;
@@ -194,12 +182,15 @@
   <div class="d-flex" id="layout" style="padding-top: 56px;">
     <!-- Sidebar -->
     <nav class="sidebar bg-dark text-white d-lg-block position-fixed" id="sidebarMenu" style="width: 250px; height: 100vh; overflow-y: auto; top: 56px; left: 0; transition: left 0.3s ease;">
-      <a href="#" class="nav-link load-apply text-white px-3 py-2 d-flex align-items-center">
-        <i class="mdi mdi-home menu-icon me-2"></i>Dashboard
-      </a>
-      <a href="#" class="nav-link load-apply text-white px-3 py-2 d-flex align-items-center">
-        <i class="mdi mdi-contacts menu-icon me-2"></i>Personal Info
-      </a>
+   <a href="{{ route('user.dashboard') }}" class="nav-link ajax-link text-white px-3 py-2 d-flex align-items-center">
+    <i class="mdi mdi-home menu-icon me-2"></i>Dashboard
+</a>
+
+
+<a href="{{ route('user.personal-info') }}" class="nav-link ajax-link text-white px-3 py-2 d-flex align-items-center">
+    <i class="mdi mdi-contacts menu-icon me-2"></i>Personal Info
+</a>
+
       <a href="{{ route('application.create') }}" class="nav-link ajax-link text-white px-3 py-2 d-flex align-items-center">
         <i class="mdi mdi-school menu-icon me-2"></i>Apply
       </a>
@@ -335,15 +326,16 @@
         });
       }
 
-      // Load personal info on page load
-      loadPanel('/personal-info');
-
+     // Load dashboard on page load
+loadPanel('/dashboard');
+ 
       // AJAX load for dashboard or static content
-      $('.load-apply').on('click', function (e) {
-        e.preventDefault();
-        loadPanel('/personal-info');
-      });
+     
 
+$('.load-dashboard').on('click', function (e) {
+    e.preventDefault();
+    loadPanel('/dashboard');
+});
       $('.load-documentation').on('click', function (e) {
         e.preventDefault();
         loadPanel('/documentation');

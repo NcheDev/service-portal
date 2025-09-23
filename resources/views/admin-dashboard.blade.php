@@ -4,25 +4,21 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>NCHE Admin</title>
-
-  <!-- Material Design Icons -->
-  <link href="https://cdn.materialdesignicons.com/5.4.55/css/materialdesignicons.min.css" rel="stylesheet" />
+<!-- CSRF Token -->
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
-  <!-- Custom Styling -->
-  <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
-<!-- In the <head> -->
+<!-- Bootstrap 5.3 CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-  <!-- Favicon -->
-  <link rel="shortcut icon" href="{{ asset('assets/images/logo2.png') }}">
-  <!-- Bootstrap 5.3 Bundle JS (includes Popper) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-9ndCyUa6mYbry3Xn7dQWzE7t27Uy2LmM3C0zHNT95+Y9wFZT+Nf76f+Jp1wHg+nG" crossorigin="anonymous"></script>
-  <!-- jQuery -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldj6z8e4l9+2b5d5a5e5f5e5f5e5f5e5f5e5f5e5f5e5f5e" crossorigin="anonymous">
+<!-- Material Design Icons -->
+<link href="https://cdn.materialdesignicons.com/5.4.55/css/materialdesignicons.min.css" rel="stylesheet">
+
+<!-- Custom Styling -->
+<link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
+
+<!-- Favicon -->
+<link rel="shortcut icon" href="{{ asset('assets/images/logo2.png') }}">
+
 </head>
 <body class="page-specific">
   <div class="container-scroller">
@@ -63,8 +59,9 @@
 
   <ul class="navbar-nav d-flex align-items-center gap-3 ms-auto">
   <li class="nav-item dropdown">
-    @php $unread = auth()->user()?->unreadNotifications->count() ?? 0; @endphp
-    <a class="nav-link position-relative {{ $unread ? 'ring' : '' }}" href="#" id="notificationsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    @php $unread = auth()->user()->unreadNotifications->count(); @endphp
+    <a class="nav-link position-relative {{ $unread ? 'ring' : '' }}" href="#" 
+       id="notificationsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
         <i class="bi bi-bell fs-4 text-white"></i>
         @if($unread)
             <span class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-pill">
@@ -72,29 +69,30 @@
             </span>
         @endif
     </a>
+
     <ul class="dropdown-menu dropdown-menu-end p-2" aria-labelledby="notificationsDropdown" style="min-width: 300px;">
-        @forelse(auth()->user()?->unreadNotifications ?? [] as $notification)
+        @forelse(auth()->user()->unreadNotifications as $notification)
+            @php
+                $message = is_array($notification->data['message'] ?? null)
+                    ? implode(', ', $notification->data['message'])
+                    : ($notification->data['message'] ?? 'No message');
+            @endphp
             <li class="border-bottom mb-1">
-                <a class="dropdown-item small d-flex flex-column" href="{{ $notification->data['url'] ?? '#' }}">
-                    <span class="text-truncate" style="max-width: 250px;">
-                        {{ is_array($notification->data['message']) 
-                            ? implode(', ', $notification->data['message']) 
-                            : $notification->data['message'] }}
-                    </span>
+                <a href="#" class="dropdown-item small notification-link" 
+                   data-id="{{ $notification->id }}" 
+                   data-url="{{ $notification->data['url'] ?? '#' }}">
+                    <span class="text-truncate" style="max-width: 250px;">{{ $message }}</span>
                     <small class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
                 </a>
             </li>
         @empty
             <li><span class="dropdown-item small text-muted">No new notifications</span></li>
         @endforelse
-        <li>
-            <form action="{{ route('notifications.markAllRead') }}" method="POST" class="text-center mt-1">
-                @csrf
-                <button type="submit" class="btn btn-sm btn-outline-primary w-100">Mark all as read</button>
-            </form>
-        </li>
     </ul>
 </li>
+
+
+
 
     <!-- Profile Dropdown -->
     <li class="nav-item dropdown">
@@ -157,6 +155,13 @@
         <span class="menu-title">Unrecognised Applications</span>
       </a>
     </li>
+   <li class="nav-item">
+    <a class="nav-link ajax-link" href="#" data-url="{{ route('admin.additional-info.chat', $applicationId ?? 1) }}">
+        <i class="mdi mdi-message-text menu-icon"></i>
+        <span class="menu-title">Additional Info Chat</span>
+    </a>
+</li>
+
     <li class="nav-item">
       <a class="nav-link" href="#" id="load-users">
         <i class="mdi mdi-account-multiple menu-icon"></i>
@@ -245,19 +250,22 @@
   <style>
     
   </style>
-  <!-- JavaScript -->
-  <script src="{{ asset('assets/vendors/js/vendor.bundle.base.js') }}"></script>
-  <script src="{{ asset('assets/vendors/chart.js/chart.umd.js') }}"></script>
-  <script src="{{ asset('assets/js/dashboard.js') }}"></script>
-  <script src="{{ asset('assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js') }}"></script>
+ <!-- Project Vendor Scripts -->
+<script src="{{ asset('assets/vendors/js/vendor.bundle.base.js') }}"></script>
+<script src="{{ asset('assets/vendors/chart.js/chart.umd.js') }}"></script>
+<script src="{{ asset('assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js') }}"></script>
 
-   
-  <!-- Before </body> -->
+<!-- Dashboard Logic -->
+<script src="{{ asset('assets/js/dashboard.js') }}"></script>
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- jQuery Cookie (needed for dashboard.js) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+
+<!-- Bootstrap 5.3 Bundle (includes Popper) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<!-- Bootstrap 5.3 Bundle JS (includes Popper) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-9ndCyUa6mYbry3Xn7dQWzE7t27Uy2LmM3C0zHNT95+Y9wFZT+Nf76f+Jp1wHg+nG" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="..." crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js" integrity="..." crossorigin="anonymous"></script>
+
 <script>
 $(document).ready(function () {
     function loadToMainPanel(route) {
@@ -405,5 +413,46 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
+<script>
+
+  /**
+ * -------------------------
+ * Additional Info Chat AJAX
+ * -------------------------
+ */
+$(document).on('submit', '#additionalInfoForm', function (e) {
+    e.preventDefault();
+
+    let form = $(this);
+    let url = form.attr('action');
+    let formData = new FormData(this);
+
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function (response) {
+            // Update only the chat box content (no full reload)
+            let newChatBox = $(response).find('.chat-box').html();
+            $('.chat-box').html(newChatBox);
+
+            // Scroll to bottom
+            let chatBox = document.querySelector('.chat-box');
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Clear input
+            form.trigger("reset");
+        },
+        error: function (xhr) {
+            console.error(xhr.responseText);
+            alert('Error sending message.');
+        }
+    });
+});
+
+</script> 
+ 
 
 </body>

@@ -18,62 +18,58 @@ class PersonalInformationController extends Controller
             'personalInfo' => $personalInfo,
         ]);
     }
+public function storeOrUpdate(Request $request)
+{
+    $user = Auth::user();
 
-    public function storeOrUpdate(Request $request)
-    {
-        $user = Auth::user();
-
-        $data = $request->validate([
-            'full_name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'physical_address' => 'required|string|max:255',
-            'contact_address' => 'required|string|max:255',
-            'gender' => 'required|string',
-            'personal_statement' => 'required|string',
-            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'cover_photo' => 'nullable|image|mimes:jpeg,png,jpg|max:4096',
-            'national_id' => 'nullable|file|mimes:pdf,jpeg,png,jpg|max:2048',
-            'country' => 'nullable|string|max:100',
-        'date_of_birth' => 'nullable|date',
-        'next_of_kin' => 'nullable|string|max:255',
-        'title' => 'nullable|string|max:100',
-        'previous_surnames' => 'nullable|string|max:255',
+    $data = $request->validate([
+        'first_name'         => 'required|string|max:255',
+        'surname'            => 'required|string|max:255',
+        'email'              => 'required|email|max:255',
+        'physical_address'   => 'required|string|max:255',
+        'contact_address'    => 'required|string|max:255',
+        'gender'             => 'required|string|in:Male,Female',
+        'profile_picture'    => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        'cover_photo'        => 'nullable|image|mimes:jpeg,png,jpg|max:4096',
+        'country'            => 'nullable|string|max:100',
+        'date_of_birth'      => 'nullable|date',
+        'next_of_kin'        => 'nullable|string|max:255',
+        'title'              => 'nullable|string|max:100',
         'national_id_number' => 'nullable|string|max:100',
-        'kin_contact'=> 'nullable|string|max:15',
+        'kin_contact'        => 'nullable|string|max:15',
+    ]);
+
+    $personalInfo = PersonalInformation::updateOrCreate(
+        ['user_id' => $user->id],
+        $data
+    );
+
+    if ($request->hasFile('profile_picture')) {
+        $path = $request->file('profile_picture')->store('profile_pictures', 'public');
+        $personalInfo->profile_picture = $path;
+    }
+
+    if ($request->hasFile('cover_photo')) {
+        $path = $request->file('cover_photo')->store('cover_photos', 'public');
+        $personalInfo->cover_photo = $path;
+    }
+
+    $personalInfo->save();
+
+    // ✅ If AJAX -> return JSON
+    if ($request->ajax() || $request->wantsJson()) {
+        return response()->json([
+            'message' => 'Personal information saved successfully!'
         ]);
+    }
 
-        $personalInfo = PersonalInformation::updateOrCreate(
-            ['user_id' => $user->id],
-            $data
-        );
-
-        // Handle file uploads
-        if ($request->hasFile('profile_picture')) {
-            $path = $request->file('profile_picture')->store('profile_pictures', 'public');
-            $personalInfo->profile_picture = $path;
-        }
-
-        if ($request->hasFile('cover_photo')) {
-            $path = $request->file('cover_photo')->store('cover_photos', 'public');
-            $personalInfo->cover_photo = $path;
-        }
-
-       if ($request->hasFile('national_id')) {
-    $path = $request->file('national_id')->store('national_ids', 'public');
-    $personalInfo->national_id_path = $path; // ✅ Save to the correct DB column
+    // ✅ If normal form submit -> redirect with success message
+    return redirect()
+        ->back()
+        ->with('success', 'Personal information saved successfully!');
 }
 
 
-        $personalInfo->save();
-
-
-    // ✅ Add success flash message and redirect back
-    
-
-   return response()->json([
-    'message' => 'Personal information saved successfully!'
-]);
-
-}
+ 
 
 }

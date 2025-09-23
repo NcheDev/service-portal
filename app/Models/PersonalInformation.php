@@ -10,21 +10,20 @@ class PersonalInformation extends Model
 
     protected $fillable = [
         'user_id',
-        'full_name',
+        'first_name',
+        'surname',
         'email',
         'physical_address',
         'contact_address',
         'gender',
-        'personal_statement',
+
         'profile_picture',
         'cover_photo',
-        'national_id_path',
-        'country',
+         'country',
     'date_of_birth',
     'next_of_kin',
     'title',
-    'previous_surnames',
-    'national_id_number',
+     'national_id_number',
     'kin_contact',
     ];
 }

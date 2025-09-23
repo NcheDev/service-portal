@@ -1,14 +1,23 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use Illuminate\Http\Request;
+use App\Http\Controllers\AdminController;
  use App\Http\Controllers\PersonalInformationController;
-use App\Http\Controllers\Admin\UserManagementController;
+use App\Notifications\ResponseReportUploaded;
 use App\Http\Controllers\ApplicationController;
  use App\Http\Controllers\InvoiceController;
- 
+ use App\Http\Controllers\DocumentationController;
+use App\Http\Controllers\Auth\ResetPasswordController;
+
+use App\Http\Controllers\AdditionalInfoController;
+use App\Http\Controllers\Admin\AuditTrailController;
+use App\Http\Controllers\Admin\UserManagementController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+ use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Admin\ApplicantViewController;
+
 
 
 Route::middleware(['auth'])->group(function () {
@@ -60,7 +69,6 @@ Route::get('/main-panel', function () {
 })->name('main-panel.view');
 // routes for downloading the PDF
 
-use App\Http\Controllers\DocumentationController;
 
 Route::get('/documentation', [DocumentationController::class, 'show'])->name('documentation.view');
 Route::get('/documentation/download', [DocumentationController::class, 'downloadPdf'])->name('documentation.download');
@@ -87,8 +95,6 @@ Route::middleware(['auth'])->group(function () {
     })->middleware('throttle:6,1')->name('verification.send');
 });
 // routes/web.php
-use App\Http\Controllers\Auth\ForgotPasswordController;
-use App\Http\Controllers\Auth\ResetPasswordController;
 
 Route::get('forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
 Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
@@ -147,7 +153,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/users/validated', [UserManagementController::class, 'validatedUsers'])->name('admin.users.validated');
 });
 Route::get('/admin/users/validated', [UserManagementController::class, 'validatedUsers'])->name('admin.users.validated');
-use App\Http\Controllers\Admin\ApplicantViewController;
 
      Route::get('/applicants', [ApplicantViewController::class, 'all'])->name('admin.applicants.all');
     Route::get('/applicants/validated', [ApplicantViewController::class, 'validated'])->name('admin.applicants.validated');
@@ -179,7 +184,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 Route::get('/db-check', function () {
     return 'Connected to DB: ' . DB::connection()->getDatabaseName();
 });
-use App\Http\Controllers\AdminController;
 
 Route::get('/admin/dashboard', [UserManagementController::class, 'dashboard'])->name('admin.dashboard');
 Route::post('/users/{application}/validate', [UserManagementController::class, 'validateUser'])->name('admin.users.validate');
@@ -206,12 +210,10 @@ Route::get('/faq', function () {
 Route::get('/help', function () {
     return view('help');
 });
-use App\Http\Controllers\Admin\AuditTrailController;
 // Audit Trail route
 Route::get('/audit-trail', [\App\Http\Controllers\Admin\AuditTrailController::class, 'index'])->name('audit.index');
 
 
-use App\Notifications\ResponseReportUploaded;
  Route::middleware(['auth'])->group(function () {
     Route::get('/applications/{application}', [ApplicationController::class, 'show'])
         ->name('user.application.details');
@@ -234,4 +236,48 @@ Route::get('/user/applications/{application}', [ApplicationController::class, 's
     ->name('user.application.details');Route::get('admin/applicants/{user}/{application}/view', 
     [App\Http\Controllers\Admin\UserManagementController::class, 'viewApplication']
 )->name('admin.applicants.viewApplication');
-  
+
+Route::prefix('admin')->middleware(['auth'])->group(function() {
+
+    // Load chat page for a specific application
+    Route::get('additional-info/{application}/chat', [AdditionalInfoController::class, 'chat'])
+        ->name('admin.additional-info.chat');
+
+    // Admin sends a new request to the user
+    Route::post('additional-info/{application}/send', [AdditionalInfoController::class, 'requestInfo'])
+        ->name('admin.additional-info.send');
+
+    // User responds to request (optional, if handled by admin panel)
+    Route::post('additional-info/respond/{infoRequest}', [AdditionalInfoController::class, 'respondInfo'])
+        ->name('user.additional-info.respond');
+
+    // Optional: Mark all notifications as read (if using your notification blade)
+    Route::post('notifications/mark-all-read', function() {
+        auth()->user()->unreadNotifications->markAsRead();
+        return back();
+    })->name('notifications.markAllRead');
+
+});
+
+Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function() {
+
+    Route::post('applicants/{application}/request-info', [ApplicationController::class, 'requestInfo'])
+        ->name('applicants.requestInfo');
+
+});
+Route::get('/admin/additional-info-chat/{application}', [ApplicationController::class, 'showAdditionalInfoChat'])
+    ->name('admin.additional-info.chat');
+    
+    
+    
+Route::middleware(['auth'])->group(function () {
+    Route::get('/personal-info', [PersonalInformationController::class, 'showForm'])
+        ->name('user.personal-info');
+
+    Route::post('/personal-info', [PersonalInformationController::class, 'storeOrUpdate']);
+});
+
+ 
+Route::get('/dashboard', function () {
+    return view('user.dashboard');
+})->name('user.dashboard'); 

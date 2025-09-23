@@ -3,17 +3,18 @@
 namespace App\Http\Controllers;
 
 use Pdf;
+use App\Models\User;
 use App\Models\Invoice;
 use App\Models\Document;
 use App\Models\Application;
 use Illuminate\Http\Request;
 use App\Models\Qualification;
 use App\Models\EducationHistory;
+use App\Models\PersonalInformation;
 use Illuminate\Support\Facades\Auth;
 use App\Models\AdditionalInfoRequest;
-use App\Notifications\AdditionalInfoNotification;
 use App\Notifications\ResponseReportUploaded;
-use App\Models\User;
+use App\Notifications\AdditionalInfoNotification;
 
 class ApplicationController extends Controller
 {
@@ -206,6 +207,12 @@ class ApplicationController extends Controller
 
         return $pdf->download("Validation_Letter_{$user->full_name}.pdf");
     }
+    public function showAdditionalInfoChat(Application $application)
+{
+    // Return the chat view
+    return view('admin.additional-info-chat', compact('application'));
+}
+
 public function requestInfo(Request $request, Application $application)
 {
     $request->validate([

@@ -7,20 +7,20 @@
     
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Icons -->
+    <!-- Material Design Icons -->
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet">
-    
+
     <!-- Custom CSS -->
     <style>
         body {
-            background: linear-gradient(135deg, #52074f, #dd8027);
-            height: 100vh;
-            margin: 0;
-            font-family: 'Segoe UI', sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+    background: linear-gradient(135deg, #ffffff, #fdf6f0); /* subtle light gradient */
+    height: 100vh;
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
         .login-box {
             background: #fff;
@@ -28,34 +28,52 @@
             padding: 2.5rem 2rem;
             max-width: 420px;
             width: 100%;
-            box-shadow: 0 0 40px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            border-top: 6px solid #52074f;
         }
 
         .login-box h4 {
             color: #52074f;
             font-weight: 600;
-            margin-bottom: 5px;
+            margin-bottom: 0.3rem;
+        }
+
+        .login-box p {
+            color: #6c757d;
+            font-size: 0.95rem;
         }
 
         .login-box .form-control {
             border-radius: 10px;
+            border: 1px solid #ddd;
         }
 
-        .login-box .btn-login {
+        .login-box .form-control:focus {
+            border-color: #52074f;
+            box-shadow: none;
+        }
+
+        .btn-login {
             background-color: #dd8027;
             border: none;
             border-radius: 10px;
             font-weight: 600;
             color: white;
+            transition: background 0.3s;
         }
 
-        .login-box .btn-login:hover {
+        .btn-login:hover {
             background-color: #c76d21;
         }
 
         .auth-links a {
             color: #52074f;
             font-weight: 500;
+            text-decoration: none;
+        }
+
+        .auth-links a:hover {
+            text-decoration: underline;
         }
 
         .form-check-label {
@@ -67,9 +85,15 @@
             font-size: 0.85rem;
         }
 
-        .logo-icon {
-            font-size: 48px;
-            color: #dd8027;
+        .logo-img {
+            max-width: 120px;
+            margin-bottom: 15px;
+        }
+
+        @media(max-width: 480px){
+            .login-box {
+                padding: 2rem 1.5rem;
+            }
         }
     </style>
 </head>
@@ -77,11 +101,12 @@
 
     <div class="login-box shadow">
         <div class="text-center mb-3">
-            <i class="mdi mdi-shield-account logo-icon"></i>
+            <!-- Replace 'logo.png' with your NCHE logo path -->
+            <img src="{{ asset('images/logo1.jpg') }}" alt="NCHE Logo" class="logo-img">
         </div>
 
-        <h4 class="text-center">Welcome Back</h4>
-        <p class="text-center text-muted mb-4">Sign in to access the NCHE Admin Panel</p>
+        <h4 class="text-center">Welcome</h4>
+        <p class="text-center">Sign in to access the NCHE Q & E Portal</p>
 
         <form method="POST" action="{{ route('login') }}">
             @csrf

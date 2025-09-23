@@ -4,47 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Certificate Validation</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
 
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #ffffff;
             color: #333;
-            background-color: white;
         }
 
         .hero {
+            min-height: 100vh;
             display: flex;
-            justify-content: center;
             align-items: center;
-            height: 100vh;
-            text-align: center;
-            padding: 20px;
-            gap: 40px;
+            padding: 60px 0;
         }
 
-        .hero-image {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .hero-image img {
+        .hero img {
             max-width: 100%;
-            height: auto;
             border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
         .slider {
-            flex: 1;
-            font-size: 1.5em;
-            max-width: 600px;
             position: relative;
         }
 
@@ -54,42 +38,45 @@
 
         .slide.active {
             display: block;
+            animation: fadeIn 1s ease-in-out;
         }
 
         .slide p {
-            font-size: 2em;
+            font-size: 1.6rem;
+            font-weight: 500;
             color: #333;
         }
 
-        .cta-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 30px;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .cta-button {
+        .cta-buttons a {
             background-color: #dd8027;
-            color: white;
-            padding: 15px 30px;
+            color: #fff;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 8px;
             text-decoration: none;
-            font-size: 1.2em;
-            border-radius: 5px;
             transition: background-color 0.3s;
         }
 
-        .cta-button:hover {
+        .cta-buttons a:hover {
             background-color: #b86d1e;
         }
 
         footer {
             text-align: center;
-            padding: 10px;
-            font-size: 0.8em;
+            padding: 15px 10px;
+            font-size: 0.9rem;
+            background: #f8f9fa;
+            border-top: 1px solid #e5e5e5;
         }
 
         footer a {
-            color: #333;
+            color: #52074f;
             text-decoration: none;
         }
 
@@ -101,31 +88,41 @@
 <body>
     @include("partials.header")
 
-    <section class="hero">
-        <div class="hero-image">
-            <img src="/assets/images/slider/image1.jpg" alt="Hero Image">
-        </div>
-
-        <div class="slider">
-            <div class="slide active">
-                <p><strong>Welcome to the Certificate Validation Platform</strong></p>
-            </div>
-            <div class="slide">
-                <p>Upload your certificates for validation and track the status.</p>
-            </div>
-            <div class="slide">
-                <p>Secure and Transparent Verification Process</p>
+    <!-- Hero Section -->
+    <section class="hero container">
+        <div class="row align-items-center">
+            <!-- Left Image -->
+            <div class="col-lg-6 mb-4 mb-lg-0 text-center">
+                <img src="/assets/images/slider/image1.jpg" alt="Certificate Validation">
             </div>
 
-            <div class="cta-buttons">
-                <a href="/login" class="cta-button">Upload Certificate</a>
-                <a href="/" class="cta-button">Track Status</a>
+            <!-- Right Slider Content -->
+            <div class="col-lg-6 text-center text-lg-start">
+                <div class="slider mb-4">
+                    <div class="slide active">
+                        <p><strong>Welcome to the Certificate Validation Platform</strong></p>
+                    </div>
+                    <div class="slide">
+                        <p>Upload your certificates for validation and track the status.</p>
+                    </div>
+                    <div class="slide">
+                        <p>Secure and Transparent Verification Process</p>
+                    </div>
+                </div>
+
+                <!-- CTA Buttons -->
+                <div class="d-flex justify-content-center justify-content-lg-start gap-3 cta-buttons">
+                    <a href="/login">Upload Certificate</a>
+                    <a href="/">Track Status</a>
+                </div>
             </div>
         </div>
     </section>
 
     @include("partials.footer")
 
+    <!-- Bootstrap + Slider Script -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Slider functionality
         const slides = document.querySelectorAll('.slide');
@@ -142,7 +139,7 @@
             showSlide(currentSlide);
         }
 
-        setInterval(nextSlide, 4000); // Change slide every 4 seconds
+        setInterval(nextSlide, 4000); // Auto slide every 4 seconds
     </script>
 </body>
 </html>
