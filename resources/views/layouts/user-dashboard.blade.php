@@ -21,7 +21,7 @@
 
     /* Navbar */
     .navbar {
-      background-color: #000;
+      background-color: #52074f !important;
       z-index: 1100;
     }
 
@@ -31,7 +31,7 @@
 
     /* Sidebar */
     .sidebar {
-      background-color: #52074f !important;
+      background-color:#dd8027 !important;
       color: white;
       position: fixed;
       top: 56px;
@@ -51,7 +51,7 @@
     }
 
     .sidebar a.nav-link:hover {
-      background-color: #dd8027 !important;
+      background-color: #52074f !important;
       color: white !important;
     }
 

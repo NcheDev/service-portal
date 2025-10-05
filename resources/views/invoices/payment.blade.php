@@ -1,42 +1,52 @@
- 
- @extends('layouts.user-dashboard')
- @section('content')
- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NCHE Portal</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
+@extends('layouts.user-dashboard')
 
-            {{-- Card --}}
-            <div class="card shadow rounded">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">💳 Invoice Payment - Total: <strong>$200 USD</strong></h5>
+@section('content')
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7 col-md-9">
+
+            {{-- Payment Card --}}
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header text-white" style="background-color:#52074f;">
+                    <h5 class="mb-0 d-flex align-items-center justify-content-between">
+                        <span>💳 Invoice Payment</span>
+@php
+    $isForeigner = strtolower($invoice->application->nationality) !== 'malawian';
+    $currency = $isForeigner ? 'USD' : 'MWK';
+    $amount = $invoice->amount ?? $invoice->fee ?? 0;
+@endphp
+
+<span class="badge" style="background-color:#dd8027; color:white; font-size:1rem; padding:0.5rem 1rem; border-radius:8px;">
+    Total: 
+    <strong>
+        @if($currency === 'USD')
+            ${{ number_format($amount, 2) }} USD
+        @else
+            MK {{ number_format($amount, 0) }} MWK
+        @endif
+    </strong>
+</span>
+
+                    </h5>
                 </div>
 
-                <div class="card-body">
+                <div class="card-body bg-light">
 
-                    {{-- Payment Instructions --}}
-                    <div class="alert alert-info">
-                        Please choose your preferred payment method. Upload proof of payment if applicable. <br>
-                        <strong>Note:</strong> For PayChangu, confirmation is automatic, no need to upload.
+                    {{-- Info Alert --}}
+                    <div class="alert alert-warning border-0 rounded-3" style="background-color:#fff5eb; color:#52074f;">
+                        <strong>Note:</strong> For <b>PayChangu</b> payments, confirmation is automatic — no need to upload proof.  
+                        <br>For mobile money or bank deposits, please upload proof of payment.
                     </div>
 
                     {{-- Payment Form --}}
-                  <form id="payment-form" action="{{ route('invoices.submitPayment', $invoice->id) }}" method="POST" enctype="multipart/form-data">
-    @csrf
+                    <form id="payment-form" action="{{ route('invoices.submitPayment', $invoice->id) }}" method="POST" enctype="multipart/form-data">
+                        @csrf
 
                         {{-- Payment Method --}}
                         <div class="mb-3">
-                            <label for="payment_method" class="form-label">Select Payment Method <span class="text-danger">*</span></label>
-                            <select name="payment_method" id="payment_method" class="form-select" required>
-                                <option value="">-- Choose --</option>
+                            <label for="payment_method" class="form-label fw-semibold text-dark">Payment Method <span class="text-danger">*</span></label>
+                            <select name="payment_method" id="payment_method" class="form-select border-secondary" required>
+                                <option value="">-- Choose Method --</option>
                                 <option value="PayChangu">PayChangu</option>
                                 <option value="Mpamba">Mpamba</option>
                                 <option value="Airtel Money">Airtel Money</option>
@@ -45,29 +55,30 @@
                         </div>
 
                         {{-- Proof Upload --}}
-                        <div class="mb-3">
-                            <label for="proof" class="form-label">Upload Proof of Payment</label>
-                            <input type="file" name="proof" class="form-control">
-                            <div class="form-text">Optional for PayChangu; required for Mpamba, Airtel Money, or Bank.</div>
+                        <div class="mb-4">
+                            <label for="proof" class="form-label fw-semibold text-dark">Upload Proof of Payment</label>
+                            <input type="file" name="proof" class="form-control border-secondary">
+                            <small class="text-muted">Optional for PayChangu. Required for Mpamba, Airtel Money, or Bank Deposit.</small>
                         </div>
 
                         {{-- Submit --}}
-                        <button type="submit" class="btn btn-success w-100">Submit Payment</button>
+                        <button type="submit" class="btn w-100 py-2 text-white fw-bold" style="background-color:#dd8027;">
+                            Submit Payment
+                        </button>
                     </form>
-
                 </div>
             </div>
 
-            {{-- Optional: Add a visual footer or note --}}
-            <div class="text-center text-muted mt-3">
-                Need help? Contact support@nche.mw
+            {{-- Footer --}}
+            <div class="text-center mt-4 small text-muted">
+                Need help? Email <a href="mailto:support@nche.mw" class="text-decoration-none" style="color:#52074f;">support@nche.mw</a>
             </div>
-
         </div>
     </div>
 </div>
- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+{{-- Scripts --}}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(document).ready(function () {
     $('#payment-form').on('submit', function (e) {
@@ -84,21 +95,28 @@ $(document).ready(function () {
             contentType: false,
             processData: false,
             success: function () {
-                alert('✅ Payment processed successfully. Please wait as we work on processing your application.');
-
-                // Load the invoices.index page into .main-panel
-                $.get("{{ route('invoices.index') }}", function (response) {
-                    $('.main-panel').html(response);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Payment Successful',
+                    text: 'Please wait as we process your application.',
+                    confirmButtonColor: '#52074f'
                 });
+
+                // Load invoice index page dynamically into main panel
+               window.location.href = "{{ route('invoices.index') }}";
+
             },
             error: function () {
-                alert('❌ Payment submission failed. Please check your input and try again.');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Payment Failed',
+                    text: 'Please check your input and try again.',
+                    confirmButtonColor: '#52074f'
+                });
             }
         });
     });
 });
 </script>
-
-</body>
-</html>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @endsection

@@ -61,10 +61,28 @@
                 </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab" style="color:#52074f; font-weight:500;">
-                    Additional Info Requests
-                </button>
-            </li>
+    <button class="nav-link position-relative" 
+        id="info-tab" 
+        data-bs-toggle="tab" 
+        data-bs-target="#info" 
+        type="button" 
+        role="tab" 
+        style="color:#52074f; font-weight:500;">
+
+        Additional Info Requests
+
+        @php 
+            $pendingCount = $application->additionalInfoRequests->where('status', 'pending')->count(); 
+        @endphp
+
+        @if($pendingCount > 0)
+            <span class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-pill">
+                {{ $pendingCount }}
+            </span>
+        @endif
+    </button>
+</li>
+
         </ul>
 
         <div class="tab-content" id="docTabContent">

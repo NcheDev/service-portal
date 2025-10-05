@@ -34,13 +34,14 @@
                     <p class="text-muted small">Log into the portal to track your application progress and certificate verification results.</p>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Reminder Section -->
+        </div><br>
+            <!-- Reminder Section -->
     <div class="card reminder-card shadow-sm p-3 text-center">
         <p class="mb-0">💡 <strong>Reminder:</strong> After processing, you will receive an email with your results. Always log in to the portal to view the latest updates.</p>
     </div>
+    </div>
+
+
 
 </div>
 
@@ -77,6 +78,6 @@
     font-weight: 500;
 }
 </style>
-
+ 
 
 @endsection

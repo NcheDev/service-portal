@@ -30,10 +30,22 @@
                 </thead>
                 <tbody>
                     @foreach($invoices as $invoice)
+                        @php
+                            // Determine currency based on application nationality
+                            $isForeigner = strtolower($invoice->application->nationality) !== 'malawian';
+                            $currency = $isForeigner ? 'USD' : 'MWK';
+                            $amount = $invoice->fee ?? 0;
+                        @endphp
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $invoice->invoice_number }}</td>
-                            <td style="font-weight:500; color:#dd8027;">MK {{ number_format($invoice->fee, 2) }}</td>
+                            <td style="font-weight:500; color:#dd8027;">
+                                @if($currency === 'USD')
+                                    ${{ number_format($amount, 2) }} USD
+                                @else
+                                    MK {{ number_format($amount, 0) }} MWK
+                                @endif
+                            </td>
                             <td>
                                 @if ($invoice->proof_path)
                                     <span class="badge rounded-pill" style="background-color:#28a745; color:white;">Paid</span>
@@ -43,7 +55,7 @@
                             </td>
                             <td>
                                 <a href="{{ route('invoices.show', $invoice->id) }}" 
-                                   class="btn btn-sm" 
+                                   class="btn btn-sm"
                                    style="background-color:#52074f; color:white; border:none;">
                                     Details
                                 </a>
