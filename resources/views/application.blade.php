@@ -1,376 +1,399 @@
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<br>
-<div class="container pt-5 pb-4">
-    <h2 class="mb-4 text-center">Qualification Evaluation Application</h2>
+@extends('layouts.user-dashboard')
+@section('content')
 
-    <form  id="application-form" action="{{ route('application.store') }}"  method="POST" enctype="multipart/form-data">
+<div class="container pt-5 pb-4">
+
+    <h2 class="mb-4 text-center fw-bold" 
+        style="color:#52074f; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; letter-spacing:1px;">
+        Qualification Evaluation Application
+    </h2>
+
+    {{-- Success Message --}}
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    <form id="application-form" action="{{ route('application.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
         {{-- Card: Processing Type & Nationality --}}
-        <div class="card mb-4 shadow-sm">
-    <div class="card-header bg-white">
-        <h5 class="mb-0">Applicant Info</h5>
-    </div>
-    <div class="card-body row">
-        {{-- Processing Type --}}
-        <div class="col-md-6 mb-3">
-            <label for="processing_type" class="form-label">Processing Type</label>
-            <select class="form-control" name="processing_type" id="processing_type" required>
-                <option value="normal">Normal</option>
-                <option value="express">Express</option>
-            </select>
-            <div class="mt-2 text-info small" id="processing_info">Normal takes 21 days.</div>
-        </div>
+        <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-header text-white" style="background-color:#52074f;">
+                <h5 class="mb-0">Applicant Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <label for="processing_type" class="form-label fw-bold">Processing Type</label>
+                        <select class="form-select" name="processing_type" id="processing_type" required>
+                            <option value="normal" {{ old('processing_type') == 'normal' ? 'selected' : '' }}>Normal</option>
+                            <option value="express" {{ old('processing_type') == 'express' ? 'selected' : '' }}>Express</option>
+                        </select>
+                        <div class="mt-2 text-info small" id="processing_info"></div>
+                        @error('processing_type') 
+                            <div class="text-danger small">{{ $message }}</div> 
+                        @enderror
+                    </div>
 
-        {{-- Nationality --}}
-        <div class="col-md-6 mb-3">
-            <label for="nationality" class="form-label">Nationality</label>
-            <select class="form-control" name="nationality" id="nationality" required>
-                <option value="local">Local</option>
-                <option value="foreigner">Foreigner</option>
-            </select>
-            <div class="mt-2 text-info small" id="fee_info">Locals: MK 75,000 per qualification</div>
+                    <div class="col-md-6">
+                        <label for="nationality" class="form-label fw-bold">Nationality</label>
+                        <select class="form-select" name="nationality" id="nationality" required>
+                            <option value="local" {{ old('nationality') == 'local' ? 'selected' : '' }}>Local</option>
+                            <option value="foreigner" {{ old('nationality') == 'foreigner' ? 'selected' : '' }}>Foreigner</option>
+                        </select>
+                        <div class="mt-2 text-info small" id="fee_info"></div>
+                        @error('nationality') 
+                            <div class="text-danger small">{{ $message }}</div> 
+                        @enderror
+                    </div>
+                </div>
+            </div>
+           
         </div>
-    </div>
-</div>
 
         {{-- Card: Qualification to be Evaluated --}}
-        <div class="card mb-4 shadow-sm">
-            <div class="card-header bg-white">
-                <h5 class="mb-0">Qualification/Award to be Evaluated</h5>
+        <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-header text-white" style="background-color:#52074f;">
+                <h5 class="mb-0">Qualification / Award to be Evaluated</h5>
             </div>
-           <div class="card-body">
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Qualification Name</th>
-                <th>Program Name</th> {{-- ✅ Added this --}}
-                <th>Date Obtained</th>
-                <th>Institution</th>
-                <th>Country</th>
-            </tr>
-        </thead>
-        <tbody>
-           <tr>
-    {{-- Qualification Name --}}
-    <td>
-        <input 
-            type="text" 
-            name="qualifications[0][name]" 
-            class="form-control" 
-            placeholder="Qualification name" 
-            value="{{ old('qualifications.0.name') }}"
-        >
-        <small class="text-muted">As it appears on certificate.</small>
-        @error('qualifications.0.name') <div class="text-danger small">{{ $message }}</div> @enderror
-    </td>
+            <div class="card-body">
+                <p class="text-muted mb-4">
+                    <em>Please enter details exactly as they appear on your certificate.</em>
+                </p>
 
-    {{-- Program Name --}}
-    <td>
-        <input 
-            type="text" 
-            name="qualifications[0][program_name]" 
-            class="form-control" 
-            placeholder="e.g., Computer Science" 
-            value="{{ old('qualifications.0.program_name') }}"
-        >
-        <small class="text-muted">As it appears on certificate.</small>
-        @error('qualifications.0.program_name') <div class="text-danger small">{{ $message }}</div> @enderror
-    </td>
+                @php
+                    $qualifications = old('qualifications', [['name'=>'','program_name'=>'','year'=>'','institution'=>'','country'=>'']]);
+                @endphp
 
-    {{-- Date Awarded --}}
-    <td>
-        <input 
-            type="text" 
-            name="qualifications[0][year]" 
-            class="form-control" 
-            placeholder="e.g., 12 July 2020" 
-            value="{{ old('qualifications.0.year') }}"
-        >
-        <small class="text-muted">As it appears on certificate.</small>
-        @error('qualifications.0.year') <div class="text-danger small">{{ $message }}</div> @enderror
-    </td>
+                @foreach($qualifications as $i => $qual)
+                <div class="row g-4 mb-3 border-bottom pb-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Qualification Name</label>
+                        <input type="text" name="qualifications[{{ $i }}][name]" class="form-control"
+                               value="{{ $qual['name'] }}">
+                        @error("qualifications.$i.name") 
+                            <div class="text-danger small">{{ $message }}</div> 
+                        @enderror
+                    </div>
 
-    {{-- Institution --}}
-    <td>
-        <input 
-            type="text" 
-            name="qualifications[0][institution]" 
-            class="form-control" 
-            placeholder="Institution name" 
-            value="{{ old('qualifications.0.institution') }}"
-        >
-        <small class="text-muted">As it appears on certificate.</small>
-        @error('qualifications.0.institution') <div class="text-danger small">{{ $message }}</div> @enderror
-    </td>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Program Name</label>
+                        <input type="text" name="qualifications[{{ $i }}][program_name]" class="form-control"
+                               value="{{ $qual['program_name'] }}">
+                        @error("qualifications.$i.program_name") 
+                            <div class="text-danger small">{{ $message }}</div> 
+                        @enderror
+                    </div>
 
-    {{-- Country --}}
-    <td>
-        <input 
-            type="text" 
-            name="qualifications[0][country]" 
-            class="form-control" 
-            placeholder="Country" 
-            value="{{ old('qualifications.0.country') }}"
-        >
-        <small class="text-muted">As it appears on certificate.</small>
-        @error('qualifications.0.country') <div class="text-danger small">{{ $message }}</div> @enderror
-    </td>
-</tr>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Year Obtained</label>
+                        <input type="number" name="qualifications[{{ $i }}][year]" class="form-control"
+       value="{{ $qual['year'] }}" min="1900" max="{{ date('Y') }}" required>
 
-        </tbody>
-    </table>
-</div>
+                        @error("qualifications.$i.year") 
+                            <div class="text-danger small">{{ $message }}</div> 
+                        @enderror
+                    </div>
 
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Institution</label>
+                        <input type="text" name="qualifications[{{ $i }}][institution]" class="form-control"
+                               value="{{ $qual['institution'] }}">
+                        @error("qualifications.$i.institution") 
+                            <div class="text-danger small">{{ $message }}</div> 
+                        @enderror
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Country</label>
+                        <select name="qualifications[{{ $i }}][country]" class="form-select" required>
+                            <option value="">-- Select Country --</option>
+                            @foreach(['Afghanistan','Albania','Algeria','Andorra','Angola','Antigua and Barbuda','Argentina','Armenia','Australia','Austria','Azerbaijan',
+            'Bahamas','Bahrain','Bangladesh','Barbados','Belarus','Belgium','Belize','Benin','Bhutan','Bolivia','Bosnia and Herzegovina','Botswana','Brazil','Brunei','Bulgaria','Burkina Faso','Burundi',
+            'Cabo Verde','Cambodia','Cameroon','Canada','Central African Republic','Chad','Chile','China','Colombia','Comoros','Congo (Congo-Brazzaville)','Costa Rica','Croatia','Cuba','Cyprus','Czechia (Czech Republic)',
+            'Democratic Republic of the Congo','Denmark','Djibouti','Dominica','Dominican Republic',
+            'Ecuador','Egypt','El Salvador','Equatorial Guinea','Eritrea','Estonia','Eswatini','Ethiopia',
+            'Fiji','Finland','France',
+            'Gabon','Gambia','Georgia','Germany','Ghana','Greece','Grenada','Guatemala','Guinea','Guinea-Bissau','Guyana',
+            'Haiti','Honduras','Hungary',
+            'Iceland','India','Indonesia','Iran','Iraq','Ireland','Israel','Italy',
+            'Jamaica','Japan','Jordan',
+            'Kazakhstan','Kenya','Kiribati','Kuwait','Kyrgyzstan',
+            'Laos','Latvia','Lebanon','Lesotho','Liberia','Libya','Liechtenstein','Lithuania','Luxembourg',
+            'Madagascar','Malawi','Malaysia','Maldives','Mali','Malta','Marshall Islands','Mauritania','Mauritius','Mexico','Micronesia','Moldova','Monaco','Mongolia','Montenegro','Morocco','Mozambique','Myanmar (Burma)',
+            'Namibia','Nauru','Nepal','Netherlands','New Zealand','Nicaragua','Niger','Nigeria','North Korea','North Macedonia','Norway',
+            'Oman',
+            'Pakistan','Palau','Palestine State','Panama','Papua New Guinea','Paraguay','Peru','Philippines','Poland','Portugal',
+            'Qatar',
+            'Romania','Russia','Rwanda',
+            'Saint Kitts and Nevis','Saint Lucia','Saint Vincent and the Grenadines','Samoa','San Marino','Sao Tome and Principe','Saudi Arabia','Senegal','Serbia','Seychelles','Sierra Leone','Singapore','Slovakia','Slovenia','Solomon Islands','Somalia','South Africa','South Korea','South Sudan','Spain','Sri Lanka','Sudan','Suriname','Sweden','Switzerland','Syria',
+            'Taiwan','Tajikistan','Tanzania','Thailand','Timor-Leste','Togo','Tonga','Trinidad and Tobago','Tunisia','Turkey','Turkmenistan','Tuvalu',
+            'Uganda','Ukraine','United Arab Emirates','United Kingdom','United States of America','Uruguay','Uzbekistan',
+            'Vanuatu','Vatican City','Venezuela','Vietnam',
+            'Yemen',
+            'Zambia','Zimbabwe'] as $country) {{-- simplified for demo --}}
+                                <option value="{{ $country }}" {{ $qual['country'] == $country ? 'selected' : '' }}>
+                                    {{ $country }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error("qualifications.$i.country") 
+                            <div class="text-danger small">{{ $message }}</div> 
+                        @enderror
+                    </div>
+                </div>
+                @endforeach
+            </div>
         </div>
 
         {{-- Card: Education History --}}
-        <div class="card mb-4 shadow-sm">
-            <div class="card-header bg-white">
-                <h5 class="mb-0">History of Educational Institutions Attended</h5>
+        <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-header text-white" style="background-color:#52074f;">
+                <h5 class="mb-0">
+                    History of Educational Institutions Attended 
+                    <span class="badge" style="background-color:#dd8027;">Required</span>
+                </h5>
             </div>
             <div class="card-body">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Qualification Name</th>
-                            <th>Year Obtained</th>
-                            <th>Institution</th>
-                            <th>Country</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="education-history-body">
-                        @php $educationHistories = old('education_histories', [[]]); @endphp
-                        @foreach ($educationHistories as $index => $history)
-                            <tr>
-                                <td>
-                                    <input type="text" name="education_histories[{{ $index }}][name]" class="form-control"
-                                        value="{{ $history['name'] ?? '' }}">
-                                    @error("education_histories.$index.name") <div class="text-danger small">{{ $message }}</div> @enderror
-                                </td>
-                                <td>
-                                    <input type="text" name="education_histories[{{ $index }}][year]" class="form-control"
-                                        value="{{ $history['year'] ?? '' }}">
-                                    @error("education_histories.$index.year") <div class="text-danger small">{{ $message }}</div> @enderror
-                                </td>
-                                <td>
-                                    <input type="text" name="education_histories[{{ $index }}][institution]" class="form-control"
-                                        value="{{ $history['institution'] ?? '' }}">
-                                    @error("education_histories.$index.institution") <div class="text-danger small">{{ $message }}</div> @enderror
-                                </td>
-                                <td>
-                                    <input type="text" name="education_histories[{{ $index }}][country]" class="form-control"
-                                        value="{{ $history['country'] ?? '' }}">
-                                    @error("education_histories.$index.country") <div class="text-danger small">{{ $message }}</div> @enderror
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this)">Remove</button>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-                <button type="button" class="btn btn-outline-primary" onclick="addEducationRow()">+ Add More</button>
+                <div id="education-history-body">
+                    @php $educationHistories = old('education_histories', [[]]); @endphp
+                    @foreach ($educationHistories as $index => $history)
+                        <div class="row g-3 align-items-end mb-3 border-bottom pb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Qualification Name</label>
+                                <input type="text" name="education_histories[{{ $index }}][name]" class="form-control"
+                                       value="{{ $history['name'] ?? '' }}">
+                                @error("education_histories.$index.name") 
+                                    <div class="text-danger small">{{ $message }}</div> 
+                                @enderror
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Year Obtained</label>
+                                <input type="number" name="education_histories[{{ $index }}][year]" class="form-control"
+                                       value="{{ $history['year'] ?? '' }}">
+                                @error("education_histories.$index.year") 
+                                    <div class="text-danger small">{{ $message }}</div> 
+                                @enderror
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Institution</label>
+                                <input type="text" name="education_histories[{{ $index }}][institution]" class="form-control"
+                                       value="{{ $history['institution'] ?? '' }}">
+                                @error("education_histories.$index.institution") 
+                                    <div class="text-danger small">{{ $message }}</div> 
+                                @enderror
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Country</label>
+                                <select name="education_histories[{{ $index }}][country]" class="form-control">
+                                    <option value="">-- Select Country --</option>
+                                    @foreach(['Afghanistan','Albania','Algeria','Andorra','Angola','Antigua and Barbuda','Argentina','Armenia','Australia','Austria','Azerbaijan',
+            'Bahamas','Bahrain','Bangladesh','Barbados','Belarus','Belgium','Belize','Benin','Bhutan','Bolivia','Bosnia and Herzegovina','Botswana','Brazil','Brunei','Bulgaria','Burkina Faso','Burundi',
+            'Cabo Verde','Cambodia','Cameroon','Canada','Central African Republic','Chad','Chile','China','Colombia','Comoros','Congo (Congo-Brazzaville)','Costa Rica','Croatia','Cuba','Cyprus','Czechia (Czech Republic)',
+            'Democratic Republic of the Congo','Denmark','Djibouti','Dominica','Dominican Republic',
+            'Ecuador','Egypt','El Salvador','Equatorial Guinea','Eritrea','Estonia','Eswatini','Ethiopia',
+            'Fiji','Finland','France',
+            'Gabon','Gambia','Georgia','Germany','Ghana','Greece','Grenada','Guatemala','Guinea','Guinea-Bissau','Guyana',
+            'Haiti','Honduras','Hungary',
+            'Iceland','India','Indonesia','Iran','Iraq','Ireland','Israel','Italy',
+            'Jamaica','Japan','Jordan',
+            'Kazakhstan','Kenya','Kiribati','Kuwait','Kyrgyzstan',
+            'Laos','Latvia','Lebanon','Lesotho','Liberia','Libya','Liechtenstein','Lithuania','Luxembourg',
+            'Madagascar','Malawi','Malaysia','Maldives','Mali','Malta','Marshall Islands','Mauritania','Mauritius','Mexico','Micronesia','Moldova','Monaco','Mongolia','Montenegro','Morocco','Mozambique','Myanmar (Burma)',
+            'Namibia','Nauru','Nepal','Netherlands','New Zealand','Nicaragua','Niger','Nigeria','North Korea','North Macedonia','Norway',
+            'Oman',
+            'Pakistan','Palau','Palestine State','Panama','Papua New Guinea','Paraguay','Peru','Philippines','Poland','Portugal',
+            'Qatar',
+            'Romania','Russia','Rwanda',
+            'Saint Kitts and Nevis','Saint Lucia','Saint Vincent and the Grenadines','Samoa','San Marino','Sao Tome and Principe','Saudi Arabia','Senegal','Serbia','Seychelles','Sierra Leone','Singapore','Slovakia','Slovenia','Solomon Islands','Somalia','South Africa','South Korea','South Sudan','Spain','Sri Lanka','Sudan','Suriname','Sweden','Switzerland','Syria',
+            'Taiwan','Tajikistan','Tanzania','Thailand','Timor-Leste','Togo','Tonga','Trinidad and Tobago','Tunisia','Turkey','Turkmenistan','Tuvalu',
+            'Uganda','Ukraine','United Arab Emirates','United Kingdom','United States of America','Uruguay','Uzbekistan',
+            'Vanuatu','Vatican City','Venezuela','Vietnam',
+            'Yemen',
+            'Zambia','Zimbabwe'] as $country) {{-- simplified --}}
+                                        <option value="{{ $country }}" {{ ($history['country'] ?? '') == $country ? 'selected' : '' }}>
+                                            {{ $country }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error("education_histories.$index.country") 
+                                    <div class="text-danger small">{{ $message }}</div> 
+                                @enderror
+                            </div>
+                            <div class="col-12 text-end">
+                                <button type="button" class="btn btn-sm" style="background-color:#dd8027; color:white;" onclick="removeRow(this)">
+                                    Remove
+                                </button>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+                <div class="mt-3">
+                    <button type="button" class="btn" style="background-color:#52074f; color:white;" onclick="addEducationRow()">
+                        + Add More
+                    </button>
+                </div>
             </div>
         </div>
 
         {{-- Card: Document Uploads --}}
-        <div class="card mb-4 shadow-sm">
-            <div class="card-header bg-white">
+        <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-header text-white" style="background-color:#52074f;">
                 <h5 class="mb-0">Document Uploads</h5>
             </div>
             <div class="card-body">
-                <div class="mb-3">
-                    <label>Upload Qualification Certificates (certified copy)</label>
-                    <input type="file" name="certificates[]" class="form-control" multiple required>
-                </div>
-                <div class="mb-3">
-                    <label>Upload Academic Records (transcripts)</label>
-                    <input type="file" name="academic_records[]" class="form-control" multiple required>
-                </div>
-                <div class="mb-3">
-                    <label>Upload Previous NCHE Evaluations</label>
-                    <input type="file" name="previous_evaluations[]" class="form-control" multiple>
-                </div>
-                <div class="mb-3">
-                    <label>Upload Syllabus / Course Prescriptions</label>
-                    <input type="file" name="syllabi[]" class="form-control" multiple>
-                </div>
-            </div>
-        </div>
-        <!-- Consent Form Section -->
-<div class="card mb-4">
-    <div class="card-header bg-primary text-white">
-        <strong>Consent Form</strong>
-    </div>
-    <div class="card-body">
-        <p class="mb-4">Please download the consent form, sign it, and upload the signed version below.</p>
-
-        <div class="row mb-3">
-            <div class="col-auto">
-                <!-- Download Button -->
-                <a href="{{ asset('assets/forms/consent_form.pdf') }}" download class="btn btn-outline-primary">
-                    <i class="bi bi-download"></i> Download Consent Form
-                </a>
-            </div>
-        </div>
-
-        <!-- Upload Form -->
-        {{-- Consent Form Upload --}}
-    <div class="card mb-4 shadow-sm">
-        <div class="card-header bg-white">
-            <h5 class="mb-0">Upload Signed Consent Form</h5>
-        </div>
-        <div class="card-body">
-            <div class="row g-3 align-items-center">
-                <div class="col-md-6">
-                    <label for="consent_form" class="form-label">Consent Form (PDF)</label>
-                    <input type="file" name="consent_form" id="consent_form" class="form-control" accept="application/pdf" required>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Upload Qualification Certificates</label>
+                        <input type="file" name="certificates[]" class="form-control" multiple required>
+                        @error('certificates') <div class="text-danger small">{{ $message }}</div> @enderror
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Upload Academic Records</label>
+                        <input type="file" name="academic_records[]" class="form-control" multiple required>
+                        @error('academic_records') <div class="text-danger small">{{ $message }}</div> @enderror
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Upload Previous NCHE Evaluations</label>
+                        <input type="file" name="previous_evaluations[]" class="form-control" multiple>
+                        @error('previous_evaluations') <div class="text-danger small">{{ $message }}</div> @enderror
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Upload Syllabus / Course Prescriptions</label>
+                        <input type="file" name="syllabi[]" class="form-control" multiple>
+                        @error('syllabi') <div class="text-danger small">{{ $message }}</div> @enderror
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    </div>
-</div>
 
+        {{-- Card: Consent Form --}}
+        <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-header text-white" style="background-color:#52074f;">
+                <h5 class="mb-0">Consent Form</h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-4 text-muted">
+                    Please download the consent form, sign it, and upload the signed version below.
+                </p>
+                <div class="row mb-3">
+                    <div class="col-auto">
+                        <a href="{{ asset('assets/forms/consent_form.pdf') }}" download 
+                           class="btn text-white" style="background-color:#dd8027;">
+                            <i class="bi bi-download"></i> Download Consent Form
+                        </a>
+                    </div>
+                </div>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <label for="consent_form" class="form-label fw-bold">
+                            Upload Signed Consent Form (PDF)
+                        </label>
+                        <input type="file" name="consent_form" id="consent_form" 
+                               class="form-control" accept="application/pdf" required>
+                        @error('consent_form') <div class="text-danger small">{{ $message }}</div> @enderror
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        {{-- Card: Notices --}}
-        <div class="alert alert-info">
-            <strong>Note:</strong>
-            <ul class="mb-0">
+        {{-- Notices --}}
+        <div class="alert alert-info shadow-sm border-0">
+            <strong>Important Notes:</strong>
+            <ul class="mb-0 mt-2">
                 <li>Submit certified copies and transcripts as required.</li>
-                <li>Forged documents lead to disqualification.</li>
-                <li>NCHE may share this info with other institutions.</li>
-                <li>Normal: <strong>21 working days</strong>, Express: <strong>10 working days</strong></li>
+                <li>Forged documents will lead to <strong>disqualification</strong>.</li>
+                <li>NCHE may share this information with other institutions.</li>
+                <li>Processing time: Normal – <strong>21 working days</strong>, Express – <strong>10 working days</strong>.</li>
             </ul>
         </div>
 
         {{-- Submit --}}
         <div class="text-center mt-4">
-            <button type="submit" class="btn btn-primary px-4 py-2">Submit Application</button>
+            <button type="submit" class="btn btn-primary px-5 py-2 fw-semibold shadow">Submit Application</button>
         </div>
     </form>
 </div>
 
- 
-
 <script>
-    let eduIndex = 1;
+let eduIndex = {{ count(old('education_histories', [[]])) }};
 
-    function addEducationRow() {
-        const tbody = document.getElementById('education-history-body');
-        const row = document.createElement('tr');
+function addEducationRow() {
+    const container = document.getElementById('education-history-body');
 
-        row.innerHTML = `
-            <td><input type="text" name="education_histories[${eduIndex}][name]" class="form-control" placeholder="Qualification Name"></td>
-            <td><input type="text" name="education_histories[${eduIndex}][year]" class="form-control" placeholder="Year Obtained"></td>
-            <td><input type="text" name="education_histories[${eduIndex}][institution]" class="form-control" placeholder="Institution"></td>
-            <td><input type="text" name="education_histories[${eduIndex}][country]" class="form-control" placeholder="Country"></td>
-            <td><button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this)">Remove</button></td>
-        `;
+    const row = document.createElement('div');
+    row.className = 'row g-3 align-items-end mb-3 border-bottom pb-3';
+    row.innerHTML = `
+        <div class="col-md-6">
+            <label class="form-label">Qualification Name</label>
+            <input type="text" name="education_histories[${eduIndex}][name]" class="form-control" placeholder="Qualification Name">
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Year Obtained</label>
+            <input type="number" name="education_histories[${eduIndex}][year]" class="form-control">
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Institution</label>
+            <input type="text" name="education_histories[${eduIndex}][institution]" class="form-control" placeholder="Institution">
+        </div>
+        <div class="col-md-6">
+               <label class="form-label">Country</label>
+                                <select name="education_histories[{{ $index }}][country]" class="form-control">
+                                    <option value="">-- Select Country --</option>
+                                    @foreach(['Afghanistan','Albania','Algeria','Andorra','Angola','Antigua and Barbuda','Argentina','Armenia','Australia','Austria','Azerbaijan',
+            'Bahamas','Bahrain','Bangladesh','Barbados','Belarus','Belgium','Belize','Benin','Bhutan','Bolivia','Bosnia and Herzegovina','Botswana','Brazil','Brunei','Bulgaria','Burkina Faso','Burundi',
+            'Cabo Verde','Cambodia','Cameroon','Canada','Central African Republic','Chad','Chile','China','Colombia','Comoros','Congo (Congo-Brazzaville)','Costa Rica','Croatia','Cuba','Cyprus','Czechia (Czech Republic)',
+            'Democratic Republic of the Congo','Denmark','Djibouti','Dominica','Dominican Republic',
+            'Ecuador','Egypt','El Salvador','Equatorial Guinea','Eritrea','Estonia','Eswatini','Ethiopia',
+            'Fiji','Finland','France',
+            'Gabon','Gambia','Georgia','Germany','Ghana','Greece','Grenada','Guatemala','Guinea','Guinea-Bissau','Guyana',
+            'Haiti','Honduras','Hungary',
+            'Iceland','India','Indonesia','Iran','Iraq','Ireland','Israel','Italy',
+            'Jamaica','Japan','Jordan',
+            'Kazakhstan','Kenya','Kiribati','Kuwait','Kyrgyzstan',
+            'Laos','Latvia','Lebanon','Lesotho','Liberia','Libya','Liechtenstein','Lithuania','Luxembourg',
+            'Madagascar','Malawi','Malaysia','Maldives','Mali','Malta','Marshall Islands','Mauritania','Mauritius','Mexico','Micronesia','Moldova','Monaco','Mongolia','Montenegro','Morocco','Mozambique','Myanmar (Burma)',
+            'Namibia','Nauru','Nepal','Netherlands','New Zealand','Nicaragua','Niger','Nigeria','North Korea','North Macedonia','Norway',
+            'Oman',
+            'Pakistan','Palau','Palestine State','Panama','Papua New Guinea','Paraguay','Peru','Philippines','Poland','Portugal',
+            'Qatar',
+            'Romania','Russia','Rwanda',
+            'Saint Kitts and Nevis','Saint Lucia','Saint Vincent and the Grenadines','Samoa','San Marino','Sao Tome and Principe','Saudi Arabia','Senegal','Serbia','Seychelles','Sierra Leone','Singapore','Slovakia','Slovenia','Solomon Islands','Somalia','South Africa','South Korea','South Sudan','Spain','Sri Lanka','Sudan','Suriname','Sweden','Switzerland','Syria',
+            'Taiwan','Tajikistan','Tanzania','Thailand','Timor-Leste','Togo','Tonga','Trinidad and Tobago','Tunisia','Turkey','Turkmenistan','Tuvalu',
+            'Uganda','Ukraine','United Arab Emirates','United Kingdom','United States of America','Uruguay','Uzbekistan',
+            'Vanuatu','Vatican City','Venezuela','Vietnam',
+            'Yemen',
+            'Zambia','Zimbabwe'] as $country) {{-- simplified --}}
+                                        <option value="{{ $country }}" {{ ($history['country'] ?? '') == $country ? 'selected' : '' }}>
+                                            {{ $country }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error("education_histories.$index.country") 
+                                    <div class="text-danger small">{{ $message }}</div> 
+                                @enderror
+                            
 
-        tbody.appendChild(row);
-        eduIndex++;
-    }
+        </div>
+        <div class="col-12 text-end">
+            <button type="button" class="btn btn-sm" style="background-color:#dd8027; color:white;" onclick="removeRow(this)">
+                Remove
+            </button>
+        </div>
+    `;
+    container.appendChild(row);
+    eduIndex++;
+}
 
-    function removeRow(button) {
-        button.closest('tr').remove();
-    }
-</script>
- 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.qualification-select').forEach(function(select) {
-            select.addEventListener('change', function () {
-                const wrapper = this.closest('td').querySelector('.other-qualification-wrapper');
+function removeRow(button) {
+    button.closest('.row').remove();
+}
 
-                if (this.value === 'Other') {
-                    wrapper.classList.remove('d-none');
-                } else {
-                    wrapper.classList.add('d-none');
-                    wrapper.querySelector('input').value = '';
-                }
-            });
-        });
-    });
-</script>
- 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const processingSelect = document.getElementById('processing_type');
-        const nationalitySelect = document.getElementById('nationality');
-        const processingInfo = document.getElementById('processing_info');
-        const feeInfo = document.getElementById('fee_info');
-
-        function updateProcessingInfo() {
-            const type = processingSelect.value;
-
-            if (type === 'normal') {
-                processingInfo.textContent = "Normal takes 21 days.";
-            } else if (type === 'express') {
-                processingInfo.textContent = "Express takes 10 days.";
-            }
-        }
-
-        function updateFeeInfo() {
-            const type = processingSelect.value;
-            const nationality = nationalitySelect.value;
-
-            if (type === 'normal' && nationality === 'local') {
-                feeInfo.textContent = "Locals: MK 75,000 per qualification";
-            } else if (type === 'normal' && nationality === 'foreigner') {
-                feeInfo.textContent = "Foreigners: US$ 150 per qualification";
-            } else if (type === 'express' && nationality === 'local') {
-                feeInfo.textContent = "Locals: MK 112,500 per qualification";
-            } else if (type === 'express' && nationality === 'foreigner') {
-                feeInfo.textContent = "Foreigners: US$ 225 per qualification";
-            }
-        }
-
-        // Initial load
-        updateProcessingInfo();
-        updateFeeInfo();
-
-        // On change
-        processingSelect.addEventListener('change', function () {
-            updateProcessingInfo();
-            updateFeeInfo();
-        });
-
-        nationalitySelect.addEventListener('change', function () {
-            updateFeeInfo();
-        });
-    });
-</script><script>
-$(document).on('submit', '#applicationForm', function(e) {
-    e.preventDefault();
-    var formData = new FormData(this);
-    
-    $.ajax({
-        url: $(this).attr('action'),
-        method: $(this).attr('method'),
-        data: formData,
-        contentType: false,
-        processData: false,
-        success: function(response) {
-            // Replace main panel content with invoice partial
-            $('.main-panel').html(response);
-        },
-        error: function(xhr) {
-            alert('Error submitting application');
-            console.error(xhr.responseText);
-        }
-    });
-});
- 
-</script>
-
- 
-
-   <script>
-    // Initialize the processing fee script
-   initProcessingFeeScript();
+// Processing Fee Script
+initProcessingFeeScript();
 function initProcessingFeeScript() {
     const processingSelect = document.getElementById('processing_type');
     const nationalitySelect = document.getElementById('nationality');
@@ -381,66 +404,22 @@ function initProcessingFeeScript() {
 
     function updateProcessingInfo() {
         const type = processingSelect.value;
-        if (type === 'normal') {
-            processingInfo.textContent = "Normal takes 21 days.";
-        } else if (type === 'express') {
-            processingInfo.textContent = "Express takes 10 days.";
-        }
+        processingInfo.textContent = type === 'normal' ? "Normal takes 21 days." : "Express takes 10 days.";
     }
 
     function updateFeeInfo() {
         const type = processingSelect.value;
         const nationality = nationalitySelect.value;
-        if (type === 'normal' && nationality === 'local') {
-            feeInfo.textContent = "Locals: MK 75,000 per qualification";
-        } else if (type === 'normal' && nationality === 'foreigner') {
-            feeInfo.textContent = "Foreigners: US$ 150 per qualification";
-        } else if (type === 'express' && nationality === 'local') {
-            feeInfo.textContent = "Locals: MK 112,500 per qualification";
-        } else if (type === 'express' && nationality === 'foreigner') {
-            feeInfo.textContent = "Foreigners: US$ 225 per qualification";
-        }
+        if(type==='normal' && nationality==='local') feeInfo.textContent="Locals: MK 75,000 per qualification";
+        else if(type==='normal' && nationality==='foreigner') feeInfo.textContent="Foreigners: US$ 150 per qualification";
+        else if(type==='express' && nationality==='local') feeInfo.textContent="Locals: MK 112,500 per qualification";
+        else if(type==='express' && nationality==='foreigner') feeInfo.textContent="Foreigners: US$ 225 per qualification";
     }
 
     updateProcessingInfo();
     updateFeeInfo();
-
-    processingSelect.addEventListener('change', () => {
-        updateProcessingInfo();
-        updateFeeInfo();
-    });
-
+    processingSelect.addEventListener('change', ()=>{updateProcessingInfo(); updateFeeInfo();});
     nationalitySelect.addEventListener('change', updateFeeInfo);
 }
-
- </script>
- <script>
-$(document).ready(function () {
-    $('form#application-form').on('submit', function (e) {
-        e.preventDefault(); // Prevent full page reload
-
-        var form = $(this);
-        var url = form.attr('action');
-        var formData = new FormData(this);
-
-        $.ajax({
-            url: url,
-            method: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function () {
-                // Load invoice list into main-panel
-                $('.main-panel').load('{{ route("invoices.index") }}', function () {
-                    alert('Application submitted! Please proceed to payment.');
-                });
-            },
-            error: function (xhr) {
-                alert('Error: ' + xhr.responseText);
-            }
-        });
-    });
-});
 </script>
-
-</body>
+@endsection

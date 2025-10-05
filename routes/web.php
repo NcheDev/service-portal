@@ -52,7 +52,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
     Route::get('/user-dashboard', function () {
-        return view('user-dashboard');
+        return view('user.dashboard');
     });
 });
 
@@ -281,3 +281,15 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/dashboard', function () {
     return view('user.dashboard');
 })->name('user.dashboard'); 
+
+
+Route::middleware(['auth'])->group(function () {
+    // Show form
+    Route::get('/personal-information', [PersonalInformationController::class, 'showForm'])
+        ->name('personal.showForm');
+
+    // Save or update form
+    Route::post('/personal-information', [PersonalInformationController::class, 'storeOrUpdate'])
+        ->name('personal.storeOrUpdate');
+});
+Route::get('/profile', [PersonalInformationController::class, 'show'])->name('user.profile');

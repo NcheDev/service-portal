@@ -9,6 +9,12 @@ use App\Models\PersonalInformation;
 
 class PersonalInformationController extends Controller
 {
+    public function show()
+{
+    $user = auth()->user();
+    return view('users.profile', compact('user'));
+}
+
     public function showForm()
     {
         $user = Auth::user();
@@ -56,12 +62,7 @@ public function storeOrUpdate(Request $request)
 
     $personalInfo->save();
 
-    // ✅ If AJAX -> return JSON
-    if ($request->ajax() || $request->wantsJson()) {
-        return response()->json([
-            'message' => 'Personal information saved successfully!'
-        ]);
-    }
+   
 
     // ✅ If normal form submit -> redirect with success message
     return redirect()

@@ -1,71 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Personal Information Form</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <style>
-        /* ===== Form Container ===== */
-        form#personal-info-form {
-            max-width: 1000px;
-            margin: 30px auto;
-            padding: 30px;
-            background-color: #fff;
-            border-radius: 12px;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+{{-- Personal Information Form Partial --}}
+@extends('layouts.user-dashboard')
+@section('content')
 
-        /* ===== Section Headings ===== */
-        form#personal-info-form h5 {
-            font-weight: 600;
-            color: #52074f;
-            border-bottom: 2px solid #dd8027;
-            padding-bottom: 8px;
-            margin-bottom: 20px;
-        }
-
-        /* ===== Profile Picture ===== */
-        #profile-picture-preview {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid #dd8027;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            cursor: pointer;
-        }
-        #profile-picture-preview:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 12px rgba(82, 7, 79, 0.3);
-        }
-
-        /* ===== Buttons ===== */
-        .custom-btn-purple {
-            background-color: #52074f;
-            color: #fff;
-            border: none;
-            padding: 10px 25px;
-            border-radius: 6px;
-            font-weight: 600;
-            transition: background-color 0.3s ease;
-        }
-        .custom-btn-purple:hover {
-            background-color: #3e063c;
-        }
-    </style>
-</head>
-<body>
 @if(session('success'))
     <div class="alert alert-success">{{ session('success') }}</div>
 @endif
 
 <form id="personal-info-form" action="{{ route('personal.storeOrUpdate') }}" method="POST" enctype="multipart/form-data">
     @csrf
-    @if(isset($personalInfo))
-        @method('PUT')
-    @endif
 
     <!-- Profile Picture -->
     <div class="text-center mb-4">
@@ -135,19 +77,19 @@
         <div class="col-md-6">
             <label for="country" class="form-label">Country</label>
            @php
-    $countries = Symfony\Component\Intl\Countries::getNames();
-@endphp
+                $countries = Symfony\Component\Intl\Countries::getNames();
+           @endphp
 
-<select name="country" class="form-select" required>
-    <option value="">Select Country</option>
-    @foreach($countries as $code => $name)
-        <option value="{{ $name }}" {{ old('country', $personalInfo?->country) === $name ? 'selected' : '' }}>
-            {{ $name }}
-        </option>
-    @endforeach
-</select>
-
+           <select name="country" class="form-select" required>
+               <option value="">Select Country</option>
+               @foreach($countries as $code => $name)
+                   <option value="{{ $name }}" {{ old('country', $personalInfo?->country) === $name ? 'selected' : '' }}>
+                       {{ $name }}
+                   </option>
+               @endforeach
+           </select>
         </div>
+
         <div class="col-md-6">
             <label for="next_of_kin" class="form-label">Next of Kin</label>
             <input type="text" name="next_of_kin" class="form-control" 
@@ -174,16 +116,61 @@
     </div>
 </form>
 
+{{-- Inline Styles --}}
+<style>
+form#personal-info-form {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+form#personal-info-form h5 {
+    font-weight: 600;
+    color: #52074f;
+    border-bottom: 2px solid #dd8027;
+    padding-bottom: 8px;
+    margin-bottom: 20px;
+}
+#profile-picture-preview {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #dd8027;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+#profile-picture-preview:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(82, 7, 79, 0.3);
+}
+.custom-btn-purple {
+    background-color: #52074f;
+    color: #fff;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+.custom-btn-purple:hover {
+    background-color: #3e063c;
+}
+</style>
+
+{{-- Profile Picture Preview Script --}}
 <script>
-    document.getElementById('profile_picture').addEventListener('change', function(event) {
-        const preview = document.getElementById('profile-picture-preview');
-        const file = event.target.files[0];
-        if(file) {
-            const reader = new FileReader();
-            reader.onload = function(e){ preview.src = e.target.result; };
-            reader.readAsDataURL(file);
-        }
-    });
+document.getElementById('profile_picture').addEventListener('change', function(event) {
+    const preview = document.getElementById('profile-picture-preview');
+    const file = event.target.files[0];
+    if(file) {
+        const reader = new FileReader();
+        reader.onload = function(e){ preview.src = e.target.result; };
+        reader.readAsDataURL(file);
+    }
+});
 </script>
-</body>
-</html>
+@endsection

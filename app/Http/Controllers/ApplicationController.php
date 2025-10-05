@@ -28,16 +28,17 @@ class ApplicationController extends Controller
         return view('application');
     }
 
-   public function store(Request $request)
+ public function store(Request $request)
 {
     $request->validate([
         'processing_type' => 'required|in:normal,express',
         'nationality' => 'required|in:local,foreigner',
 
         // Qualifications
+        'qualifications' => 'required|array|min:1',
         'qualifications.*.name' => 'required|string',
         'qualifications.*.program_name' => 'required|string|max:255',
-        'qualifications.*.year' => 'required|date|before_or_equal:today',
+        'qualifications.*.year' => 'required|digits:4',
         'qualifications.*.institution' => 'required|string|max:255',
         'qualifications.*.country' => 'required|string|max:255',
         'qualifications.*.custom_name' => 'nullable|required_if:qualifications.*.name,Other|string|max:255',
@@ -51,6 +52,7 @@ class ApplicationController extends Controller
 
         // Files
         'consent_form' => 'required|mimes:pdf|max:2048',
+        'certificates' => 'required|array|min:1',
         'certificates.*' => 'file|max:5120',
         'academic_records.*' => 'file|max:5120',
         'previous_evaluations.*' => 'file|max:5120',
@@ -65,42 +67,34 @@ class ApplicationController extends Controller
     ]);
 
     // Save Qualifications
-    if ($request->has('qualifications')) {
-        foreach ($request->qualifications as $qualificationData) {
-            Qualification::create([
-                'application_id' => $application->id,
-                'user_id' => Auth::id(),
-                'name' => $qualificationData['name'],
-                'custom_name' => $qualificationData['custom_name'] ?? null,
-                'program_name' => $qualificationData['program_name'] ?? null,
-                'year' => $qualificationData['year'],
-                'institution' => $qualificationData['institution'],
-                'country' => $qualificationData['country'],
-            ]);
-        }
-    }
-
-    // Save Education History
-    if ($request->has('education_histories')) {
-        foreach ($request->education_histories as $history) {
-            $application->educationHistories()->create($history);
-        }
-    }
-
-    // Save Consent Form
-    if ($request->hasFile('consent_form')) {
-        $path = $request->file('consent_form')->store('consent_forms', 'public');
-
-        Document::create([
+    foreach ($request->qualifications as $qualificationData) {
+        Qualification::create([
             'application_id' => $application->id,
-            'type' => 'consent_form',
-            'file_path' => $path,
+            'user_id' => Auth::id(),
+            'name' => $qualificationData['name'],
+            'custom_name' => $qualificationData['custom_name'] ?? null,
+            'program_name' => $qualificationData['program_name'],
+            'year' => $qualificationData['year'],
+            'institution' => $qualificationData['institution'],
+            'country' => $qualificationData['country'],
         ]);
     }
 
+    // Save Education History
+    foreach ($request->education_histories as $history) {
+        $application->educationHistories()->create($history);
+    }
+
+    // Save Consent Form
+    $consentPath = $request->file('consent_form')->store('consent_forms', 'public');
+    Document::create([
+        'application_id' => $application->id,
+        'type' => 'consent_form',
+        'file_path' => $consentPath,
+    ]);
+
     // Save Other Uploaded Documents
-    $documentTypes = ['certificates', 'academic_records', 'previous_evaluations', 'syllabi'];
-    foreach ($documentTypes as $type) {
+    foreach (['certificates', 'academic_records', 'previous_evaluations', 'syllabi'] as $type) {
         if ($request->hasFile($type)) {
             foreach ($request->file($type) as $file) {
                 $path = $file->store('documents', 'public');
@@ -113,14 +107,14 @@ class ApplicationController extends Controller
     }
 
     // Generate Invoice
-    $fee = match ([$request->processing_type, $request->nationality]) {
+    $fee = match([$request->processing_type, $request->nationality]) {
         ['normal', 'local'] => 75000,
         ['normal', 'foreigner'] => 150,
         ['express', 'local'] => 112500,
         ['express', 'foreigner'] => 225,
     };
 
-    $invoice = Invoice::create([
+    Invoice::create([
         'application_id' => $application->id,
         'user_id' => Auth::id(),
         'invoice_number' => 'INV-' . now()->timestamp . '-' . rand(1000, 9999),
@@ -128,10 +122,11 @@ class ApplicationController extends Controller
         'fee' => $fee,
     ]);
 
-    // Redirect to invoices list page with success message
+    // Success message
     return redirect()->route('invoices.index')
-        ->with('success', 'Application submitted! Please proceed to payment.');
+        ->with('success', 'Application submitted successfully! Please proceed to payment.');
 }
+
 
 
     public function uploadConsentForm(Request $request)
