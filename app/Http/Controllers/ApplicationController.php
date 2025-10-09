@@ -280,6 +280,12 @@ public function respondInfo(Request $request, AdditionalInfoRequest $infoRequest
     return back()->with('success', 'Response submitted successfully and admins have been notified.');
 }
 
+public function pendingCount(Application $application)
+{
+    $pending = $application->additionalInfoRequests()->where('status', 'pending')->count();
+    return response()->json(['pending' => $pending]);
+}
+
 
 
 

@@ -60,7 +60,7 @@
                     Admin Feedback
                 </button>
             </li>
-            <li class="nav-item" role="presentation">
+           <li class="nav-item" role="presentation">
     <button class="nav-link position-relative" 
         id="info-tab" 
         data-bs-toggle="tab" 
@@ -72,16 +72,18 @@
         Additional Info Requests
 
         @php 
-            $pendingCount = $application->additionalInfoRequests->where('status', 'pending')->count(); 
+            // Check if there are any pending requests
+            $hasPending = $application->additionalInfoRequests->where('status', 'pending')->count() > 0;
         @endphp
 
-        @if($pendingCount > 0)
-            <span class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-pill">
-                {{ $pendingCount }}
-            </span>
+        @if($hasPending)
+            <!-- Red dot for pending notifications -->
+            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger rounded-circle"></span>
         @endif
     </button>
 </li>
+
+
 
         </ul>
 
@@ -174,63 +176,144 @@
             {{-- Additional Info Requests --}}
            <div class="tab-pane fade" id="info" role="tabpanel">
   <div class="card mb-3 shadow-sm">
-    <div class="card-header text-white" style="background-color:#dd8027;">
-      Additional Information Requests
-    </div>
+  <div class="card-header text-white fw-bold" style="background-color:#dd8027;">
+    Additional Information Requests
+  </div>
 
-    <div class="card-body p-3" style="background:#f8f9fa;">
-      @forelse($application->additionalInfoRequests as $req)
-        <div class="chat-thread mb-4 p-3 rounded-4 shadow-sm bg-white">
-          {{-- Admin message --}}
-          <div class="d-flex mb-2">
-            <div class="chat-bubble admin bg-light p-3 rounded-4 me-auto" style="max-width:75%;">
-              <div class="small text-muted fw-bold mb-1">Admin</div>
-              <p class="mb-2">{{ $req->message }}</p>
-              <span class="small text-muted">{{ $req->created_at->format('M d, H:i') }}</span>
-            </div>
+  {{-- Scrollable chat area --}}
+  <div class="card-body p-3" style="background:#f8f9fa; max-height:400px; overflow-y:auto;">
+    @forelse($application->additionalInfoRequests as $req)
+      <div class="chat-thread mb-4 p-3 rounded-4 shadow-sm bg-white">
+
+        {{-- Admin message --}}
+        <div class="d-flex mb-3 align-items-start">
+          {{-- Admin Avatar --}}
+          <img src="{{ asset('images/avatar.png') }}" alt="Admin" class="chat-avatar me-2">
+
+          <div class="chat-bubble admin p-2 px-3 rounded-4"
+               style="max-width:80%; background:#f2f2f2; border-left:4px solid #dd8027; display:flex; flex-direction:column; justify-content:flex-start;">
+            <div class="small text-muted fw-bold mb-1" style="color:#52074f;">Admin</div>
+            <p class="mb-2" style=" word-wrap:break-word; margin-top:0;">
+              {{ $req->message }}
+            </p>
+            <span class="small text-muted">{{ $req->created_at->format('M d, H:i') }}</span>
           </div>
+        </div>
 
-          {{-- User response (if available) --}}
-          @if($req->status != 'pending')
-            <div class="d-flex justify-content-end mb-2">
-              <div class="chat-bubble user p-3 rounded-4 ms-auto" style="background-color:#dcf8c6; max-width:75%;">
-                <div class="small text-muted fw-bold mb-1">You</div>
-                <p class="mb-2">{{ $req->response ?? 'No response provided.' }}</p>
-                @if($req->response_file)
-                  <a href="{{ asset('storage/'.$req->response_file) }}" target="_blank" class="btn btn-outline-primary btn-sm">
+        {{-- User response --}}
+        @if($req->status != 'pending')
+          <div class="d-flex justify-content-end align-items-start mb-3">
+            <div class="chat-bubble user p-2 px-3 rounded-4 text-dark"
+                 style="background-color:#f9ece1; max-width:50%; border-right:4px solid #52074f; display:flex; flex-direction:column; justify-content:flex-start;">
+              <div class="small text-muted fw-bold mb-1" style="color:#52074f;">You</div>
+
+              {{-- User message --}}
+              <p class="mb-2" style=" word-wrap:break-word; margin-top:0;">
+                {{ $req->response ?? 'No response provided.' }}
+              </p>
+
+              {{-- User file --}}
+              @if(!empty($req->response_file_path))
+                <div class="mt-1">
+                  <a href="{{ asset('storage/'.$req->response_file_path) }}" 
+                     target="_blank"
+                     class="btn btn-sm btn-outline-primary"
+                     style="border-color:#52074f; color:#52074f;">
                     📎 View Uploaded File
                   </a>
-                @endif
-                <span class="small text-muted d-block mt-1">{{ $req->updated_at->format('M d, H:i') }}</span>
-              </div>
-            </div>
-          @else
-            {{-- Response form when pending --}}
-            <div class="d-flex justify-content-end mt-2">
-              <form action="{{ route('applications.respond-info', $req->id) }}" method="POST" enctype="multipart/form-data"
-                    class="p-3 bg-light rounded-4 shadow-sm" style="max-width:75%;">
-                @csrf
-                @method('PUT')
+                </div>
+              @endif
 
-                <textarea name="response" class="form-control mb-2" rows="2" placeholder="Type your response..."></textarea>
-                <input type="file" name="response_file" class="form-control form-control-sm mb-2">
-                <button type="submit" class="btn btn-sm text-white" style="background-color:#52074f;">Send</button>
-              </form>
+              <span class="small text-muted d-block mt-1">
+                {{ $req->updated_at->format('M d, H:i') }}
+              </span>
             </div>
-          @endif
-        </div>
-      @empty
-        <p class="text-muted text-center">No additional information requested by admin.</p>
-      @endforelse
-    </div>
+
+            {{-- User avatar --}}
+            <img 
+              src="{{ Auth::user()->personalInfo?->profile_picture 
+                        ? Storage::url(Auth::user()->personalInfo->profile_picture) 
+                        : 'https://via.placeholder.com/40' }}" 
+              alt="User" 
+              class="chat-avatar ms-2">
+          </div>
+        @else
+          {{-- Response form --}}
+          <div class="d-flex justify-content-end mt-2">
+            <form action="{{ route('applications.respond-info', $req->id) }}" 
+                  method="POST" enctype="multipart/form-data"
+                  class="p-3 bg-light rounded-4 shadow-sm border"
+                  style="max-width:80%; border-color:#dd8027;">
+              @csrf
+              @method('PUT')
+
+              <textarea name="response" class="form-control mb-2" rows="2" placeholder="Type your response..."></textarea>
+              <input type="file" name="response_file" class="form-control form-control-sm mb-2">
+              <button type="submit" class="btn btn-sm text-white" style="background-color:#52074f;">Send</button>
+            </form>
+
+            <img 
+              src="{{ Auth::user()->personalInfo?->profile_picture 
+                        ? Storage::url(Auth::user()->personalInfo->profile_picture) 
+                        : 'https://via.placeholder.com/40' }}" 
+              alt="User" 
+              class="chat-avatar ms-2">
+          </div>
+        @endif
+      </div>
+    @empty
+      <p class="text-muted text-center">No additional information requested by admin.</p>
+    @endforelse
   </div>
 </div>
+
 
         </div>
     </div>
 </div>
 
 <style>
+    /* Avatar styling */
+.chat-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #52074f;
+}
+
+/* Chat bubble */
+.chat-bubble {
+  line-height: 1.4;
+  font-size: 0.95rem;
+  padding: 8px 14px !important;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* ensures text starts from top */
+  word-break: break-word;
+}
+
+/* Chat paragraph spacing */
+.chat-bubble p {
+  margin-bottom: 6px !important;
+  margin-top: 0 !important; /* remove middle spacing */
+}
+
+/* Scrollbar */
+.card-body::-webkit-scrollbar {
+  width: 8px;
+}
+.card-body::-webkit-scrollbar-thumb {
+  background-color: #dd8027;
+  border-radius: 4px;
+}
+
+/* Hover effect */
+.chat-bubble:hover {
+  box-shadow: 0 2px 8px rgba(82, 7, 79, 0.15);
+}
+
 .main-card {
     max-width: 1100px;
     margin: 30px auto;

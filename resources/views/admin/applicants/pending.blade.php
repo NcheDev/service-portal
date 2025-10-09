@@ -1,123 +1,143 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>All Applicants</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
+@extends('admin-dashboard')
 
-<div class="container mt-5">
-    <h2 class="mb-4 text-success">Pending Applications</h2>
+@section('content')
+<div class="container-fluid py-4">
+  <div class="card shadow-sm border-0">
+    <div class="card-header d-flex justify-content-between align-items-center" 
+         style="background-color:#52074f; color:white;">
+      <h4 class="mb-0">Pending Applications</h4>
+      <span class="badge rounded-pill" style="background-color:#dd8027;">
+        {{ $users->count() }} Applicants
+      </span>
+    </div>
 
-    @if($users->count() > 0)
-        <table class="table table-bordered table-striped">
-            <thead class="table-dark">
-                <tr>
-                    <th>#</th>
-                    <th>Full Name</th>
-                    <th>Email</th>
-                    <th>Status</th>
-                    <th>View</th>
-                </tr>
+    <div class="card-body bg-light">
+      @if($users->count() > 0)
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+            <thead style="background-color:#52074f; color:white;">
+              <tr>
+                <th>#</th>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
             </thead>
             <tbody>
-                @foreach($users as $user)
-                    @if($user->applications->count())
-                        @foreach($user->applications as $app)
-                            <tr>
-                                <td>{{ $loop->parent->iteration }}.{{ $loop->iteration }}</td>
-                                <td>{{ $user->name }}</td>
-                                <td>{{ $user->email }}</td>
-                                <td>
-                                    <span class="badge bg-{{ 
-                                        $app->status === 'validated' ? 'success' : 
-                                        ($app->status === 'pending' ? 'warning text-dark' : 
-                                        ($app->status === 'invalid' ? 'danger' : 'secondary')) 
-                                    }}">
-                                        {{ ucfirst($app->status) }}
-                                    </span>
-                                </td>
-                                <td>
-                                   <a href="{{ route('admin.applicants.viewApplication', [$user->id, $app->id]) }}" 
-   class="btn btn-sm btn-primary btn-view-application" 
-   data-url="{{ route('admin.applicants.viewApplication', [$user->id, $app->id]) }}">
-   View Application
-</a>
-
-                                </td>
-                            </tr>
-                        @endforeach
-                    @else
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ $user->name }}</td>
-                            <td>{{ $user->email }}</td>
-                            <td><span class="badge bg-secondary">No Applications</span></td>
-                            <td><a href="#" class="btn btn-sm btn-secondary disabled">N/A</a></td>
-                        </tr>
-                    @endif
-                @endforeach
+              @foreach($users as $user)
+                @if($user->applications->count())
+                  @foreach($user->applications as $app)
+                    <tr>
+                      <td>{{ $loop->parent->iteration }}.{{ $loop->iteration }}</td>
+                      <td class="fw-semibold">{{ $user->name }}</td>
+                      <td>{{ $user->email }}</td>
+                      <td>
+                        <span class="badge 
+                          @if($app->status === 'validated') bg-success
+                          @elseif($app->status === 'pending') bg-warning text-dark
+                          @elseif($app->status === 'invalid') bg-danger
+                          @else bg-secondary @endif">
+                          {{ ucfirst($app->status) }}
+                        </span>
+                      </td>
+                      <td>
+                        <a href="{{ route('admin.applicants.viewApplication', [$user->id, $app->id]) }}"
+                           class="btn btn-sm text-white"
+                           style="background-color:#dd8027; border:none;"
+                           data-url="{{ route('admin.applicants.viewApplication', [$user->id, $app->id]) }}">
+                           <i class="mdi mdi-eye me-1"></i> View
+                        </a>
+                      </td>
+                    </tr>
+                  @endforeach
+                @else
+                  <tr>
+                    <td>{{ $loop->iteration }}</td>
+                    <td>{{ $user->name }}</td>
+                    <td>{{ $user->email }}</td>
+                    <td><span class="badge bg-secondary">No Applications</span></td>
+                    <td><button class="btn btn-sm btn-secondary" disabled>N/A</button></td>
+                  </tr>
+                @endif
+              @endforeach
             </tbody>
-        </table>
+          </table>
+        </div>
 
         <!-- Pagination -->
-        <div class="d-flex justify-content-center">
-            {{ $users->links() }}
+        <div class="d-flex justify-content-center mt-3">
+          {{ $users->links() }}
         </div>
-    @else
-        <div class="alert alert-info">No applicants found.</div>
-    @endif
+      @else
+        <div class="alert alert-info text-center mb-0">No applicants found.</div>
+      @endif
+    </div>
+  </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Internal Style for NCHE Theme -->
+<style>
+.card {
+  border-radius: 10px;
+  overflow: hidden;
+}
 
-<script>
-$(document).ready(function() {
-    $('.btn-view-user').on('click', function(e) {
-        e.preventDefault();
+.table th {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
 
-        var userId = $(this).data('user-id');
-        var url = '/admin/users/' + userId;
+.table-hover tbody tr:hover {
+  background-color: rgba(221,128,39,0.08);
+  transition: background 0.2s ease;
+}
 
-        $.ajax({
-            url: url,
-            method: 'GET',
-            success: function(response) {
-                $('.main-panel').html(response);
-            },
-            error: function(xhr) {
-                alert('Failed to load user details.');
-                console.error(xhr);
-            }
-        });
-    });
-});
-</script>
+.btn:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
+  transition: all 0.2s ease;
+}
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-$(document).ready(function() {
-    $('.btn-view-application').on('click', function(e) {
-        e.preventDefault();
+/* Pagination Styling */
+.pagination .page-link {
+  color: #52074f;
+}
+.pagination .page-item.active .page-link {
+  background-color: #dd8027;
+  border-color: #dd8027;
+}
+.pagination .page-link:hover {
+  background-color: #52074f;
+  color: #fff;
+}
 
-        var url = $(this).data('url');
+/* Responsive */
+@media (max-width: 768px) {
+  .table th, .table td {
+    font-size: 0.85rem;
+  }
+  .btn {
+    font-size: 0.8rem;
+  }
+}
 
-        $.ajax({
-            url: url,
-            method: 'GET',
-            success: function(response) {
-                $('.main-panel').html(response);
-            },
-            error: function(xhr) {
-                alert('Failed to load application details.');
-                console.error(xhr);
-            }
-        });
-    });
-});
-</script>
-
-</body>
-</html>
+@media (max-width: 576px) {
+    h2 { font-size: 0.9rem; }
+    .badge { font-size: 0.55rem; }
+    .table th, .table td {
+        font-size: 0.55rem;
+        padding: 0.2rem 0.25rem;
+    }
+    .btn-sm {
+        font-size: 0.45rem;
+        padding: 0.2rem 0.35rem;
+    }
+    .table-responsive-sm {
+        margin-bottom: 1rem;
+    }
+  }
+</style>
+ 
+@endsection

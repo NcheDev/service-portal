@@ -15,7 +15,7 @@
     .card {
         border: none;
         border-radius: 15px;
-        overflow: hidden;
+        overflow: hidden; 
     }
 
     .card-header {

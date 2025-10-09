@@ -1,3 +1,5 @@
+@extends('admin-dashboard')
+@section('content')
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -200,3 +202,4 @@
   <!-- Your AJAX script here -->
 </body>
 </html>
+@endsection

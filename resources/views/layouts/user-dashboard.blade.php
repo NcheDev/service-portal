@@ -190,27 +190,35 @@
     });
   </script>
 
-  <script>
+ <script>
 document.addEventListener('DOMContentLoaded', function () {
-  const token = document.querySelector('meta[name="csrf-token"]')?.content;
+    const token = document.querySelector('meta[name="csrf-token"]')?.content;
 
-  // Handle notification clicks via AJAX
-  document.querySelectorAll('.dropdown-item[data-id]').forEach(item => {
-    item.addEventListener('click', function (e) {
-      e.preventDefault();
-      const noteId = this.getAttribute('data-id');
-      const url = this.getAttribute('data-url') || '/';
+    // Select all notification items
+    document.querySelectorAll('.dropdown-item[data-id]').forEach(item => {
+        item.addEventListener('click', function (e) {
+            e.preventDefault();
+            const noteId = this.getAttribute('data-id');
+            const url = this.getAttribute('data-url') || '/';
 
-      fetch(`/notifications/read/${noteId}`, {
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-      })
-        .then(() => {
-          // Redirect smoothly
-          window.location.href = url;
-        })
-        .catch(err => console.error('Error marking notification as read:', err));
+            fetch(`/notifications/read/${noteId}`, {
+                headers: { 
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': token
+                },
+                method: 'GET'
+            })
+            .then(res => res.json())
+            .then(() => {
+                // Optionally hide the notification or decrement badge
+                this.remove(); // remove clicked notification from dropdown
+
+                // Redirect to notification link
+                window.location.href = url;
+            })
+            .catch(err => console.error('Error marking notification as read:', err));
+        });
     });
-  });
 });
 </script>
 

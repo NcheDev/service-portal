@@ -293,3 +293,15 @@ Route::middleware(['auth'])->group(function () {
         ->name('personal.storeOrUpdate');
 });
 Route::get('/profile', [PersonalInformationController::class, 'show'])->name('user.profile');
+
+Route::get('/applications/{application}/pending-count', [ApplicationController::class, 'pendingCount'])
+    ->name('applications.pendingCount');
+
+    // routes/web.php
+Route::get('/notifications/read/{id}', function ($id) {
+    $notification = auth()->user()->unreadNotifications()->find($id);
+    if ($notification) {
+        $notification->markAsRead();
+    }
+    return response()->json(['status' => 'success']);
+});
