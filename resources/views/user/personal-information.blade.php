@@ -1,10 +1,29 @@
 {{-- Personal Information Form Partial --}}
 @extends('layouts.user-dashboard')
+
 @section('content')
 
+{{-- ✅ SUCCESS MESSAGE --}}
 @if(session('success'))
-    <div class="alert alert-success">{{ session('success') }}</div>
+    <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
 @endif
+
+{{-- ❌ VALIDATION ERRORS --}}
+@if ($errors->any())
+    <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+        <strong>There were some problems with your input:</strong>
+        <ul class="mb-0 mt-2">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+@endif
+ 
 
 <form id="personal-info-form" action="{{ route('personal.storeOrUpdate') }}" method="POST" enctype="multipart/form-data">
     @csrf
@@ -19,19 +38,45 @@
         <input type="file" id="profile_picture" name="profile_picture" class="d-none" accept="image/*">
     </div>
 
-    <h5>Personal Information</h5>
+    <h5>Applicant Details</h5>
+    
 
     <div class="row g-3">
-        <div class="col-md-6">
-            <label for="first_name" class="form-label">First Name</label>
-            <input type="text" name="first_name" class="form-control" 
-                   value="{{ old('first_name', $personalInfo?->first_name) }}" required>
-        </div>
-        <div class="col-md-6">
-            <label for="surname" class="form-label">Surname</label>
-            <input type="text" name="surname" class="form-control" 
-                   value="{{ old('surname', $personalInfo?->surname) }}" required>
-        </div>
+       
+<div class="row g-3 mb-3"><div class="col-md-6">
+    <label for="application_type" class="form-label">Application Type</label>
+    <select name="application_type" id="application_type" class="form-select" required>
+        <option value="">Select Type</option>
+        <option value="Individual" {{ old('application_type', $personalInfo?->application_type) === 'Individual' ? 'selected' : '' }}>Individual</option>
+        <option value="Institution" {{ old('application_type', $personalInfo?->application_type) === 'Institution' ? 'selected' : '' }}>Institution</option>
+    </select>
+</div>
+<div class="col-md-6" id="institution-name-field" 
+     style="{{ old('application_type', $personalInfo?->application_type) === 'Institution' ? 'display:block;' : 'display:none;' }}">
+    <label for="institution_name" class="form-label">Institution Name</label>
+    <input type="text" name="institution_name" id="institution_name" class="form-control"
+           value="{{ old('institution_name', $personalInfo?->institution_name) }}"
+           placeholder="e.g. University of Malawi"
+           title="Enter the full name of your institution, e.g. University of Malawi">
+</div>
+
+       <div class="col-md-6">
+    <label for="first_name" class="form-label">First Name</label>
+    <input type="text" name="first_name" class="form-control" 
+           value="{{ old('first_name', $personalInfo?->first_name) }}" 
+           placeholder="e.g. John"
+           title="Enter your first name" 
+           required>
+</div>
+
+<div class="col-md-6">
+    <label for="surname" class="form-label">Surname</label>
+    <input type="text" name="surname" class="form-control" 
+           value="{{ old('surname', $personalInfo?->surname) }}" 
+           placeholder="e.g. Banda"
+           title="Enter your surname" 
+           required>
+</div>
 
         <div class="col-md-6">
             <label for="title" class="form-label">Title</label>
@@ -43,10 +88,28 @@
                 <option value="Dr" {{ old('title', $personalInfo?->title) === 'Dr' ? 'selected' : '' }}>Dr</option>
             </select>
         </div>
+<div class="col-md-6">
+    <label for="email" class="form-label">Email</label>
+    <input type="email" name="email" class="form-control" 
+           value="{{ old('email', $personalInfo?->email) }}"
+           placeholder="e.g. user@example.com"
+           title="Enter a valid email address, e.g. user@example.com">
+</div>
+
+        
+<div class="col-md-6">
+    <label for="gender" class="form-label">Gender</label>
+    <select name="gender" id="gender" class="form-select" required>
+        <option value="">Select Gender</option>
+        <option value="Male" {{ old('gender', $personalInfo?->gender) == 'Male' ? 'selected' : '' }}>Male</option>
+        <option value="Female" {{ old('gender', $personalInfo?->gender) == 'Female' ? 'selected' : '' }}>Female</option>
+     </select>
+</div>
+
         <div class="col-md-6">
-            <label for="email" class="form-label">Email</label>
-            <input type="email" name="email" class="form-control" 
-                   value="{{ old('email', $personalInfo?->email) }}">
+            <label for="date_of_birth" class="form-label">Date of Birth</label>
+            <input type="date" name="date_of_birth" class="form-control" 
+                   value="{{ old('date_of_birth', $personalInfo?->date_of_birth) }}">
         </div>
 
         <div class="col-md-6">
@@ -54,32 +117,60 @@
             <input type="text" name="contact_address" class="form-control" 
                    value="{{ old('contact_address', $personalInfo?->contact_address) }}">
         </div>
-        <div class="col-md-6">
-            <label for="physical_address" class="form-label">Physical Address</label>
-            <input type="text" name="physical_address" class="form-control" 
-                   value="{{ old('physical_address', $personalInfo?->physical_address) }}">
-        </div>
 
         <div class="col-md-6">
-            <label for="gender" class="form-label">Gender</label>
-            <select name="gender" class="form-select" required>
-                <option value="">Select Gender</option>
-                <option value="Male" {{ old('gender', $personalInfo?->gender) === 'Male' ? 'selected' : '' }}>Male</option>
-                <option value="Female" {{ old('gender', $personalInfo?->gender) === 'Female' ? 'selected' : '' }}>Female</option>
+            <label for="physical_address" class="form-label">Postal Address</label>
+            <input type="text" name="physical_address" class="form-control" 
+                   value="{{ old('physical_address', $personalInfo?->physical_address) }}">
+        </div> 
+        
+
+
+<div class="row g-3">
+ 
+
+    {{-- Primary Phone --}}
+    <div class="col-md-6">
+        <label for="primary_phone" class="form-label">Primary Phone</label>
+        <div class="input-group">
+            <select name="primary_country_code" class="form-select" required>
+                @foreach(config('country_codes') as $code => $country)
+                    <option value="{{ $code }}" {{ old('primary_country_code', $personalInfo?->primary_country_code) == $code ? 'selected' : '' }}>
+                        {{ $code }} {{ $country }}
+                    </option>
+                @endforeach
             </select>
+            <input type="tel" name="primary_phone" class="form-control" 
+                   value="{{ old('primary_phone', $personalInfo?->primary_phone) }}" 
+                   placeholder="Enter phone number" required>
         </div>
-        <div class="col-md-6">
-            <label for="date_of_birth" class="form-label">Date of Birth</label>
-            <input type="date" name="date_of_birth" class="form-control" 
-                   value="{{ $personalInfo?->date_of_birth ?? now()->format('Y-m-d') }}" readonly>
+    </div>
+
+    {{-- Secondary Phone --}}
+    <div class="col-md-6">
+        <label for="secondary_phone" class="form-label">Secondary Phone</label>
+        <div class="input-group">
+            <select name="secondary_country_code" class="form-select">
+                @foreach(config('country_codes') as $code => $country)
+                    <option value="{{ $code }}" {{ old('secondary_country_code', $personalInfo?->secondary_country_code) == $code ? 'selected' : '' }}>
+                        {{ $code }} {{ $country }}
+                    </option>
+                @endforeach
+            </select>
+            <input type="tel" name="secondary_phone" class="form-control" 
+                   value="{{ old('secondary_phone', $personalInfo?->secondary_phone) }}" 
+                   placeholder="Enter phone number">
         </div>
+    </div>
+
+</div>
+
 
         <div class="col-md-6">
             <label for="country" class="form-label">Country</label>
            @php
                 $countries = Symfony\Component\Intl\Countries::getNames();
            @endphp
-
            <select name="country" class="form-select" required>
                <option value="">Select Country</option>
                @foreach($countries as $code => $name)
@@ -89,22 +180,15 @@
                @endforeach
            </select>
         </div>
+ 
 
-        <div class="col-md-6">
-            <label for="next_of_kin" class="form-label">Next of Kin</label>
-            <input type="text" name="next_of_kin" class="form-control" 
-                   value="{{ old('next_of_kin', $personalInfo?->next_of_kin) }}">
-        </div>
-
-        <div class="col-md-6">
-            <label for="kin_contact" class="form-label">Next of Kin Phone</label>
-            <input type="text" name="kin_contact" class="form-control" 
-                   value="{{ old('kin_contact', $personalInfo?->kin_contact) }}">
-        </div>
+         
         <div class="col-md-6">
             <label for="national_id_number" class="form-label">National ID Number</label>
-            <input type="text" name="national_id_number" class="form-control" 
-                   value="{{ old('national_id_number', $personalInfo?->national_id_number) }}">
+<input type="text" name="national_id_number" class="form-control" 
+       value="{{ old('national_id_number', $personalInfo?->national_id_number) }}" 
+       placeholder="Enter National ID Number" required>
+                   
         </div>
     </div>
 
@@ -161,6 +245,10 @@ form#personal-info-form h5 {
 }
 </style>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"></script>
+
 {{-- Profile Picture Preview Script --}}
 <script>
 document.getElementById('profile_picture').addEventListener('change', function(event) {
@@ -172,5 +260,24 @@ document.getElementById('profile_picture').addEventListener('change', function(e
         reader.readAsDataURL(file);
     }
 });
+</script><script>
+document.addEventListener('DOMContentLoaded', function () {
+    const typeSelect = document.getElementById('application_type');
+    const institutionField = document.getElementById('institution-name-field');
+
+    function toggleInstitutionField() {
+        if (typeSelect.value === 'Institution') {
+            institutionField.style.display = 'block';
+        } else {
+            institutionField.style.display = 'none';
+            document.getElementById('institution_name').value = '';
+        }
+    }
+
+    // Listen for changes dynamically
+    typeSelect.addEventListener('change', toggleInstitutionField);
+});
 </script>
+ 
+
 @endsection

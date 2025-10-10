@@ -305,3 +305,8 @@ Route::get('/notifications/read/{id}', function ($id) {
     }
     return response()->json(['status' => 'success']);
 });
+
+ 
+Route::post('/personal-information', [PersonalInformationController::class, 'storeOrUpdate'])
+    ->name('personal-information.storeOrUpdate');
+

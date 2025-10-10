@@ -33,16 +33,19 @@ public function storeOrUpdate(Request $request)
         'surname'            => 'required|string|max:255',
         'email'              => 'required|email|max:255',
         'physical_address'   => 'required|string|max:255',
-        'contact_address'    => 'required|string|max:255',
+        'contact_address'    =>  'required|string|max:255',
         'gender'             => 'required|string|in:Male,Female',
         'profile_picture'    => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         'cover_photo'        => 'nullable|image|mimes:jpeg,png,jpg|max:4096',
         'country'            => 'nullable|string|max:100',
         'date_of_birth'      => 'nullable|date',
-        'next_of_kin'        => 'nullable|string|max:255',
-        'title'              => 'nullable|string|max:100',
+         'title'              => 'nullable|string|max:100',
         'national_id_number' => 'nullable|string|max:100',
-        'kin_contact'        => 'nullable|string|max:15',
+          'application_type' => 'required|in:Individual,Institution',
+        'institution_name'   => 'nullable|required_if:application_type,Institution|string|max:255',
+        'primary_phone'   => 'required|string|regex:/^\+?[0-9]{8,15}$/',
+        'secondary_phone' => 'nullable|string|regex:/^\+?[0-9]{8,15}$/',
+        'primary_country_code' => 'required|string',
     ]);
 
     $personalInfo = PersonalInformation::updateOrCreate(

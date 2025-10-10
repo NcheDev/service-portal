@@ -1,4 +1,3 @@
-{{-- resources/views/partials/dashboard-hero.blade.php --}}
 @extends('layouts.user-dashboard')
 @section('content')
 <div class="container py-5">
@@ -9,7 +8,51 @@
         <p class="mb-0">Apply, submit information, and track your certificate verification status in a few easy steps.</p>
     </div>
 
-    <!-- How to Use Section -->
+    <!-- Applications Overview Cards -->
+    <div class="mb-5">
+        <h4 class="mb-4 text-center fw-bold">My Applications Overview</h4>
+        <div class="row g-4 text-center">
+
+            <!-- All Applications -->
+            <div class="col-md-3 mx-auto">
+                <div class="card stats-card shadow-sm p-4 h-100">
+                    <i class="mdi mdi-file-document-outline text-primary mb-3"></i>
+                    <h5 class="fw-bold">All Applications</h5>
+                    <p class="fs-4 mb-0">{{ $allApplications ?? 0 }}</p>
+                </div>
+            </div>
+
+            <!-- Approved Applications -->
+            <div class="col-md-3 mx-auto">
+                <div class="card stats-card shadow-sm p-4 h-100">
+                    <i class="mdi mdi-checkbox-marked-circle-outline text-success mb-3"></i>
+                    <h5 class="fw-bold">Approved</h5>
+                    <p class="fs-4 mb-0">{{ $approvedApplications ?? 0 }}</p>
+                </div>
+            </div>
+
+            <!-- Pending Applications -->
+            <div class="col-md-3 mx-auto">
+                <div class="card stats-card shadow-sm p-4 h-100">
+                    <i class="mdi mdi-timer-sand text-warning mb-3"></i>
+                    <h5 class="fw-bold">Pending</h5>
+                    <p class="fs-4 mb-0">{{ $pendingApplications ?? 0 }}</p>
+                </div>
+            </div>
+
+            <!-- Rejected / Unrecognized Applications -->
+            <div class="col-md-3 mx-auto">
+                <div class="card stats-card shadow-sm p-4 h-100">
+                    <i class="mdi mdi-close-circle-outline text-danger mb-3"></i>
+                    <h5 class="fw-bold">Rejected / Unrecognized</h5>
+                    <p class="fs-4 mb-0">{{ $rejectedApplications ?? 0 }}</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- How to Use Section (unchanged) -->
     <div class="mb-5">
         <h4 class="mb-4 text-center fw-bold">How to Use the System</h4>
         <div class="row g-4">
@@ -35,17 +78,16 @@
                 </div>
             </div>
         </div><br>
-            <!-- Reminder Section -->
-    <div class="card reminder-card shadow-sm p-3 text-center">
-        <p class="mb-0">💡 <strong>Reminder:</strong> After processing, you will receive an email with your results. Always log in to the portal to view the latest updates.</p>
+        
+        <!-- Reminder Section -->
+        <div class="card reminder-card shadow-sm p-3 text-center">
+            <p class="mb-0">💡 <strong>Reminder:</strong> After processing, you will receive an email with your results. Always log in to the portal to view the latest updates.</p>
+        </div>
     </div>
-    </div>
-
-
 
 </div>
 
-{{-- Styles for the partial --}}
+{{-- Styles --}}
 <style>
 .hero-card {
     background: linear-gradient(135deg, #52074f, #dd8027);
@@ -53,31 +95,33 @@
     border-radius: 1rem;
     overflow: hidden;
 }
-.hero-card h3 {
-    font-size: 2.2rem;
-}
-.hero-card p {
-    font-size: 1.1rem;
-}
+.hero-card h3 { font-size: 2.2rem; }
+.hero-card p { font-size: 1.1rem; }
 
-.step-card {
+/* Application Stats Cards */
+.stats-card {
+    background-color: #fff;
     border-radius: 1rem;
     transition: transform 0.3s, box-shadow 0.3s;
+    padding: 2rem 1rem;
 }
-.step-card:hover {
+.stats-card:hover {
     transform: translateY(-8px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.15);
 }
-.step-card i {
-    font-size: 2rem;
-}
+.stats-card i { font-size: 2rem; }
 
+/* Step Cards */
+.step-card { border-radius: 1rem; transition: transform 0.3s, box-shadow 0.3s; }
+.step-card:hover { transform: translateY(-8px); box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+.step-card i { font-size: 2rem; }
+
+/* Reminder Card */
 .reminder-card {
     background: #fff3cd;
     border-left: 5px solid #ffc107;
     font-weight: 500;
 }
 </style>
- 
 
 @endsection
