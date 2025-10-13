@@ -96,7 +96,7 @@ public function login(Request $request)
     $user = Auth::user();
 
     if ($user->hasRole('admin')) {
-        return redirect('/admin-dashboard');
+        return redirect('/admin.dashboard');
     } else {
         return redirect('/user-dashboard');
     }

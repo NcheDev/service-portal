@@ -235,8 +235,10 @@
             </div>
 
             <div class="card-body">
-                <form id="recognitionForm" enctype="multipart/form-data">
-                    @csrf
+               <form id="recognitionForm" method="POST" action="{{ route('admin.applicants.validateUser', $application->id) }}"
+enctype="multipart/form-data">
+    @csrf
+
 
                     <div class="mb-3">
                         <label class="form-label">Upload Validation Report (PDF)</label>
@@ -450,7 +452,7 @@ function submitRecognition(action) {
     var formData = new FormData(form);
     formData.append('action', action);
 
-    // Show spinner before AJAX
+    // Show spinner before submitting
     $('#loadingSpinner').show();
 
     $.ajax({
@@ -460,24 +462,22 @@ function submitRecognition(action) {
         processData: false,
         contentType: false,
         success: function(response) {
+            // Hide spinner
             $('#loadingSpinner').hide();
-            alert('Action completed successfully!');
 
-            // Reload the application details view into main panel
-            $.get("{{ route('admin.applicants.viewApplication', [$user->id, $application->id]) }}", function(data) {
-                $('.main-panel').html(data);
-            });
+            // ✅ Show success alert, then reload the page fully
+            alert('Action completed successfully!');
+            window.location.reload();
         },
         error: function(xhr) {
             $('#loadingSpinner').hide();
-            alert('Something went wrong. Please Fill the comment section.');
+            alert('Something went wrong. Please fill the comment section.');
             console.error(xhr);
         }
     });
 }
 
 function submitRevert() {
-    // Show spinner before AJAX
     $('#loadingSpinner').show();
 
     $.ajax({
@@ -487,10 +487,7 @@ function submitRevert() {
         success: function(response) {
             $('#loadingSpinner').hide();
             alert('Status reverted to pending!');
-
-            $.get("{{ route('admin.applicants.viewApplication', [$user->id, $application->id]) }}", function(data) {
-                $('.main-panel').html(data);
-            });
+            window.location.reload();
         },
         error: function(xhr) {
             $('#loadingSpinner').hide();
@@ -500,6 +497,7 @@ function submitRevert() {
     });
 }
 </script>
+
  
 <style>
 

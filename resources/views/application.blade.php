@@ -7,15 +7,7 @@
         {{ session('success') }}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-@endif
-{{-- ✅ SUCCESS MESSAGE --}}
-@if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
-        <i class="bi bi-check-circle me-2"></i>
-        {{ session('success') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-@endif
+@endif 
 
 {{-- ❌ VALIDATION ERRORS --}}
 @if ($errors->any())
@@ -174,8 +166,7 @@
             <option value="Merit" {{ $qual['merit'] == 'Merit' ? 'selected' : '' }}>Merit</option>
             <option value="Credit" {{ $qual['merit'] == 'Credit' ? 'selected' : '' }}>Credit</option>
             <option value="Pass" {{ $qual['merit'] == 'Pass' ? 'selected' : '' }}>Pass</option>
-            <option value="Other" {{ $qual['merit'] == 'Other' ? 'selected' : '' }}>Other</option>
-        </select>
+         </select>
         @error("qualifications.$i.merit") 
             <div class="text-danger small">{{ $message }}</div> 
         @enderror
@@ -203,13 +194,13 @@
         </div>
         <div class="row g-4 mb-4">
             <div class="col-md-6">
-                <label class="form-label fw-bold">Upload Qualification Certificates</label>
+                <label class="form-label fw-bold">Upload Qualification Certificate</label>
                 <input type="file" name="certificates[]" class="form-control" multiple required>
                 @error('certificates') <div class="text-danger small">{{ $message }}</div> @enderror
             </div>
             <div class="col-md-6">
-                <label class="form-label fw-bold">Upload Academic Records</label>
-                <input type="file" name="academic_records[]" class="form-control" multiple required>
+                <label class="form-label fw-bold">Upload Academic Records <i>(optional)</i></label>
+                <input type="file" name="academic_records[]" class="form-control" >
                 @error('academic_records') <div class="text-danger small">{{ $message }}</div> @enderror
             </div>
         </div>

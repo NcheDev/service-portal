@@ -1,4 +1,4 @@
- 
+. 
 
 <div class="email-verification-container">
     <h2>Please Verify Your Email Address</h2>
@@ -24,7 +24,7 @@
 </div>
 <style>
     body {
-        background: linear-gradient(135deg, #52074f, #dd8027);
+background-color: #f4f4f4; 
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         min-height: 100vh;
         display: flex;

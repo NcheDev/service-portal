@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\AdditionalInfoRequest;
 use App\Notifications\ResponseReportUploaded;
 use App\Notifications\AdditionalInfoNotification;
+use Carbon\Carbon;
+ 
 
 class ApplicationController extends Controller
 {
@@ -233,6 +235,37 @@ public function pendingCount(Application $application)
 }
 
 
+
+public function userDashboard()
+{
+    $userId = Auth::id();
+    $startOfMonth = Carbon::now()->startOfMonth();
+
+    // All applications for this user
+    $allApplications = Application::where('user_id', $userId)->count();
+
+    // Approved / Validated
+    $approvedApplications = Application::where('user_id', $userId)
+        ->where('status', 'validated')
+        ->count();
+
+    // Pending
+    $pendingApplications = Application::where('user_id', $userId)
+        ->where('status', 'pending')
+        ->count();
+
+    // Rejected / Unrecognized
+    $rejectedApplications = Application::where('user_id', $userId)
+        ->where('status', 'invalid')
+        ->count();
+
+    return view('user.dashboard', compact(
+        'allApplications',
+        'approvedApplications',
+        'pendingApplications',
+        'rejectedApplications'
+    ));
+}
 
 
 }

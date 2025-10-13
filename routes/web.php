@@ -46,7 +46,7 @@ Route::middleware(['auth'])->group(function () {
 });
 // Dashboards (only for verified users)
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/admin-dashboard', function () {
+    Route::get('/admin.dashboard', function () {
     return redirect()->route('admin.dashboard');
 });
 
@@ -310,3 +310,9 @@ Route::get('/notifications/read/{id}', function ($id) {
 Route::post('/personal-information', [PersonalInformationController::class, 'storeOrUpdate'])
     ->name('personal-information.storeOrUpdate');
 
+Route::get('/admin/dashboard', [UserManagementController::class, 'dashboard'])
+    ->name('admin.dashboard');
+
+    Route::get('/user-dashboard', [ApplicationController::class, 'userDashboard'])
+    ->name('user.dashboard')
+    ->middleware(['auth']);

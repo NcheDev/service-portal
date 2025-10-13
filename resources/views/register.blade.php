@@ -41,8 +41,7 @@
             <form method="POST" action="{{ route('register') }}">
               @csrf
 
-              <input type="text" name="username" placeholder="Username" value="{{ old('username') }}" />
-
+ 
               <input type="email" name="email" placeholder="Email" value="{{ old('email') }}" />
 
               <input type="password" name="password" placeholder="Password" />

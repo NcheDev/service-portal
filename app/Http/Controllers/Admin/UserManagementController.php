@@ -159,7 +159,7 @@ public function show($id)
     $request->validate([
         'validation_report' => 'required|mimes:pdf|max:2048',
         'action' => 'required|in:validated,invalid',
-        'validation_comment' => 'required|nullable|string|max:1000',
+        'validation_comment' => 'required|string|max:1000',
     ]);
 
     // Store the uploaded file
@@ -238,24 +238,27 @@ public function dashboard()
 
     $newApplications = Application::where('created_at', '>=', $startOfWeek)->count();
 
-    // Consider completed to be any that are not pending
+    // Completed = anything that is not pending
     $completedApplications = Application::where('status', '!=', 'pending')->count();
 
+    // Validated this month
     $approvedApplications = Application::where('status', 'validated')
-        ->where('created_at', '>=', $startOfMonth)
+        ->where('updated_at', '>=', $startOfMonth) // <-- use updated_at
         ->count();
 
+    // Invalid this month
     $rejectedApplications = Application::where('status', 'invalid')
-        ->where('created_at', '>=', $startOfMonth)
+        ->where('updated_at', '>=', $startOfMonth) // <-- use updated_at
         ->count();
 
-    return view('admin-dashboard', compact(
+    return view('admin.dashboard', compact(
         'newApplications',
         'completedApplications',
         'approvedApplications',
         'rejectedApplications'
     ));
 }
+
 public function viewApplication($userId, $applicationId)
 {
     $user = User::with('personalInformation')->findOrFail($userId);

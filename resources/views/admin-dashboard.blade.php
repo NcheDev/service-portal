@@ -299,12 +299,7 @@ body {
         <a class="nav-link" href="{{ route('admin.applicants.invalid') }}">
           <i class="mdi mdi-close-circle menu-icon me-2"></i> Unrecognised Applications
         </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="{{ route('admin.additional-info.chat', $applicationId ?? 1) }}">
-          <i class="mdi mdi-message-text menu-icon me-2"></i> Additional Info Chat
-        </a>
-      </li>
+      </li> 
       <li class="nav-item">
         <a class="nav-link" href="{{ route('admin.users.index') }}">
           <i class="mdi mdi-account-multiple menu-icon me-2"></i> User Management
