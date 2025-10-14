@@ -316,3 +316,6 @@ Route::get('/admin/dashboard', [UserManagementController::class, 'dashboard'])
     Route::get('/user-dashboard', [ApplicationController::class, 'userDashboard'])
     ->name('user.dashboard')
     ->middleware(['auth']);
+
+    Route::patch('/admin/users/{user}/toggle-status', [UserManagementController::class, 'toggleStatus'])
+    ->name('admin.users.toggleStatus');

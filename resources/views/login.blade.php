@@ -106,10 +106,9 @@
         </div>
 
         <h4 class="text-center">Welcome</h4>
-        <p class="text-center">Sign in to access the NCHE Q & E Portal</p>
 
         <form method="POST" action="{{ route('login') }}">
-            @csrf
+            @csrf 
 
             <!-- Email -->
             <div class="mb-3">

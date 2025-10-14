@@ -39,30 +39,48 @@
             @endif
 
             <form method="POST" action="{{ route('register') }}">
-              @csrf
+    @csrf
 
- 
-              <input type="email" name="email" placeholder="Email" value="{{ old('email') }}" />
+    <!-- First Name -->
+    <input type="text" name="first_name" placeholder="First Name" value="{{ old('first_name') }}" />
+    @error('first_name')
+        <span class="text-danger">{{ $message }}</span>
+    @enderror
 
-              <input type="password" name="password" placeholder="Password" />
+    <!-- Surname -->
+    <input type="text" name="surname" placeholder="Surname" value="{{ old('surname') }}" />
+    @error('surname')
+        <span class="text-danger">{{ $message }}</span>
+    @enderror
 
-              <input type="password" name="password_confirmation" placeholder="Confirm Password" />
+    <!-- Email -->
+    <input type="email" name="email" placeholder="Email" value="{{ old('email') }}" />
+    @error('email')
+        <span class="text-danger">{{ $message }}</span>
+    @enderror
 
-              <!-- reCAPTCHA -->
-              <div class="form-group">
-                <div class="recaptcha-wrapper">
-                  <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}"></div>
-                </div>
-                @error('g-recaptcha-response')
-                  <span class="text-danger">{{ $message }}</span>
-                @enderror
-              </div>
-              
+    <!-- Password -->
+    <input type="password" name="password" placeholder="Password" />
+    @error('password')
+        <span class="text-danger">{{ $message }}</span>
+    @enderror
 
-              
+    <!-- Confirm Password -->
+    <input type="password" name="password_confirmation" placeholder="Confirm Password" />
 
-              <button type="submit" class="btn-submit">Register</button>
-            </form>
+    <!-- reCAPTCHA -->
+    <div class="form-group">
+        <div class="recaptcha-wrapper">
+            <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}"></div>
+        </div>
+        @error('g-recaptcha-response')
+            <span class="text-danger">{{ $message }}</span>
+        @enderror
+    </div>
+
+    <button type="submit" class="btn-submit">Register</button>
+</form>
+
           </div>
         </div>
       </div>

@@ -293,6 +293,15 @@ public function logTrail($action)
     }
 }
 
+public function toggleStatus(User $user)
+{
+    $user->is_active = !$user->is_active;
+    $user->save();
+
+    $status = $user->is_active ? 'activated' : 'deactivated';
+
+    return redirect()->back()->with('success', "User has been {$status} successfully.");
+}
 
 
 

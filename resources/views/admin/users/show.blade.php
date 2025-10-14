@@ -41,6 +41,18 @@
                 {{ $user->is_active ? 'Active' : 'Inactive' }}
               </span>
             </p>
+            <!-- User Activation Toggle -->
+<form method="POST" action="{{ route('admin.users.toggleStatus', $user->id) }}">
+  @csrf
+  @method('PATCH')
+
+  @if($user->is_active)
+    <button type="submit" class="btn btn-danger btn-sm mt-2 w-100">Deactivate User</button>
+  @else
+    <button type="submit" class="btn btn-success btn-sm mt-2 w-100">Activate User</button>
+  @endif
+</form>
+
             <p><strong>Roles:</strong></p>
             <div class="mt-auto">
               @forelse ($user->getRoleNames() as $role)
