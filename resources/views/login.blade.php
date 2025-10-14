@@ -109,34 +109,41 @@
 
         <form method="POST" action="{{ route('login') }}">
             @csrf 
+@if (session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
 
+{{-- ❌ GENERAL ERROR MESSAGE --}}
+@if (session('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+@endif
             <!-- Email -->
-            <div class="mb-3">
-                <input type="email" name="email" value="{{ old('email') }}"
-                       class="form-control form-control-lg @error('email') is-invalid @enderror"
-                       placeholder="Email" required autofocus>
-                @error('email')
-                    <div class="text-danger mt-1">{{ $message }}</div>
-                @enderror
-            </div>
+            <div class="mb-3"><div class="mb-3">
+    <input type="email" name="email" value="{{ old('email') }}"
+           class="form-control form-control-lg @error('email') is-invalid @enderror"
+           placeholder="Email" required autofocus>
+    @error('email')
+        <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+</div>
 
-            <!-- Password -->
-            <div class="mb-3">
-                <input type="password" name="password"
-                       class="form-control form-control-lg @error('password') is-invalid @enderror"
-                       placeholder="Password" required>
-                @error('password')
-                    <div class="text-danger mt-1">{{ $message }}</div>
-                @enderror
-            </div>
+<div class="mb-3">
+    <input type="password" name="password"
+           class="form-control form-control-lg @error('password') is-invalid @enderror"
+           placeholder="Password" required>
+    @error('password')
+        <div class="text-danger mt-1">{{ $message }}</div>
+    @enderror
+</div>
 
-            <!-- reCAPTCHA -->
-            <div class="mb-3">
-                <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}"></div>
-                @error('g-recaptcha-response')
-                    <div class="text-danger mt-1">{{ $message }}</div>
-                @enderror
-            </div>
+           
+             
 
             <!-- Login Button -->
             <div class="d-grid mb-3">
@@ -166,6 +173,5 @@
     </div>
 
     <!-- Scripts -->
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </body>
 </html>
