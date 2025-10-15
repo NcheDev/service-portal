@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Validator;
+
 
 
 class AuthController extends Controller
@@ -67,82 +69,78 @@ class AuthController extends Controller
 }
 
  
-
 public function login(Request $request)
 {
-    // ✅ Step 1: Validate inputs (simple and browser-compatible)
-    $request->validate([
-       $request->validate([
-    'email' => [
-        'required',
-        'email', // ensures it has "@" and a valid domain format
-    ],
-    'password' => [
-        'required',
-        'string',
-        'min:8',                      // at least 8 characters
-        'regex:/[A-Z]/',              // at least one uppercase letter
-        'regex:/[a-z]/',              // at least one lowercase letter
-        'regex:/[0-9]/',              // at least one digit
-        'regex:/[@$!%*?&]/',          // at least one special character
-    ],
-], [
-    'email.required' => 'Please enter your email address.',
-    'email.email' => 'Enter a valid email address with "@" and a domain.',
-
-    'password.required' => 'Please enter your password.',
-    'password.min' => 'Password must be at least 8 characters long.',
-    'password.regex' => 'Password must include uppercase, lowercase, number, and a special character (e.g. @, $, %, !).',
-]),
-
+    // Step 1: Validate email & password with strong rules
+    $validator = Validator::make($request->all(), [
+        'email' => ['required', 'email'],
+        'password' => [
+            'required', 'string', 'min:8',
+            'regex:/[A-Z]/',    // at least one uppercase letter
+            'regex:/[a-z]/',    // at least one lowercase letter
+            'regex:/[0-9]/',    // at least one number
+            'regex:/[@$!%*?&]/' // at least one special character
+        ],
     ], [
-        'email.required' => 'Please enter your email address.',
-        'email.email' => 'Invalid email format. Please include "@" and domain.',
-        'password.required' => 'Please enter your password.',
+        'email.required' => 'Email is required.',
+        'email.email' => 'Please enter a valid email (must contain "@" and a domain).',
+        'password.required' => 'Password is required.',
+        'password.min' => 'Password must be at least 8 characters long.',
+        'password.regex' => 'Password must include uppercase, lowercase, a number, and a special character.',
     ]);
 
-    // ✅ Step 2: Check rate limit (3 attempts per minute)
+    // ✅ If validation fails
+    if ($validator->fails()) {
+        return back()
+            ->withErrors($validator)
+            ->with('error', 'There were errors in your login details. Please correct them and try again.')
+            ->withInput($request->except('password'));
+    }
+
+    // Step 2: Rate limiting (3 attempts)
     if (RateLimiter::tooManyAttempts($this->throttleKey($request), 3)) {
         $seconds = RateLimiter::availableIn($this->throttleKey($request));
-
-        return back()->with('error',
-            'You have entered the wrong password more than 3 times. ' .
-            'Please reset your password or try again in ' . $seconds . ' seconds.'
-        )->withInput();
+        return back()
+            ->with('error', 'Too many login attempts. Please reset your password or try again in ' . $seconds . ' seconds.')
+            ->withInput();
     }
 
-    // ✅ Step 3: Verify if user exists
+    // Step 3: Check if user exists and is active
     $user = User::where('email', $request->email)->first();
-
     if (!$user) {
-        return back()->with('error', 'No account found with this email.')->withInput();
+        RateLimiter::hit($this->throttleKey($request), 60);
+        return back()
+            ->with('error', 'No account found with this email address.')
+            ->withInput();
     }
 
-    // ✅ Step 4: Check if user is active
     if (!$user->is_active) {
-        return back()->with('error', 'Your account was suspended. Please contact support.')->withInput();
+        return back()
+            ->with('error', 'Your account has been suspended. Please contact support.')
+            ->withInput();
     }
 
-    // ✅ Step 5: Attempt login
+    // Step 4: Attempt login
     $credentials = $request->only('email', 'password');
-
     if (!Auth::attempt($credentials, $request->filled('remember'))) {
-        // count failed attempts
-        RateLimiter::hit($this->throttleKey($request), 60); // lockout for 60 seconds
-        return back()->with('error', 'Invalid email or password.')->withInput();
+        RateLimiter::hit($this->throttleKey($request), 60);
+        return back()
+            ->with('error', 'Invalid email or password.')
+            ->withInput($request->except('password'));
     }
 
-    // ✅ Step 6: Successful login
-    RateLimiter::clear($this->throttleKey($request)); // reset failed attempts
+    // Step 5: Successful login
+    RateLimiter::clear($this->throttleKey($request));
     $request->session()->regenerate();
 
-    $user = Auth::user();
-
-    return redirect()
-        ->intended($user->hasRole('admin') ? '/admin.dashboard' : '/user-dashboard')
-        ->with('success', 'Login successful! Welcome back.');
+    return redirect()->intended(
+        Auth::user()->hasRole('admin') ? '/admin.dashboard' : '/user-dashboard'
+    )->with('success', 'Welcome back!');
 }
 
+/**
+ * Helper for rate limiting
+ */ 
 /**
  * Generate a unique throttle key for rate limiting.
  */

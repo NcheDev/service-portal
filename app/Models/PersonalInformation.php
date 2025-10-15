@@ -27,7 +27,9 @@ class PersonalInformation extends Model
          'application_type'  ,
          'primary_phone',
          'secondary_phone',
-         'primary_country_code'
+         'primary_country_code',
+         'institution_position',
+         'nationality'
 
     ];
 }

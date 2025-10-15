@@ -45,7 +45,7 @@
          </div>
         <div class="row g-4 mb-4">
             <div class="col-md-6">
-                <label for="processing_type" class="form-label fw-bold">Processing Type</label>
+                <label for="processing_type" class="form-label fw-bold">Processing Type <span class="text-danger">*</span></label>
                 <select class="form-select" name="processing_type" id="processing_type" required>
                     <option value="normal" {{ old('processing_type') == 'normal' ? 'selected' : '' }}>Normal</option>
                     <option value="express" {{ old('processing_type') == 'express' ? 'selected' : '' }}>Express</option>
@@ -71,8 +71,8 @@
 <div class="col-md-6">
     <label class="form-label fw-bold" 
            data-bs-toggle="tooltip" 
-           title="Select the level of qualification you obtained (e.g., Master's, Degree, Diploma)">
-        Qualification Level
+           title="Select the level of qualification you obtained (Master's, Degree, Diploma)">
+        Qualification Level <span class="text-danger">*</span>
     </label>
     <select name="qualifications[{{ $i }}][name]" 
             class="form-select" 
@@ -83,14 +83,13 @@
         <option value="Degree" {{ $qual['name'] == 'Degree' ? 'selected' : '' }}>Bachelor’s Degree</option>
         <option value="Diploma" {{ $qual['name'] == 'Diploma' ? 'selected' : '' }}>Diploma</option>
         <option value="Certificate" {{ $qual['name'] == 'Certificate' ? 'selected' : '' }}>Certificate</option>
-        <option value="Other" {{ $qual['name'] == 'Other' ? 'selected' : '' }}>Other</option>
     </select>
     <div class="col-md-6" id="other-qualification-{{ $i }}" style="display:none;">
     <label class="form-label fw-bold">Specify Other Qualification</label>
     <input type="text" 
            name="qualifications[{{ $i }}][other_name]" 
            class="form-control" 
-           placeholder="e.g., Postgraduate Diploma in Project Management">
+           placeholder=" Postgraduate Diploma in Project Management">
 </div>
 
     @error("qualifications.$i.name") 
@@ -104,12 +103,12 @@
         <label class="form-label fw-bold" 
                data-bs-toggle="tooltip" 
                title="Specify the specific program title under the qualification">
-            Program Name
+            Program Name  <span class="text-danger">*</span>
         </label>
         <input type="text" 
                name="qualifications[{{ $i }}][program_name]" 
                class="form-control"
-               placeholder="e.g., Public Health"
+               placeholder=" Public Health"
                value="{{ $qual['program_name'] }}">
         @error("qualifications.$i.program_name") 
             <div class="text-danger small">{{ $message }}</div> 
@@ -121,12 +120,12 @@
         <label class="form-label fw-bold" 
                data-bs-toggle="tooltip" 
                title="Enter the year you were officially awarded this qualification">
-            Year Obtained
+            Year Obtained  <span class="text-danger">*</span>
         </label>
         <input type="number" 
                name="qualifications[{{ $i }}][year]" 
                class="form-control"
-               placeholder="e.g., 2020"
+               placeholder="2020"
                value="{{ $qual['year'] }}" 
                min="1900" 
                max="{{ date('Y') }}" 
@@ -146,7 +145,7 @@
         <input type="text" 
                name="qualifications[{{ $i }}][institution]" 
                class="form-control"
-               placeholder="e.g., University of Malawi"
+               placeholder="University of Malawi"
                value="{{ $qual['institution'] }}">
         @error("qualifications.$i.institution") 
             <div class="text-danger small">{{ $message }}</div> 
@@ -163,7 +162,6 @@
         <select name="qualifications[{{ $i }}][merit]" class="form-select">
             <option value="">-- Select Merit / Class --</option>
             <option value="Distinction" {{ $qual['merit'] == 'Distinction' ? 'selected' : '' }}>Distinction</option>
-            <option value="Merit" {{ $qual['merit'] == 'Merit' ? 'selected' : '' }}>Merit</option>
             <option value="Credit" {{ $qual['merit'] == 'Credit' ? 'selected' : '' }}>Credit</option>
             <option value="Pass" {{ $qual['merit'] == 'Pass' ? 'selected' : '' }}>Pass</option>
          </select>
@@ -172,7 +170,7 @@
         @enderror
     </div>
             <div class="col-md-6">
-                <label class="form-label fw-bold">Country</label>
+                <label class="form-label fw-bold">Country  <span class="text-danger">*</span></label>
                 <select name="qualifications[{{ $i }}][country]" class="form-select" required>
                     <option value="">-- Select Country --</option>
                     @foreach($countries as $country)
@@ -188,26 +186,56 @@
         </div>
         @endforeach
 
-        {{-- Document Uploads --}}
-        <div class="mb-4 " style="border-color:#dd8027;">
+       <!-- ========================= ATTACHMENTS SECTION ========================= -->
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-header text-white fw-bold" style="background-color:#52074f; border-radius: 8px 8px 0 0;">
+        <i class="bi bi-paperclip me-2"></i> Attachments
+    </div>
 
-        </div>
-        <div class="row g-4 mb-4">
+    <div class="card-body" style="background-color: #f9f9f9; border: 1px solid #dd8027; border-top: none; border-radius: 0 0 8px 8px;">
+        <p class="text-muted mb-4">
+            Please upload all supporting documents for your application below. 
+            Ensure that the files are in <strong>PDF, JPG, or PNG</strong> format and that each file is clearly labeled.
+        </p>
+
+        <div class="row g-4">
             <div class="col-md-6">
-                <label class="form-label fw-bold">Upload Qualification Certificate</label>
-                <input type="file" name="certificates[]" class="form-control" multiple required>
-                @error('certificates') <div class="text-danger small">{{ $message }}</div> @enderror
+                <label class="form-label fw-bold text-dark">
+                    Qualification Certificates  <span class="text-danger">*</span>
+                </label>
+                <input type="file" name="certificates[]" class="form-control border-secondary" multiple required>
+                <small class="text-muted">You can select multiple certificates at once.</small>
+                @error('certificates') 
+                    <div class="text-danger small">{{ $message }}</div> 
+                @enderror
             </div>
+
             <div class="col-md-6">
-                <label class="form-label fw-bold">Upload Academic Records <i>(optional)</i></label>
-                <input type="file" name="academic_records[]" class="form-control" >
-                @error('academic_records') <div class="text-danger small">{{ $message }}</div> @enderror
+                <label class="form-label fw-bold text-dark">
+                    Academic Records <i>(optional)</i>
+                </label>
+                <input type="file" name="academic_records[]" class="form-control border-secondary" multiple>
+                <small class="text-muted">Include transcripts or report cards if available.</small>
+                @error('academic_records') 
+                    <div class="text-danger small">{{ $message }}</div> 
+                @enderror
             </div>
         </div>
+
+        <div class="mt-4">
+            <div class="alert alert-warning mb-0 py-2 small">
+                <i class="bi bi-info-circle me-2"></i>
+                <strong>Tip:</strong> Upload all your documents before submitting to avoid delays in processing.
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ====================== END ATTACHMENTS SECTION ======================= -->
+
 
        {{-- 🧾 Consent Section --}}
 <div class="alert alert-warning shadow-sm border-0">
-    <h5 class="fw-bold text-nche-primary mb-2">Consent & Declaration</h5>
+    <h5 class="fw-bold text-nche-primary mb-2">Consent & Declaration  <span class="text-danger">*</span></h5>
     <p class="mb-2">
         By submitting this application, I hereby confirm that:
     </p>
@@ -234,6 +262,39 @@
             <button type="submit" class="btn btn-primary px-5 py-2 fw-semibold shadow">Submit Application</button>
         </div>
     </form>
+    <!-- Confirmation Modal -->
+<div class="modal fade" id="consentModal" tabindex="-1" aria-labelledby="consentModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg">
+      <div class="modal-header" style="background-color:#52074f; color:white;">
+        <h5 class="modal-title fw-bold" id="consentModalLabel">Confirm Submission</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <p class="mb-3">
+          By submitting this application, you confirm that:
+        </p>
+        <ul>
+          <li>All information provided is accurate and true.</li>
+          <li>All attached documents are certified copies of originals.</li>
+          <li>You consent to NCHE verifying your records with relevant authorities.</li>
+        </ul>
+        <p class="fw-semibold text-nche-primary">
+          By continuing, you agree to the <strong>terms and conditions</strong> stated above.
+        </p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" id="confirmSubmit" class="btn btn-primary" style="background-color:#dd8027; border:none;">
+          Yes, Submit Application
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 </div>
  <style>
 
@@ -341,7 +402,24 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 </script>
- 
+ <script>
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('application-form');
+    const modal = new bootstrap.Modal(document.getElementById('consentModal'));
+    const confirmButton = document.getElementById('confirmSubmit');
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault(); // stop immediate submission
+        modal.show(); // open modal
+    });
+
+    confirmButton.addEventListener('click', function () {
+        modal.hide(); // close modal
+        form.submit(); // now actually submit the form
+    });
+});
+</script>
+
 
   
 @endsection

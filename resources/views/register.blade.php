@@ -40,18 +40,40 @@
 
             <form method="POST" action="{{ route('register') }}">
     @csrf
-
-    <!-- First Name -->
-    <input type="text" name="first_name" placeholder="First Name" value="{{ old('first_name') }}" />
+<!-- First Name -->
+<div class="mb-3">
+    <label for="first_name" class="form-label">First Name</label>
+    <input 
+        type="text" 
+        id="first_name" 
+        name="first_name" 
+        class="form-control @error('first_name') is-invalid @enderror" 
+        placeholder="Enter your first name" 
+        value="{{ old('first_name') }}" 
+        required
+    >
     @error('first_name')
-        <span class="text-danger">{{ $message }}</span>
+        <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
+</div>
 
-    <!-- Surname -->
-    <input type="text" name="surname" placeholder="Surname" value="{{ old('surname') }}" />
+<!-- Surname -->
+<div class="mb-3">
+    <label for="surname" class="form-label">Surname</label>
+    <input 
+        type="text" 
+        id="surname" 
+        name="surname" 
+        class="form-control @error('surname') is-invalid @enderror" 
+        placeholder="Enter your surname" 
+        value="{{ old('surname') }}" 
+        required
+    >
     @error('surname')
-        <span class="text-danger">{{ $message }}</span>
+        <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
+</div>
+
 
     <!-- Email -->
     <input type="email" name="email" placeholder="Email" value="{{ old('email') }}" />
@@ -68,15 +90,7 @@
     <!-- Confirm Password -->
     <input type="password" name="password_confirmation" placeholder="Confirm Password" />
 
-    <!-- reCAPTCHA -->
-    <div class="form-group">
-        <div class="recaptcha-wrapper">
-            <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}"></div>
-        </div>
-        @error('g-recaptcha-response')
-            <span class="text-danger">{{ $message }}</span>
-        @enderror
-    </div>
+     
 
     <button type="submit" class="btn-submit">Register</button>
 </form>

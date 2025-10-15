@@ -41,45 +41,56 @@
     <h5>Applicant Details</h5>
     
 
-    <div class="row g-3">
-       
-<div class="row g-3 mb-3"><div class="col-md-6">
-    <label for="application_type" class="form-label">Application Type</label>
-    <select name="application_type" id="application_type" class="form-select" required>
-        <option value="">Select Type</option>
-        <option value="Individual" {{ old('application_type', $personalInfo?->application_type) === 'Individual' ? 'selected' : '' }}>Individual</option>
-        <option value="Institution" {{ old('application_type', $personalInfo?->application_type) === 'Institution' ? 'selected' : '' }}>Institution</option>
-    </select>
-</div>
-<div class="col-md-6" id="institution-name-field" 
-     style="{{ old('application_type', $personalInfo?->application_type) === 'Institution' ? 'display:block;' : 'display:none;' }}">
-    <label for="institution_name" class="form-label">Institution Name</label>
-    <input type="text" name="institution_name" id="institution_name" class="form-control"
-           value="{{ old('institution_name', $personalInfo?->institution_name) }}"
-           placeholder="e.g. University of Malawi"
-           title="Enter the full name of your institution, e.g. University of Malawi">
-</div>
+    <div class="row g-3">  <div class="col-md-3">
+        <label for="application_type" class="form-label">Application Type <span class="text-danger">*</span></label>
+        <select name="application_type" id="application_type" class="form-select" required>
+            <option value="">Select Type</option>
+            <option value="Individual" {{ old('application_type', $personalInfo?->application_type) === 'Individual' ? 'selected' : '' }}>Individual</option>
+            <option value="Institution" {{ old('application_type', $personalInfo?->application_type) === 'Institution' ? 'selected' : '' }}>Institution</option>
+        </select>
+    </div>
 
+    <!-- Institution Name -->
+    <div class="col-md-3" id="institution-name-field" 
+         style="{{ old('application_type', $personalInfo?->application_type) === 'Institution' ? 'display:block;' : 'display:none;' }}">
+        <label for="institution_name" class="form-label">Institution Name <span class="text-danger">*</span></label>
+        <input type="text" name="institution_name" id="institution_name" class="form-control"
+               value="{{ old('institution_name', $personalInfo?->institution_name) }}"
+               placeholder="University of Malawi"
+               title="Enter the full name of your institution">
+    </div>
+
+    <!-- New Field Next to Institution -->
+    <div class="col-md-3" id="institution-position-field" 
+         style="{{ old('application_type', $personalInfo?->application_type) === 'Institution' ? 'display:block;' : 'display:none;' }}">
+        <label for="institution_position" class="form-label">Position <span class="text-danger">*</span></label>
+        <input type="text" name="institution_position" id="institution_position" class="form-control"
+               value="{{ old('institution_position', $personalInfo?->institution_position) }}"
+               placeholder="Your Position ie HR"
+               title="Enter your position in the institution">
+    </div>
+
+ <div class="col-md-3"></div>
        <div class="col-md-6">
-    <label for="first_name" class="form-label">First Name</label>
+    <label for="first_name" class="form-label">First Name <span class="text-danger">*</span></label>
     <input type="text" name="first_name" class="form-control" 
            value="{{ old('first_name', $personalInfo?->first_name) }}" 
-           placeholder="e.g. John"
+           placeholder="  John"
            title="Enter your first name" 
            required>
 </div>
 
 <div class="col-md-6">
-    <label for="surname" class="form-label">Surname</label>
+    <label for="surname" class="form-label">Surname <span class="text-danger">*</span></label>
     <input type="text" name="surname" class="form-control" 
            value="{{ old('surname', $personalInfo?->surname) }}" 
-           placeholder="e.g. Banda"
+           placeholder="  Banda"
            title="Enter your surname" 
            required>
 </div>
 
         <div class="col-md-6">
-            <label for="title" class="form-label">Title</label>
+            <label for="title" class="form-label">Title  <span class="text-danger">*</span></label>
             <select name="title" class="form-select" required>
                 <option value="">Select Title</option>
                 <option value="Mr" {{ old('title', $personalInfo?->title) === 'Mr' ? 'selected' : '' }}>Mr</option>
@@ -89,16 +100,16 @@
             </select>
         </div>
 <div class="col-md-6">
-    <label for="email" class="form-label">Email</label>
+    <label for="email" class="form-label">Email  <span class="text-danger">*</span></label>
     <input type="email" name="email" class="form-control" 
            value="{{ old('email', $personalInfo?->email) }}"
-           placeholder="e.g. user@example.com"
-           title="Enter a valid email address, e.g. user@example.com">
+           placeholder="  user@example.com"
+           title="Enter a valid email address,   user@example.com">
 </div>
 
         
 <div class="col-md-6">
-    <label for="gender" class="form-label">Gender</label>
+    <label for="gender" class="form-label">Gender <span class="text-danger">*</span></label>
     <select name="gender" id="gender" class="form-select" required>
         <option value="">Select Gender</option>
         <option value="Male" {{ old('gender', $personalInfo?->gender) == 'Male' ? 'selected' : '' }}>Male</option>
@@ -107,19 +118,19 @@
 </div>
 
         <div class="col-md-6">
-            <label for="date_of_birth" class="form-label">Date of Birth</label>
+            <label for="date_of_birth" class="form-label">Date of Birth <span class="text-danger">*</span></label>
             <input type="date" name="date_of_birth" class="form-control" 
                    value="{{ old('date_of_birth', $personalInfo?->date_of_birth) }}">
         </div>
 
         <div class="col-md-6">
-            <label for="contact_address" class="form-label">Contact Address</label>
+            <label for="contact_address" class="form-label">Contact Address  <span class="text-danger">*</span></label>
             <input type="text" name="contact_address" class="form-control" 
                    value="{{ old('contact_address', $personalInfo?->contact_address) }}">
         </div>
 
         <div class="col-md-6">
-            <label for="physical_address" class="form-label">Postal Address</label>
+            <label for="physical_address" class="form-label">Postal Address <span class="text-danger">*</span></label>
             <input type="text" name="physical_address" class="form-control" 
                    value="{{ old('physical_address', $personalInfo?->physical_address) }}">
         </div> 
@@ -131,7 +142,7 @@
 
     {{-- Primary Phone --}}
     <div class="col-md-6">
-        <label for="primary_phone" class="form-label">Primary Phone</label>
+        <label for="primary_phone" class="form-label">Primary Phone <span class="text-danger">*</span></label>
         <div class="input-group">
             <select name="primary_country_code" class="form-select" required>
                 @foreach(config('country_codes') as $code => $country)
@@ -148,7 +159,7 @@
 
     {{-- Secondary Phone --}}
     <div class="col-md-6">
-        <label for="secondary_phone" class="form-label">Secondary Phone</label>
+        <label for="secondary_phone" class="form-label">Secondary Phone <span class="text-danger">*</span></label>
         <div class="input-group">
             <select name="secondary_country_code" class="form-select">
                 @foreach(config('country_codes') as $code => $country)
@@ -167,7 +178,7 @@
 
 
         <div class="col-md-6">
-            <label for="country" class="form-label">Country</label>
+            <label for="country" class="form-label">Country <span class="text-danger">*</span></label>
            @php
                 $countries = Symfony\Component\Intl\Countries::getNames();
            @endphp
@@ -182,14 +193,29 @@
         </div>
  
 
-         
-        <div class="col-md-6">
-            <label for="national_id_number" class="form-label">National ID Number</label>
-<input type="text" name="national_id_number" class="form-control" 
-       value="{{ old('national_id_number', $personalInfo?->national_id_number) }}" 
-       placeholder="Enter National ID Number" required>
-                   
-        </div>
+       <div class="col-md-6">
+    <label for="nationality" class="form-label">Nationality  <span class="text-danger">*</span></label>
+    <select name="nationality" id="nationality" class="form-select" required>
+        <option value="">-- Select Nationality --</option>
+        @foreach (config('nationalities') as $nation)
+            <option value="{{ $nation }}" 
+                {{ old('nationality', $personalInfo?->nationality) == $nation ? 'selected' : '' }}>
+                {{ $nation }}
+            </option>
+        @endforeach
+    </select>
+</div>
+
+<!-- Hidden by default, shown only if Malawian -->
+<div class="col-md-6" id="national_id_section" 
+     style="display: {{ old('nationality', $personalInfo?->nationality) == 'Malawian' ? 'block' : 'none' }};">
+    <label for="national_id_number" class="form-label">National ID Number <span class="text-danger">*</span></label>
+    <input type="text" name="national_id_number" id="national_id_number"
+           class="form-control"
+           value="{{ old('national_id_number', $personalInfo?->national_id_number) }}"
+           placeholder="Enter National ID Number">
+</div>
+
     </div>
 
     <!-- Submit -->
@@ -264,20 +290,38 @@ document.getElementById('profile_picture').addEventListener('change', function(e
 document.addEventListener('DOMContentLoaded', function () {
     const typeSelect = document.getElementById('application_type');
     const institutionField = document.getElementById('institution-name-field');
+    const positionField = document.getElementById('institution-position-field');
 
-    function toggleInstitutionField() {
+    function toggleInstitutionFields() {
         if (typeSelect.value === 'Institution') {
             institutionField.style.display = 'block';
+            positionField.style.display = 'block';
         } else {
             institutionField.style.display = 'none';
+            positionField.style.display = 'none';
             document.getElementById('institution_name').value = '';
+            document.getElementById('institution_position').value = '';
         }
     }
 
-    // Listen for changes dynamically
-    typeSelect.addEventListener('change', toggleInstitutionField);
+    typeSelect.addEventListener('change', toggleInstitutionFields);
 });
 </script>
- 
+
+ <script>
+document.addEventListener('DOMContentLoaded', function () {
+    const nationalitySelect = document.getElementById('nationality');
+    const idSection = document.getElementById('national_id_section');
+
+    nationalitySelect.addEventListener('change', function () {
+        if (this.value === 'Malawian') {
+            idSection.style.display = 'block';
+        } else {
+            idSection.style.display = 'none';
+        }
+    });
+});
+</script>
+
 
 @endsection
