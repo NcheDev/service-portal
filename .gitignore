@@ -3,10 +3,10 @@
 /node_modules
 /public/storage
 /storage/*.key
-.env
+
 .env.backup
 .phpunit.result.cache
-/config/
+
 
 
 # Laravel 8+ IDE helper files
