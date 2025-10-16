@@ -19,7 +19,7 @@ class AdminUserSeeder extends Seeder
             ['email' => 'admin@example.com'], // Change this email if needed
             [
                 'name' => 'System Admin',
-                'password' => Hash::make('password123'), // Change the password
+                'password' => Hash::make('@PAssword123'), // Change the password
             ]
         );
 

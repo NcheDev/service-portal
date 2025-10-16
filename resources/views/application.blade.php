@@ -140,7 +140,7 @@
         <label class="form-label fw-bold" 
                data-bs-toggle="tooltip" 
                title="Enter the full name of the awarding institution or university">
-            Institution
+            Awarding Institution <span class="text-danger">*</span>
         </label>
         <input type="text" 
                name="qualifications[{{ $i }}][institution]" 
@@ -157,7 +157,7 @@
         <label class="form-label fw-bold" 
                data-bs-toggle="tooltip" 
                title="Select your qualification class or merit (if applicable)">
-            Merit / Class
+            Merit / Class <span class="text-danger">*</span>
         </label>
         <select name="qualifications[{{ $i }}][merit]" class="form-select">
             <option value="">-- Select Merit / Class --</option>
@@ -170,7 +170,7 @@
         @enderror
     </div>
             <div class="col-md-6">
-                <label class="form-label fw-bold">Country  <span class="text-danger">*</span></label>
+                <label class="form-label fw-bold">Country Obtained  <span class="text-danger">*</span></label>
                 <select name="qualifications[{{ $i }}][country]" class="form-select" required>
                     <option value="">-- Select Country --</option>
                     @foreach($countries as $country)

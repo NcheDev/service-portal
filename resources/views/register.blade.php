@@ -73,22 +73,51 @@
         <div class="text-danger mt-1">{{ $message }}</div>
     @enderror
 </div>
-
-
-    <!-- Email -->
-    <input type="email" name="email" placeholder="Email" value="{{ old('email') }}" />
+<!-- Email -->
+<div class="mb-3">
+    <label for="email" class="form-label">Email Address</label>
+    <input 
+        type="email" 
+        id="email" 
+        name="email" 
+        class="form-control" 
+        placeholder="Enter your email" 
+        value="{{ old('email') }}" 
+        required
+    />
     @error('email')
-        <span class="text-danger">{{ $message }}</span>
+        <span class="text-danger small">{{ $message }}</span>
     @enderror
+</div>
 
-    <!-- Password -->
-    <input type="password" name="password" placeholder="Password" />
+<!-- Password -->
+<div class="mb-3">
+    <label for="password" class="form-label">Password</label>
+    <input 
+        type="password" 
+        id="password" 
+        name="password" 
+        class="form-control" 
+        placeholder="Enter your password" 
+        required
+    />
     @error('password')
-        <span class="text-danger">{{ $message }}</span>
+        <span class="text-danger small">{{ $message }}</span>
     @enderror
+</div>
 
-    <!-- Confirm Password -->
-    <input type="password" name="password_confirmation" placeholder="Confirm Password" />
+<!-- Confirm Password -->
+<div class="mb-3">
+    <label for="password_confirmation" class="form-label">Confirm Password</label>
+    <input 
+        type="password" 
+        id="password_confirmation" 
+        name="password_confirmation" 
+        class="form-control" 
+        placeholder="Re-enter your password" 
+        required
+    />
+</div>
 
      
 

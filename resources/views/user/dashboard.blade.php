@@ -4,7 +4,8 @@
 
     <!-- Hero Section -->
     <div class="card shadow-lg mb-5 text-center p-5 hero-card">
-        <h3 class="fw-bold mb-3">Welcome to the Certificate Portal!</h3>
+        <h3 class="fw-bold mb-3">Welcome           <span>{{ Auth::user()->name }}</span>
+ to the Certificate Verification Portal!</h3>
         <p class="mb-0">Apply, submit information, and track your certificate verification status in a few easy steps.</p>
     </div>
 
