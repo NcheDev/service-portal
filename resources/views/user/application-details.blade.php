@@ -45,56 +45,63 @@
             </div>
 
             {{-- ===== Certificate Section ===== --}}
-            <div class="document-section p-3 mb-4 border rounded shadow-sm">
-                <div class="d-flex align-items-center mb-3">
-                    <i class="bi bi-mortarboard-fill fs-4 me-2" style="color:#52074f;"></i>
-                    <h5 class="fw-bold text-uppercase mb-0" style="color:#52074f;">Certificate to be Verified</h5>
-                </div>
+          <div class="document-section p-3 mb-4 border rounded shadow-sm">
+    <div class="d-flex align-items-center mb-3">
+        <i class="bi bi-mortarboard-fill fs-4 me-2" style="color:#52074f;"></i>
+        <h5 class="fw-bold text-uppercase mb-0" style="color:#52074f;">Certificate to be Verified</h5>
+    </div>
 
-                @if($certificate = $application->documents->where('type', 'certificates')->first())
-                    <div class="document-card d-flex flex-wrap align-items-center justify-content-between border rounded p-3 mb-2 shadow-sm bg-light">
-                        <div class="d-flex align-items-center mb-2 mb-md-0">
-                            <i class="bi bi-file-earmark-pdf-fill text-danger fs-3 me-3"></i>
-                            <div>
-                                <p class="mb-0 fw-bold text-dark">{{ basename($certificate->file_path) }}</p>
-                                <small class="text-muted">Uploaded certificate document</small>
-                            </div>
-                        </div>
-                        <div class="d-flex gap-2">
-                            <a href="{{ asset('storage/' . $certificate->file_path) }}" target="_blank" class="btn btn-sm text-white" style="background-color:#52074f;">View</a>
-                            <a href="{{ asset('storage/' . $certificate->file_path) }}" download class="btn btn-sm btn-outline-secondary">Download</a>
-                        </div>
-                    </div>
-                @else
-                    <p class="text-muted">No certificate uploaded.</p>
-                @endif
+    @if($certificate = $application->documents->where('type', 'certificates')->first())
+        <div class="document-card d-flex flex-wrap align-items-center justify-content-between border rounded p-3 mb-2 shadow-sm bg-light">
+            <div class="d-flex align-items-center mb-2 mb-md-0">
+                <i class="bi bi-file-earmark-pdf-fill text-danger fs-3 me-3"></i>
+                <div>
+                    {{-- Use the database field or Blade input name instead of actual file name --}}
+                    <p class="mb-0 fw-bold text-dark">
+                        {{ $certificate->document_name ?? 'Certificate Document' }}
+                    </p>
+                    <small class="text-muted">Uploaded certificate document</small>
+                </div>
             </div>
+            <div class="d-flex gap-2">
+                <a href="{{ asset('storage/' . $certificate->file_path) }}" target="_blank" class="btn btn-sm text-white" style="background-color:#52074f;">View</a>
+                <a href="{{ asset('storage/' . $certificate->file_path) }}" download class="btn btn-sm btn-outline-secondary">Download</a>
+            </div>
+        </div>
+    @else
+        <p class="text-muted">No certificate uploaded.</p>
+    @endif
+</div>
+
 
             {{-- ===== Admin Feedback ===== --}}
-            <div class="document-section p-3 mb-4 border rounded shadow-sm">
-                <div class="d-flex align-items-center mb-3">
-                    <i class="bi bi-chat-left-text-fill fs-4 me-2 text-secondary"></i>
-                    <h5 class="fw-bold text-uppercase mb-0" style="color:#52074f;">Admin Feedback Report</h5>
-                </div>
+           <div class="document-section p-3 mb-4 border rounded shadow-sm">
+    <div class="d-flex align-items-center mb-3">
+        <i class="bi bi-chat-left-text-fill fs-4 me-2 text-secondary"></i>
+        <h5 class="fw-bold text-uppercase mb-0" style="color:#52074f;">Admin Feedback Report</h5>
+    </div>
 
-                @if($application->response_report_path)
-                    <div class="document-card d-flex flex-wrap align-items-center justify-content-between border rounded p-3 shadow-sm bg-light">
-                        <div class="d-flex align-items-center mb-2 mb-md-0">
-                            <i class="bi bi-file-earmark-arrow-down-fill text-dark fs-3 me-3"></i>
-                            <div>
-                                <p class="mb-0 fw-bold text-dark">{{ basename($application->response_report_path) }}</p>
-                                <small class="text-muted">Feedback report file</small>
-                            </div>
-                        </div>
-                        <div class="d-flex gap-2">
-                            <a href="{{ asset('storage/' . $application->response_report_path) }}" target="_blank" class="btn btn-sm text-white" style="background-color:#52074f;">View</a>
-                            <a href="{{ asset('storage/' . $application->response_report_path) }}" download class="btn btn-sm btn-outline-secondary">Download</a>
-                        </div>
-                    </div>
-                @else
-                    <p class="text-muted">No feedback report available yet.</p>
-                @endif
+    @if($application->response_report_path)
+        <div class="document-card d-flex flex-wrap align-items-center justify-content-between border rounded p-3 shadow-sm bg-light">
+            <div class="d-flex align-items-center mb-2 mb-md-0">
+                <i class="bi bi-file-earmark-arrow-down-fill text-dark fs-3 me-3"></i>
+                <div>
+                    {{-- Use the database field or user-friendly name instead of file name --}}
+                    <p class="mb-0 fw-bold text-dark">
+                        {{ $application->response_report_name ?? 'Feedback Report' }}
+                    </p>
+                    <small class="text-muted">Feedback report file</small>
+                </div>
             </div>
+            <div class="d-flex gap-2">
+                <a href="{{ asset('storage/' . $application->response_report_path) }}" target="_blank" class="btn btn-sm text-white" style="background-color:#52074f;">View</a>
+                <a href="{{ asset('storage/' . $application->response_report_path) }}" download class="btn btn-sm btn-outline-secondary">Download</a>
+            </div>
+        </div>
+    @else
+        <p class="text-muted">No feedback report available yet.</p>
+    @endif
+</div>
 
             {{-- ===== Additional Info Requests ===== --}}
             <div class="document-section p-3 mb-3 border rounded shadow-sm">
@@ -137,6 +144,13 @@
                     @endforelse
                 </div>
             </div>
+            {{-- ===== Download Application PDF ===== --}}
+            <div class="text-center mt-4">
+    <a href="{{ route('application.download', $application->id) }}" 
+       class="btn btn-outline-nche-orange btn-lg">
+        <i class="bi bi-file-earmark-pdf me-2"></i> Download My Application PDF
+    </a>
+</div>
 
         </form>
     </div>

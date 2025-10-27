@@ -319,3 +319,6 @@ Route::get('/admin/dashboard', [UserManagementController::class, 'dashboard'])
 
     Route::patch('/admin/users/{user}/toggle-status', [UserManagementController::class, 'toggleStatus'])
     ->name('admin.users.toggleStatus');
+
+    Route::get('/application/{id}/download', [App\Http\Controllers\ApplicationController::class, 'downloadPDF'])
+    ->name('application.download');

@@ -262,6 +262,7 @@
             <button type="submit" class="btn btn-primary px-5 py-2 fw-semibold shadow">Submit Application</button>
         </div>
     </form>
+
     <!-- Confirmation Modal -->
 <div class="modal fade" id="consentModal" tabindex="-1" aria-labelledby="consentModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
@@ -294,6 +295,7 @@
     </div>
   </div>
 </div>
+
 
 </div>
  <style>

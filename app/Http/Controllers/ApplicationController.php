@@ -1,8 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use Pdf;
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\User;
 use App\Models\Invoice;
 use App\Models\Document;
@@ -16,6 +15,7 @@ use App\Models\AdditionalInfoRequest;
 use App\Notifications\ResponseReportUploaded;
 use App\Notifications\AdditionalInfoNotification;
 use Carbon\Carbon;
+
  
 
 class ApplicationController extends Controller
@@ -267,5 +267,18 @@ public function userDashboard()
     ));
 }
 
+public function downloadPDF($id)
+{
+    $application = Application::with(['user.personalInformation', 'qualifications'])->findOrFail($id);
+
+    $pdf = Pdf::loadView('pdfs.application', [
+        'application' => $application,
+        'user' => $application->user,
+        'qualifications' => $application->qualifications,
+    ]);
+
+    $filename = 'Application_'.$application->id.'.pdf';
+    return $pdf->download($filename);
+}
 
 }
