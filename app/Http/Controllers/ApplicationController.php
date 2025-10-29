@@ -43,9 +43,8 @@ class ApplicationController extends Controller
         'qualifications.*.institution' => 'required|string|max:255',
         'qualifications.*.country' => 'required|string|max:255',
         'qualifications.*.custom_name' => 'nullable|required_if:qualifications.*.name,Other|string|max:255',
-
-        // Education History
-         
+        'qualifications.*.merit' => 'nullable|string|max:255',
+        
 
         // Files
          'certificates' => 'required|array|min:1',
@@ -53,13 +52,15 @@ class ApplicationController extends Controller
         'academic_records.*' => 'file|max:5120',
         'previous_evaluations.*' => 'file|max:5120',
         'syllabi.*' => 'file|max:5120',
+        'consent_agree' => 'accepted',
     ]);
 
     // Create Application
-    $application = Application::create([
-        'user_id' => Auth::id(),
-        'processing_type' => $request->processing_type,
-    ]);
+   $application = Application::create([
+    'user_id' => Auth::id(),
+    'processing_type' => $request->processing_type,
+    'consent_agree' => $request->has('consent_agree'), 
+]);
 
     // Save Qualifications
     foreach ($request->qualifications as $qualificationData) {
@@ -72,6 +73,7 @@ class ApplicationController extends Controller
             'year' => $qualificationData['year'],
             'institution' => $qualificationData['institution'],
             'country' => $qualificationData['country'],
+            'merit' => $qualificationData['merit'] ?? null,
         ]);
     }
 
@@ -277,7 +279,15 @@ public function downloadPDF($id)
         'qualifications' => $application->qualifications,
     ]);
 
-    $filename = 'Application_'.$application->id.'.pdf';
+    // Get user full name or fallback to user name
+    $userName = $application->user->personalInformation->full_name ?? $application->user->name;
+
+    // Clean up the name for a safe filename
+    $safeName = preg_replace('/[^A-Za-z0-9_\-]/', '', $userName);
+
+    // Generate filename
+    $filename = $safeName . '_Application_' . $application->id . '.pdf';
+
     return $pdf->download($filename);
 }
 

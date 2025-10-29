@@ -15,6 +15,7 @@ class Document extends Model
         'application_id',
         'type',
         'file_path',
+        
     ];
 
     public function application()

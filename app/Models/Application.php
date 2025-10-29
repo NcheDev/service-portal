@@ -17,6 +17,8 @@ class Application extends Model
     'status',
     'response_report_path',  // Path to the response report
     'validation_comment',
+    'consent_agree',
+    'merit'
 ];
 
 public function qualification()

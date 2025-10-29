@@ -17,7 +17,8 @@ class Qualification extends Model
         'institution',
         'country',
         'user_id',
-        'program_name', // Added program_name field
+        'program_name',  
+        'merit',
 
     ];
 

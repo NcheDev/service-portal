@@ -1,175 +1,127 @@
 @extends('layouts.user-dashboard')
 @section('content')
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>NCHE - FAQ</title>
-  <style>
-    body {
-      background-color: #f9fafc;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: #333;
-    }
 
-    /* Hero Section */
-    .header {
-      background: linear-gradient(90deg, #52074f 0%, #6a1570 40%, #dd8027 100%);
-      color: #fff;
-      text-align: center;
-      padding: 4rem 1rem 3rem;
-      border-radius: 0 0 25px 25px;
-      margin-bottom: 3rem;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    }
+<div class="documentation-card p-4 mb-5 shadow-sm rounded" style="background-color:#fff;">
+    <h1 class="text-center fw-bold mb-4" style="color:#52074f; font-size:24px;">
+        Qualifications Recognition, Verification and Evaluation
+    </h1>
 
-    .header h1 {
-      font-size: 2.2rem;
-      font-weight: 700;
-      margin-bottom: 0.8rem;
-      letter-spacing: 0.8px;
-    }
+    <p class="fw-bold text-center mb-4" style="color:#dd8027;">
+        The Process of Qualifications Recognition and Verification
+    </p>
 
-    .header p {
-      font-size: 1.05rem;
-      opacity: 0.9;
-      margin: 0;
-    }
+    <h2 class="text-nche-primary border-bottom mb-3 pb-2">Lodging an Application</h2>
+    <p>
+        Any person may lodge an application to have their qualification(s) evaluated by the 
+        <strong>National Council for Higher Education (NCHE)</strong>. Applications must be made 
+        on the approved application form and must be completed fully, correctly, and legibly.
+    </p>
+    <p>
+        The NCHE will process full applications only. If any information is lacking or does not 
+        comply with the requirements in the application form and as stated below, the evaluation 
+        process will not be activated and additional information will be requested.
+    </p>
 
-    /* Accordion */
-    .accordion-button {
-      background-color: #fff;
-      color: #52074f;
-      font-weight: 600;
-      border: 1px solid #eee;
-      transition: all 0.2s ease-in-out;
-    }
+    <h2 class="text-nche-primary border-bottom mb-3 pb-2">Forged Documents</h2>
+    <p>
+        If forged, altered, or falsified documents are submitted, an evaluation will not be processed. 
+        The NCHE reserves the right to share the information with institutions and government agencies 
+        as appropriate.
+    </p>
 
-    .accordion-button:not(.collapsed) {
-      background-color: #dd8027;
-      color: #fff;
-      box-shadow: none;
-    }
+    <h2 class="text-nche-primary border-bottom mb-3 pb-2">Timelines for Applications</h2>
+    <ul>
+        <li>Ordinary applications: 21 working days</li>
+        <li>Urgent applications: 10 working days</li>
+    </ul>
+    <p>
+        Due to factors beyond NCHE's control, timelines may be exceeded. Clients should take cognizance 
+        of possible delays. In the event of extraordinary circumstances causing delays, clients will be informed. 
+        NCHE will, however, do everything possible to make results available promptly.
+    </p>
 
-    .accordion-button:focus {
-      box-shadow: 0 0 0 0.2rem rgba(221, 128, 39, 0.3);
-    }
+    <h2 class="text-nche-primary border-bottom mb-3 pb-2">Evaluation Results</h2>
+    <p>
+        Evaluation reports are issued only to the applicant. A certified copy may be issued to another 
+        party if specifically requested and paid for by the applicant. Results are available via mail or 
+        personal collection; reports are never faxed or emailed.
+    </p>
 
-    .accordion-body {
-      background-color: #fff;
-      color: #444;
-      line-height: 1.6;
-      border-left: 3px solid #dd8027;
-      border-radius: 0 0 10px 10px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-    }
+    <h2 class="text-nche-primary border-bottom mb-3 pb-2">Charges</h2>
+    <ul>
+        <li>Normal processing: Locals MK 75,000 | Foreigners US$ 150</li>
+        <li>Express processing: Locals MK 112,500 | Foreigners US$ 225</li>
+    </ul>
 
-    .faq-icon {
-      color: #ffc107;
-      margin-right: 8px;
-    }
+    <h2 class="text-nche-primary border-bottom mb-3 pb-2">Requirements for Doctorate Qualifications Verification</h2>
+    <ul>
+        <li>Doctorate certificate with transcripts</li>
+        <li>Doctorate thesis</li>
+        <li>All master’s degree verification documents mentioned below</li>
+    </ul>
 
-    /* Search Bar */
-    #faq-search {
-      border-radius: 30px;
-      padding: 0.6rem 1rem;
-    }
+    <h2 class="text-nche-primary border-bottom mb-3 pb-2">Requirements for Master’s Degree Verification</h2>
+    <ul>
+        <li>Master’s Degree certificate with transcripts</li>
+        <li>Master’s Degree thesis</li>
+        <li>Bachelor’s Degree certificate or equivalent</li>
+    </ul>
 
-    .input-group-text {
-      border-radius: 30px 0 0 30px;
-    }
+    <h2 class="text-nche-primary border-bottom mb-3 pb-2">Postgraduate Diploma Verification Requirements</h2>
+    <ul>
+        <li>Postgraduate Diploma certificate with transcripts</li>
+        <li>Diploma certificate(s) or equivalent</li>
+        <li>Bachelor’s Degree certificate(s) or equivalent</li>
+    </ul>
 
-    footer {
-      text-align: center;
-      margin-top: 4rem;
-      color: #777;
-      font-size: 0.9rem;
-    }
-  </style>
-</head>
-<body>
-  <section class="header">
-    <h1><i class="bi bi-question-circle-fill faq-icon"></i> NCHE Frequently Asked Questions</h1>
-    <p>Your guide to understanding the Qualification Verification process</p>
-  </section>
+    <h2 class="text-nche-primary border-bottom mb-3 pb-2">Bachelor’s Degree Certification Verification</h2>
+    <ul>
+        <li>Bachelor’s Degree certificate(s) or equivalent</li>
+        <li>Bachelor’s Degree transcripts</li>
+    </ul>
 
-  <div class="container my-5" style="max-width: 950px;">
-    <h2 class="mb-4" style="color:#52074f; font-weight:700;">
-      <i class="mdi mdi-help-circle-outline text-warning me-1" style="font-size:1.8rem; vertical-align:middle;"></i>
-      Frequently Asked Questions
-    </h2>
+    <h2 class="text-nche-primary border-bottom mb-3 pb-2">Diploma Certificate Verification</h2>
+    <ul>
+        <li>Diploma certificate(s) and transcripts</li>
+        <li>Secondary school certificate or equivalent</li>
+    </ul>
 
-    {{-- Search Bar --}}
-    <div class="input-group mb-4 shadow-sm">
-      <span class="input-group-text bg-white border-end-0">
-        <i class="mdi mdi-magnify text-secondary"></i>
-      </span>
-      <input type="text" id="faq-search" class="form-control border-start-0" placeholder="Search questions...">
-    </div>
+    <h2 class="text-nche-primary border-bottom mb-3 pb-2">Process for Qualification Recognition, Evaluation or Verification</h2>
+    <p>
+        The process includes verifying whether the qualification is:
+    </p>
+    <ul>
+        <li>Registered on the HEQF;</li>
+        <li>Offered by a registered and accredited institution; and</li>
+        <li>Lawfully obtained.</li>
+    </ul>
+</div>
 
-    {{-- Accordion --}}
-    <div class="accordion" id="faqAccordion">
-      @php
-        $faqs = [
-          ['q' => 'What is the NCHE Qualifications Recognition & Verification system?', 'a' => 'It is an online platform ...'],
-          ['q' => 'Who can lodge an application?', 'a' => 'Any person who wishes to have their ...'],
-          ['q' => 'What documents are required?', 'a' => 'Applicants must submit certified copies ...'],
-         ['q' => 'How long does the evaluation process take?', 'a' => 'Standard processing usually takes up to 21 working days, while express applications can be processed within 10 working days, depending on the completeness of the application.'],
-                ['q' => 'What happens if I submit forged or altered documents?', 'a' => 'NCHE will not process applications with forged or falsified documents and reserves the right to report such cases to relevant authorities.'],
-                ['q' => 'Can I get a copy of my evaluation report?', 'a' => 'Yes, the evaluation report is issued to the applicant. Certified copies can be provided to third parties upon request and payment.'],
-                ['q' => 'What are the fees for the evaluation service?', 'a' => 'Fees depend on the applicant’s nationality and processing type: Normal processing is MK 75,000 for locals and US$150 for foreigners. Express processing is MK 112,500 for locals and US$225 for foreigners.'],
-                ['q' => 'How do I pay the evaluation fees?', 'a' => 'Payments can be made through various methods including PayChangu, Mpamba, Airtel Money, or bank deposit. Upload proof of payment where required.'],
-                ['q' => 'How can I track the status of my application?', 'a' => 'Applicants are responsible for following up on their application status via the online portal or by contacting the Evaluation Division.'],
-                ['q' => 'Who can I contact for support or inquiries?', 'a' => 'For any questions, contact the Evaluation Division at verification@nche.ac.mw or visit NCHE offices during working hours.'],
-                ['q' => 'What is the timeline for application processing?', 'a' => 'Applications are ordinarily processed within 21 working days. Urgent applications may be processed within 10 working days. However, some delays may occur due to unforeseen circumstances.'],
-                ['q' => 'What happens if my application is incomplete?', 'a' => 'Incomplete or incorrect applications will not be processed. Additional information will be requested before evaluation begins.'],
-                ['q' => 'Can I submit documents in languages other than English?', 'a' => 'All foreign language documents must be accompanied by certified English translations prepared by a sworn translator.'],
-                ['q' => 'Are there additional document requirements for higher qualifications?', 'a' => 'Yes, Doctorate, Master’s degree, and Postgraduate diploma applicants must submit additional documents such as theses and transcripts.'],
-                ['q' => 'Can the evaluation report be shared with other parties?', 'a' => 'A certified copy of the evaluation report may be issued to another party if specifically requested and paid for by the applicant.'],
-                ['q' => 'What if I want my evaluation result emailed or collected personally?', 'a' => 'Evaluation results can be delivered according to your instruction by email or personal collection.'],
-                ['q' => 'Are the evaluation results binding on institutions?', 'a' => 'No, the evaluation outcome is based on the best available information and is not binding on any institution or registration body.'],
-                ['q' => 'What should I do if my name has changed?', 'a' => 'You must provide proof of any name change along with your application documents.'],
-                ['q' => 'Do I need to follow up on the status of my application?', 'a' => 'Yes, applicants are responsible for following up on their application status.'],
-                ['q' => 'What should I do if I have questions during the application process?', 'a' => 'You can contact the Evaluation Division by email at verification@nche.ac.mw or visit the NCHE office during working hours.'],
-                ['q' => 'What are the NCHE bank account details for payments?', 'a' => 'Bank Name: NBS Bank<br>Branch: Lilongwe<br>Account Name: NCHE Service Fees<br>Account Number: 14416177<br>SWIFT CODE: NBSMWMW.'],
-            ];
-      @endphp
+<style>
+.documentation-card h2 {
+    color: #52074f;
+    border-bottom: 3px solid #dd8027;
+    padding-bottom: 6px;
+    margin-top: 20px;
+    margin-bottom: 12px;
+}
 
-      @foreach($faqs as $index => $faq)
-        <div class="accordion-item mb-3 faq-item">
-          <h2 class="accordion-header" id="heading{{ $index }}">
-            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse"
-              data-bs-target="#collapse{{ $index }}" aria-expanded="false" aria-controls="collapse{{ $index }}">
-              <i class="mdi mdi-chevron-down-circle-outline me-2 text-warning"></i>
-              {{ $faq['q'] }}
-            </button>
-          </h2>
-          <div id="collapse{{ $index }}" class="accordion-collapse collapse" aria-labelledby="heading{{ $index }}"
-            data-bs-parent="#faqAccordion">
-            <div class="accordion-body">
-              {!! nl2br(e($faq['a'])) !!}
-            </div>
-          </div>
-        </div>
-      @endforeach
-    </div>
-  </div>
+.text-nche-primary {
+    color: #52074f;
+}
 
-  <footer>&copy; {{ date('Y') }} National Council for Higher Education - Malawi</footer>
+ul li {
+    margin-bottom: 6px;
+}
 
-  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    document.getElementById('faq-search').addEventListener('input', function () {
-      const query = this.value.toLowerCase();
-      document.querySelectorAll('.faq-item').forEach(function (item) {
-        const question = item.querySelector('.accordion-button').textContent.toLowerCase();
-        const answer = item.querySelector('.accordion-body').textContent.toLowerCase();
-        item.style.display = (question.includes(query) || answer.includes(query)) ? '' : 'none';
-      });
-    });
-  </script>
-</body>
-</html>
+p {
+    line-height: 1.6;
+}
+
+.documentation-card {
+    max-width: 900px;
+    margin: 0 auto;
+}
+</style>
+
 @endsection
