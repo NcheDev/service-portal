@@ -166,7 +166,7 @@ public function dashboard()
     $user = Auth::user();
 
     if ($user->hasRole('admin')) {
-        return redirect()->route('admin.dashboard'); // 👈 this is the key change
+        return redirect()->route('admin.dashboard'); 
     } else {
         return view('user-dashboard', compact('user'));
     }

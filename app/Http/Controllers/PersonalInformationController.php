@@ -46,7 +46,7 @@ public function storeOrUpdate(Request $request)
         'primary_phone'   => 'required|string|regex:/^\+?[0-9]{8,15}$/',
         'secondary_phone' => 'nullable|string|regex:/^\+?[0-9]{8,15}$/',
         'primary_country_code' => 'required|string',
-        'institution_position'=>'required|string|max:255',
+     'institution_position' => 'required_if:application_type,Institution|string|max:255|nullable',
         'nationality' => 'required|string|max:100',
     ]);
 
