@@ -8,20 +8,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 @endif 
-
-{{-- ❌ VALIDATION ERRORS --}}
-@if ($errors->any())
-    <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
-        <i class="bi bi-exclamation-triangle me-2"></i>
-        <strong>Please fix the following errors:</strong>
-        <ul class="mb-0 mt-2 small">
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-@endif
+ 
 {{-- Header with My Applications link --}}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h4 class="text-nche-primary fw-bold mb-0">New Application</h4>
@@ -37,6 +24,27 @@
         Qualification Evaluation Application
     </h2>
 
+    @php
+    $personalInfo = \App\Models\PersonalInformation::where('user_id', auth()->id())->first();
+
+    $personalInfoComplete = $personalInfo 
+        && $personalInfo->first_name 
+        && $personalInfo->surname 
+        && $personalInfo->primary_phone 
+        && $personalInfo->nationality 
+        && $personalInfo->date_of_birth 
+        && $personalInfo->physical_address;
+@endphp
+
+@if(!$personalInfoComplete)
+    <div class="alert alert-danger shadow-sm mt-3">
+        <strong>⚠️ Action Required:</strong> You must 
+        <a href="{{ route('user.personal-info') }}" class="text-decoration-underline fw-bold text-danger">
+            complete your personal information
+        </a> 
+        before applying.
+    </div>
+@else
     <form id="application-form" action="{{ route('application.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
@@ -188,54 +196,141 @@
 
        <!-- ========================= ATTACHMENTS SECTION ========================= -->
 <div class="card shadow-sm border-0 mb-4">
-    <div class="card-header text-white fw-bold" style="background-color:#52074f; border-radius: 8px 8px 0 0;">
+    <div class="card-header  fw-bold" style=" color:#52074f; border-radius: 8px 8px 0 0;">
         <i class="bi bi-paperclip me-2"></i> Attachments
     </div>
 
-    <div class="card-body" style="background-color: #f9f9f9; border: 1px solid #dd8027; border-top: none; border-radius: 0 0 8px 8px;">
-        <p class="text-muted mb-4">
-            Please upload all supporting documents for your application below. 
-            Ensure that the files are in <strong>PDF, JPG, or PNG</strong> format and that each file is clearly labeled.
-        </p>
+    <div class="card-body" style="background-color: #f9f9f9;  ">
+      <p class="text-muted mb-4">
+    Please upload all supporting documents for your application below. 
+    Ensure that the files are in <strong>PDF, JPG, DOC, or PNG</strong> format, 
+    and each file is clearly labeled. <strong>Maximum file size: 4 MB per file.</strong>
+</p>
 
-        <div class="row g-4">
-            <div class="col-md-6">
-                <label class="form-label fw-bold text-dark">
-                    Qualification Certificates  <span class="text-danger">*</span>
-                </label>
-                <input type="file" name="certificates[]" class="form-control border-secondary" multiple required>
-                <small class="text-muted">You can select multiple certificates at once.</small>
-                @error('certificates') 
-                    <div class="text-danger small">{{ $message }}</div> 
-                @enderror
-            </div>
 
-            <div class="col-md-6">
-                <label class="form-label fw-bold text-dark">
-                    Academic Records <i>(optional)</i>
-                </label>
-                <input type="file" name="academic_records[]" class="form-control border-secondary" multiple>
-                <small class="text-muted">Include transcripts or report cards if available.</small>
-                @error('academic_records') 
-                    <div class="text-danger small">{{ $message }}</div> 
-                @enderror
-            </div>
+     <div class="row g-4">
+    @foreach([
+        'certificates' => 'Qualification Certificates',
+        'academic_records' => 'Academic Records (optional)',
+        'previous_evaluations' => 'Previous Evaluations',
+        'syllabi' => 'Syllabi'
+    ] as $field => $label)
+        <div class="col-md-6">
+            <label class="form-label fw-bold text-dark">
+                {{ $label }}
+                @if($field === 'certificates') <span class="text-danger">*</span> @endif
+            </label>
+
+            <input type="file"
+                   name="{{ $field }}[]"
+                   class="form-control border-secondary file-input @error($field) is-invalid @enderror"
+                   multiple
+                   data-type="{{ $field }}"
+                   @if($field === 'certificates') required @endif>
+
+            <ul class="list-group mt-2" id="{{ $field }}-list"></ul>
+
+            {{-- Inline validation error message under the file list --}}
+            @error($field)
+                <div class="invalid-feedback d-block small mt-1">{{ $message }}</div>
+            @enderror
         </div>
+    @endforeach
+</div>
 
-        <div class="mt-4">
-            <div class="alert alert-warning mb-0 py-2 small">
-                <i class="bi bi-info-circle me-2"></i>
-                <strong>Tip:</strong> Upload all your documents before submitting to avoid delays in processing.
-            </div>
-        </div>
+<div class="mt-4">
+    <div class="alert alert-warning mb-0 py-2 small">
+        <i class="bi bi-info-circle me-2"></i>
+        <strong>Tip:</strong> Upload all your documents before submitting to avoid delays in processing.
     </div>
 </div>
+
+<script>
+document.querySelectorAll('.file-input').forEach(input => {
+    const parent = input.closest('.col-md-6');
+    const label = parent.querySelector('.form-label');
+    const fieldType = input.dataset.type;
+
+    input.addEventListener('change', function () {
+        const list = document.getElementById(fieldType + '-list');
+        list.innerHTML = ''; // Clear previous list
+
+        const allowedExtensions = ['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx'];
+        const maxFileSize = 5 * 1024 * 1024; // 5 MB
+        let validFiles = [];
+        let errors = [];
+
+        Array.from(this.files).forEach((file, index) => {
+            const ext = file.name.split('.').pop().toLowerCase();
+            let errorMsg = '';
+
+            // Validate type and size
+            if (!allowedExtensions.includes(ext)) {
+                errorMsg = `Invalid file type: .${ext}`;
+            } else if (file.size > maxFileSize) {
+                errorMsg = `File too large: ${(file.size / 1024 / 1024).toFixed(2)} MB`;
+            }
+
+            // Create list item
+            const li = document.createElement('li');
+            li.className = 'list-group-item d-flex justify-content-between align-items-center';
+            li.innerHTML = `
+                ${file.name}
+                <div class="d-flex align-items-center">
+                    <span class="badge rounded-pill ${errorMsg ? 'bg-danger' : 'bg-success'}">
+                        ${errorMsg ? errorMsg : 'Ready'}
+                    </span>
+                    <button type="button" class="btn btn-sm btn-outline-danger ms-2 remove-file">X</button>
+                </div>
+            `;
+            list.appendChild(li);
+
+            if (!errorMsg) validFiles.push(file);
+            else errors.push(file.name);
+
+            // Remove file logic
+            li.querySelector('.remove-file').addEventListener('click', () => {
+                const dt = new DataTransfer();
+                Array.from(input.files).forEach((f) => {
+                    if (f.name !== file.name) dt.items.add(f);
+                });
+                input.files = dt.files;
+                li.remove();
+
+                // If no files left, show the input again
+                if (input.files.length === 0) {
+                    input.classList.remove('d-none');
+                    label.classList.remove('text-success');
+                }
+            });
+        });
+
+        // Keep only valid files
+        const dt = new DataTransfer();
+        validFiles.forEach(f => dt.items.add(f));
+        this.files = dt.files;
+
+        // Show alert if errors
+        if (errors.length > 0) {
+            alert('Some files were rejected:\n' + errors.join('\n'));
+        }
+
+        // ✅ If at least one valid file, hide input and highlight label
+        if (this.files.length > 0) {
+            this.classList.add('d-none'); // hide the file input
+            label.classList.add('text-success');
+        }
+    });
+});
+</script>
+
 <!-- ====================== END ATTACHMENTS SECTION ======================= -->
-
-
-       {{-- 🧾 Consent Section --}}
-<div class="alert alert-warning shadow-sm border-0">
-    <h5 class="fw-bold text-nche-primary mb-2">Consent & Declaration  <span class="text-danger">*</span></h5>
+    </div></div>
+<hr>
+       {{-- 🧾 Consent Section --}}<div class="shadow-sm border rounded p-3 mb-4" style="border-left: 4px solid #dd8027; background-color: #fff8f0;">
+    <h5 class="fw-bold text-nche-primary mb-2">
+        Consent & Declaration <span class="text-danger">*</span>
+    </h5>
     <p class="mb-2">
         By submitting this application, I hereby confirm that:
     </p>
@@ -244,13 +339,12 @@
         <li>All attached documents are certified true copies of the originals.</li>
         <li>I understand that submission of forged or falsified documents will result in <strong>disqualification</strong>.</li>
         <li>I consent to NCHE sharing my information with relevant institutions and authorities for verification purposes.</li>
-         
     </ul>
 
     {{-- ✅ Agreement Checkbox --}}
-    <div class="form-check">
+    <div class="form-check mt-2">
         <input class="form-check-input" type="checkbox" id="consent_agree" name="consent_agree" required>
-        <label class="form-check-label" for="consent_agree">
+        <label class="form-check-label fw-bold text-danger" for="consent_agree">
             I have read, understood, and agree to the above terms and conditions.
         </label>
     </div>
@@ -259,9 +353,40 @@
 
         {{-- Submit --}}
         <div class="text-center mt-4">
-            <button type="submit" class="btn btn-primary px-5 py-2 fw-semibold shadow">Submit Application</button>
-        </div>
+    <button type="button" id="review-btn" class="btn btn-primary px-5 py-2 fw-semibold shadow">Review Form</button>
+</div>
+
     </form>
+    @endif
+    <!-- Review Modal -->
+<div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable modal-fullscreen-sm-down" style="margin-top: 60px;">
+    <div class="modal-content border-0 shadow-lg">
+      
+      <!-- Modal Header -->
+      <div class="modal-header" style="background-color:#52074f; color:white;">
+        <h5 class="modal-title fw-bold" id="reviewModalLabel">Review Your Submission</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      
+      <!-- Modal Body -->
+      <div class="modal-body" style="background-color:#f9f9f9;">
+        <div id="review-content" class="p-3"></div>
+      </div>
+      
+      <!-- Modal Footer -->
+      <div class="modal-footer bg-light">
+        <button type="button" class="btn btn-outline-secondary px-4 py-2 fw-semibold" data-bs-dismiss="modal">
+          Go Back & Edit
+        </button>
+        <button type="button" id="submit-btn" class="btn" style="background-color:#dd8027; color:white; font-weight:600; padding:0.5rem 1.5rem;">
+          Confirm & Submit
+        </button>
+      </div>
+      
+    </div>
+  </div>
+</div>
 
     <!-- Confirmation Modal -->
 <div class="modal fade" id="consentModal" tabindex="-1" aria-labelledby="consentModalLabel" aria-hidden="true">
@@ -383,6 +508,15 @@ button.btn-primary:hover {
     color: #fff;
 }
 
+#reviewModal .btn:hover {
+    opacity: 0.9;
+}
+#review-content h6 {
+    color: #52074f;
+    font-weight: 600;
+}
+
+
  </style>
 
  
@@ -422,6 +556,119 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
+<script>
+document.getElementById('review-btn').addEventListener('click', function() {
+    const reviewContent = document.getElementById('review-content');
+    reviewContent.innerHTML = ''; // clear previous preview
+
+    const form = document.getElementById('application-form');
+
+    // 1️⃣ Processing Type
+    const processingType = form.querySelector('[name="processing_type"]').value; 
+    reviewContent.innerHTML += `
+        <div class="mb-3 p-2 rounded" style="background-color:#fff3e6; border-left: 4px solid #dd8027;">
+            <strong>Processing Type:</strong> ${processingType}
+        </div>
+    `;
+
+    // 2️⃣ Qualifications
+    const qualificationBlocks = form.querySelectorAll('[name^="qualifications"]');
+    let qualifications = {};
+    qualificationBlocks.forEach(input => {
+        const match = input.name.match(/qualifications\[(\d+)\]\[(\w+)\]/);
+        if (match) {
+            const index = match[1];
+            const field = match[2];
+            if(!qualifications[index]) qualifications[index] = {};
+            qualifications[index][field] = input.value;
+        }
+    });
+
+    reviewContent.innerHTML += `<h6 class="mt-3 mb-2">Qualifications / Awards:</h6>`;
+    Object.values(qualifications).forEach((qual, idx) => {
+        reviewContent.innerHTML += `
+            <div class="mb-2 p-2 rounded shadow-sm" style="background-color:white; border-left: 4px solid #52074f;">
+                <strong>Qualification ${idx+1}</strong><br>
+                <div><strong>Level:</strong> ${qual.name || '-'}</div>
+                <div><strong>Program:</strong> ${qual.program_name || '-'}</div>
+                <div><strong>Year:</strong> ${qual.year || '-'}</div>
+                <div><strong>Institution:</strong> ${qual.institution || '-'}</div>
+                <div><strong>Merit/Class:</strong> ${qual.merit || '-'}</div>
+                <div><strong>Country:</strong> ${qual.country || '-'}</div>
+            </div>
+        `;
+    });
+// 3️⃣ Attachments
+const attachmentInputs = Array.from(form.querySelectorAll('.file-input'));
+let anyFiles = false;
+let attachmentsHTML = '';
+
+attachmentInputs.forEach(input => {
+    if (input.files.length > 0) {
+        anyFiles = true;
+        const fieldLabel = input.closest('.col-md-6').querySelector('label').innerText;
+        const files = Array.from(input.files).map(f => f.name).join(', ');
+        attachmentsHTML += `
+            <div class="mb-2 p-2 rounded" style="background-color:#fff3e6; border-left: 4px solid #dd8027;">
+                <strong>${fieldLabel}:</strong> ${files}
+            </div>
+        `;
+    }
+});
+
+reviewContent.innerHTML += `<h6 class="mt-3 mb-2">Attachments:</h6>`;
+reviewContent.innerHTML += anyFiles ? attachmentsHTML : `
+    <div class="mb-2 p-2 rounded" style="background-color:#fff3e6; border-left: 4px solid #dd8027;">
+        No files uploaded
+    </div>
+`;
+
+
+    // 4️⃣ Consent
+    const consentChecked = form.querySelector('[name="consent_agree"]').checked;
+    reviewContent.innerHTML += `
+        <div class="mt-3 p-2 rounded" style="background-color:#ffe6e6; border-left:4px solid #dc3545;">
+            <strong>Consent Agreed:</strong> ${consentChecked ? 'Yes' : 'No'}
+        </div>
+    `;
+
+    // Show modal
+    const reviewModal = new bootstrap.Modal(document.getElementById('reviewModal'));
+    reviewModal.show();
+});
+
+// Submit form when Confirm clicked
+document.getElementById('submit-btn').addEventListener('click', function() {
+    document.getElementById('application-form').submit();
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const currentYear = new Date().getFullYear();
+
+    // Select all year inputs
+    document.querySelectorAll('input[name^="qualifications"][name$="[year]"]').forEach(input => {
+
+        input.addEventListener('input', function () {
+            const year = parseInt(this.value, 10);
+            const feedbackId = this.dataset.feedbackId;
+
+            // Remove previous feedback if exists
+            let existingFeedback = this.parentElement.querySelector('.year-feedback');
+            if (existingFeedback) existingFeedback.remove();
+
+            // Validation
+            if (isNaN(year) || year < 1900 || year > currentYear) {
+                const div = document.createElement('div');
+                div.className = 'text-danger small year-feedback';
+                div.innerText = `Please enter a valid year between 1900 and ${currentYear}.`;
+                this.parentElement.appendChild(div);
+            }
+        });
+    });
+});
+</script>
 
   
 @endsection

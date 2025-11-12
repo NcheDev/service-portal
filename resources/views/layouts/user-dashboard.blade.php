@@ -172,7 +172,7 @@
     <a href="{{ route('user.dashboard') }}" class="nav-link"><i class="mdi mdi-home menu-icon me-2"></i>Dashboard</a>
     <a href="{{ route('user.personal-info') }}" class="nav-link"><i class="mdi mdi-contacts menu-icon me-2"></i>Applicant Details</a>
     <a href="{{ route('application.create') }}" class="nav-link"><i class="mdi mdi-school menu-icon me-2"></i>Applications</a> 
-    <a href="{{ route('faq') }}" class="nav-link"><i class="mdi mdi-help-circle menu-icon me-2"></i>FAQ</a>
+    <a href="{{ route('faq') }}" class="nav-link"><i class="mdi mdi-help-circle  me-2"></i>Info</a>
   </nav>
 
   <!-- Main Content -->

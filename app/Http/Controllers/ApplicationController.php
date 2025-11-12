@@ -47,11 +47,12 @@ class ApplicationController extends Controller
         
 
         // Files
-         'certificates' => 'required|array|min:1',
-        'certificates.*' => 'file|max:5120',
-        'academic_records.*' => 'file|max:5120',
-        'previous_evaluations.*' => 'file|max:5120',
-        'syllabi.*' => 'file|max:5120',
+        'certificates' => 'required|array|min:1',
+        'certificates.*' => 'file|mimes:pdf,png,jpg,jpeg,|max:4096',
+        'academic_records.*' => 'file|mimes:pdf,png,jpg,jpeg|max:4096',
+        'previous_evaluations.*' => 'file|mimes:pdf,png,jpg,jpeg|max:4096',
+        'syllabi.*' => 'file|mimes:pdf,png,jpg,jpeg|max:4096',
+
         'consent_agree' => 'accepted',
     ]);
 
@@ -91,10 +92,9 @@ class ApplicationController extends Controller
             }
         }
     }  
-
-    // Success message
-   return back()->with('success', 'Application submitted successfully! Please proceed to payment.');
-
+ return view('user.success', [
+        'application' => $application
+    ]);
 }
 
 

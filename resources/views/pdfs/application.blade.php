@@ -199,7 +199,7 @@ h2 {
         <thead>
             <tr>
                 <th>Level</th>
-                <th>Program Name</th>
+                <th>Field Of Study</th>
                 <th>Institution</th>
                 <th>Year</th>
                 <th>Merit</th>
