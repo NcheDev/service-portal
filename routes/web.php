@@ -47,31 +47,24 @@ Route::middleware(['auth'])->group(function () {
 // Dashboards (only for verified users)
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/admin.dashboard', function () {
-    return redirect()->route('admin.dashboard');
-});
-
-
-    Route::get('/user-dashboard', function () {
-        return view('user.dashboard');
+        return redirect()->route('admin.dashboard');
     });
 });
 
- 
-//documentation routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/user-dashboard', function () {
+        return view('user.dashboard');
+    })->name('user.dashboard');
+});
 
+Route::middleware(['auth'])->group(function () {
+    Route::get('/documentation', [DocumentationController::class, 'show'])->name('documentation.view');
+    Route::get('/documentation/download', [DocumentationController::class, 'downloadPdf'])->name('documentation.download');
 
-Route::get('/documentation', function () {
-    return view('user.documentation');
-})->name('documentation.view');
-//main-panel route
-Route::get('/main-panel', function () {
-    return view('user.main-panel');
-})->name('main-panel.view');
-// routes for downloading the PDF
-
-
-Route::get('/documentation', [DocumentationController::class, 'show'])->name('documentation.view');
-Route::get('/documentation/download', [DocumentationController::class, 'downloadPdf'])->name('documentation.download');
+    Route::get('/main-panel', function () {
+        return view('user.main-panel');
+    })->name('main-panel.view');
+});
 
 // Email verification routes
 Route::middleware(['auth'])->group(function () {
@@ -84,7 +77,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
         $request->fulfill(); // Marks user as verified
 
-        return redirect('/login'); // or /user-dashboard based on your flow
+        return redirect('/login'); 
     })->middleware(['signed'])->name('verification.verify');
 
     // Resend the verification email
@@ -94,7 +87,6 @@ Route::middleware(['auth'])->group(function () {
         return back()->with('message', 'Verification link sent!');
     })->middleware('throttle:6,1')->name('verification.send');
 });
-// routes/web.php
 
 Route::get('forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
 Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
@@ -113,65 +105,56 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::post('/users/{user}/revoke-permission', [UserManagementController::class, 'revokePermission'])->name('admin.users.revokePermission');
 
 });
- 
-// Show the form
-Route::get('/application', [ApplicationController::class, 'create'])->name('application.create');
+ Route::middleware(['auth'])->group(function() {
+    Route::get('/application', [ApplicationController::class, 'create'])->name('application.create');
+    Route::post('/application', [ApplicationController::class, 'store'])->name('application.store');
+    Route::post('/upload-consent-form', [ApplicationController::class, 'uploadConsentForm'])->name('documents.uploadConsent');
 
-// Handle form submission
-Route::post('/application', [ApplicationController::class, 'store'])->name('application.store');
-    //consent form upload
-Route::post('/upload-consent-form', [ApplicationController::class, 'uploadConsentForm'])->name('documents.uploadConsent');
-// Show the user's applications
-Route::get('/my-applications', [ApplicationController::class, 'myApplications'])->name('applications.my');
+    Route::get('/my-applications', [ApplicationController::class, 'myApplications'])->name('applications.my');
+    Route::get('/applications/{id}', [ApplicationController::class, 'show'])->name('applications.show');
 
-// Invoice routes
-Route::get('/invoices/{invoice}', [InvoiceController::class, 'show'])->name('invoices.show');
-Route::get('/invoices/{invoice}/pdf', [InvoiceController::class, 'downloadPdf'])->name('invoices.pdf');
-// routes/web.php
+    Route::post('/applications/{application}/request-info', [ApplicationController::class, 'requestInfo'])->name('applications.request-info');
+    Route::put('/applications/respond-info/{infoRequest}', [ApplicationController::class, 'respondInfo'])->name('applications.respond-info');
 
-Route::get('/invoices/{invoice}/payment', [InvoiceController::class, 'paymentForm'])->name('invoices.payment');
-Route::post('/invoices/{invoice}/payment', [InvoiceController::class, 'submitPayment'])->name('invoices.payment.submit');
- 
-Route::get('/invoices/{invoice}/payment', [InvoiceController::class, 'paymentForm'])->name('invoices.payment');
+    Route::get('/invoices/{invoice}', [InvoiceController::class, 'show'])->name('invoices.show');
+    Route::get('/invoices/{invoice}/pdf', [InvoiceController::class, 'downloadPdf'])->name('invoices.pdf');
+    Route::get('/invoices/{invoice}/payment', [InvoiceController::class, 'paymentForm'])->name('invoices.payment');
+    Route::post('/invoices/{invoice}/payment', [InvoiceController::class, 'submitPayment'])->name('invoices.payment.submit');
+});
 
-Route::post('/invoices/{invoice}/payment', [InvoiceController::class, 'submitPayment'])->name('invoices.submitPayment');
- Route::get('/my-applications', [ApplicationController::class, 'myApplications'])
-     ->name('applications.my')
-     ->middleware('auth');
-     Route::get('/applications/{id}', [ApplicationController::class, 'show'])->name('applications.show');
-
-Route::get('/applications/{id}', [ApplicationController::class, 'show'])->name('applications.show');
-Route::get('/applications/{id}', [ApplicationController::class, 'show'])->name('applications.show');
-Route::get('/my-applications', [ApplicationController::class, 'myApplications'])->name('applications.my');
-// in web.php
-Route::post('/applications/{application}/request-info', [ApplicationController::class, 'requestInfo'])->name('applications.request-info');
-Route::put('/applications/respond-info/{infoRequest}', [ApplicationController::class, 'respondInfo'])->name('applications.respond-info');
-Route::post('/applications/{application}/request-info', [ApplicationController::class, 'requestInfo'])
-    ->name('applications.request-info');
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/users/validated', [UserManagementController::class, 'validatedUsers'])->name('admin.users.validated');
 });
-Route::get('/admin/users/validated', [UserManagementController::class, 'validatedUsers'])->name('admin.users.validated');
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
+    
+    Route::get('/users/validated', [UserManagementController::class, 'validatedUsers'])
+        ->name('users.validated');
 
-     Route::get('/applicants', [ApplicantViewController::class, 'all'])->name('admin.applicants.all');
-    Route::get('/applicants/validated', [ApplicantViewController::class, 'validated'])->name('admin.applicants.validated');
-    Route::get('/applicants/pending', [ApplicantViewController::class, 'pending'])->name('admin.applicants.pending');
-    Route::get('/applicants/invalid', [ApplicantViewController::class, 'rejected'])->name('admin.applicants.invalid');
- Route::post('/users/{application}/validate', [UserManagementController::class, 'validateUser'])->name('admin.users.validate');
-Route::patch('/users/{application}/revert', [UserManagementController::class, 'revertStatus'])->name('admin.users.revertStatus');
+    Route::get('/applicants', [ApplicantViewController::class, 'all'])
+        ->name('applicants.all');
+    Route::get('/applicants/validated', [ApplicantViewController::class, 'validated'])
+        ->name('applicants.validated');
+    Route::get('/applicants/pending', [ApplicantViewController::class, 'pending'])
+        ->name('applicants.pending');
+    Route::get('/applicants/invalid', [ApplicantViewController::class, 'rejected'])
+        ->name('applicants.invalid');
 
-Route::get('/applications/{application}', [UserManagementController::class, 'show'])->name('applications.show');
-Route::get('/admin/applications/{application}/generate-letter', [UserManagementController::class, 'generateValidationLetter'])
-    ->name('applications.generateLetter');
-// routes/web.php
+    Route::post('/users/{application}/validate', [UserManagementController::class, 'validateUser'])
+        ->name('users.validate');
+    Route::patch('/users/{application}/revert', [UserManagementController::class, 'revertStatus'])
+        ->name('users.revertStatus');
+
+    Route::get('/applications/{application}', [UserManagementController::class, 'show'])
+        ->name('applications.show');
+    Route::get('/applications/{application}/generate-letter', [UserManagementController::class, 'generateValidationLetter'])
+        ->name('applications.generateLetter');
+});
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
-    // Other admin routes...
-
+ 
     Route::get('applications/{application}', [ApplicationController::class, 'show'])->name('applications.show');
 });
-// routes/web.php
 
  Route::get('/db-check', function () {
     try {
@@ -184,103 +167,123 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 Route::get('/db-check', function () {
     return 'Connected to DB: ' . DB::connection()->getDatabaseName();
 });
+// Admin routes
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function () {
 
-Route::get('/admin/dashboard', [UserManagementController::class, 'dashboard'])->name('admin.dashboard');
-Route::post('/users/{application}/validate', [UserManagementController::class, 'validateUser'])->name('admin.users.validate');
-Route::patch('/users/{application}/revert', [UserManagementController::class, 'revertStatus'])->name('admin.users.revertStatus');
+    // Dashboard
+    Route::get('/dashboard', [UserManagementController::class, 'dashboard'])->name('dashboard');
 
- 
-Route::get('/admin/applicants/{userId}/application/{applicationId}', [UserManagementController::class, 'viewApplication'])
-    ->name('admin.applicants.viewApplication');
-Route::prefix('admin/applicants')->name('admin.applicants.')->group(function () {
-    Route::post('/{application}/validate', [UserManagementController::class, 'validateUser'])->name('validateUser');
-    Route::post('/{application}/revert', [UserManagementController::class, 'revertStatus'])->name('revertStatus');
-    Route::get('/{application}/generate-letter', [UserManagementController::class, 'generateValidationLetter'])->name('generateValidationLetter');
-    Route::get('/{user}/{application}/view', [UserManagementController::class, 'viewApplication'])->name('viewApplication');
+    // User management
+    Route::post('/users/{application}/validate', [UserManagementController::class, 'validateUser'])->name('users.validate');
+    Route::patch('/users/{application}/revert', [UserManagementController::class, 'revertStatus'])->name('users.revertStatus');
+
+    // Applicant applications
+    Route::get('/applicants/{userId}/application/{applicationId}', [UserManagementController::class, 'viewApplication'])
+        ->name('applicants.viewApplication');
+
+    Route::prefix('applicants')->name('applicants.')->group(function () {
+        Route::post('/{application}/validate', [UserManagementController::class, 'validateUser'])->name('validateUser');
+        Route::post('/{application}/revert', [UserManagementController::class, 'revertStatus'])->name('revertStatus');
+        Route::get('/{application}/generate-letter', [UserManagementController::class, 'generateValidationLetter'])->name('generateValidationLetter');
+        Route::get('/{user}/{application}/view', [UserManagementController::class, 'viewApplication'])->name('viewApplication');
+    });
+
+    // Audit Trail
+    Route::get('/audit-trail', [AuditTrailController::class, 'index'])->name('audit.index');
 });
 
-Route::get('/invoices', function () {
-    $invoices = \App\Models\Invoice::with('application')->where('user_id', auth()->id())->latest()->get();
-    return view('invoices.index', compact('invoices'));
-})->middleware(['auth'])->name('invoices.index');
-Route::get('/faq', function () {
-    return view('faq');
-})->name('faq');
+// Auth-protected user routes
+Route::middleware(['auth'])->group(function () {
 
-Route::get('/help', function () {
-    return view('help');
+    // Invoices
+    Route::get('/invoices', function () {
+        $invoices = \App\Models\Invoice::with('application')->where('user_id', auth()->id())->latest()->get();
+        return view('invoices.index', compact('invoices'));
+    })->name('invoices.index');
+
+    // Help & FAQ
+    Route::get('/faq', function () {
+        return view('faq');
+    })->name('faq');
+
+    Route::get('/help', function () {
+        return view('help');
+    });
 });
-// Audit Trail route
-Route::get('/audit-trail', [\App\Http\Controllers\Admin\AuditTrailController::class, 'index'])->name('audit.index');
-
 
  Route::middleware(['auth'])->group(function () {
     Route::get('/applications/{application}', [ApplicationController::class, 'show'])
         ->name('user.application.details');
-});
-Route::post('/notifications/mark-all-read', function () {
-    auth()->user()->unreadNotifications->markAsRead();
-    return back();
-})->name('notifications.markAllRead');
-// web.php
-Route::get('/notifications/read/{id}', function($id) {
-    $notification = auth()->user()->notifications()->find($id);
-    if ($notification) {
-        $notification->markAsRead();
-        return redirect($notification->data['url'] ?? '/');
-    }
-    return redirect('/');
-})->name('notifications.read');
+});// Notifications routes (auth protected)
+Route::middleware(['auth'])->group(function () {
 
-Route::get('/user/applications/{application}', [ApplicationController::class, 'show'])
-    ->name('user.application.details');Route::get('admin/applicants/{user}/{application}/view', 
-    [App\Http\Controllers\Admin\UserManagementController::class, 'viewApplication']
-)->name('admin.applicants.viewApplication');
-
-Route::prefix('admin')->middleware(['auth'])->group(function() {
-
-    // Load chat page for a specific application
-    Route::get('additional-info/{application}/chat', [AdditionalInfoController::class, 'chat'])
-        ->name('admin.additional-info.chat');
-
-    // Admin sends a new request to the user
-    Route::post('additional-info/{application}/send', [AdditionalInfoController::class, 'requestInfo'])
-        ->name('admin.additional-info.send');
-
-    // User responds to request (optional, if handled by admin panel)
-    Route::post('additional-info/respond/{infoRequest}', [AdditionalInfoController::class, 'respondInfo'])
-        ->name('user.additional-info.respond');
-
-    // Optional: Mark all notifications as read (if using your notification blade)
-    Route::post('notifications/mark-all-read', function() {
+    // Mark all notifications as read
+    Route::post('/notifications/mark-all-read', function () {
         auth()->user()->unreadNotifications->markAsRead();
         return back();
     })->name('notifications.markAllRead');
 
+    // Mark a single notification as read and redirect
+    Route::get('/notifications/read/{id}', function ($id) {
+        $notification = auth()->user()->notifications()->find($id);
+        if ($notification) {
+            $notification->markAsRead();
+            return redirect($notification->data['url'] ?? '/');
+        }
+        return redirect('/');
+    })->name('notifications.read');
+
+});
+// User application routes (auth protected)
+Route::middleware(['auth'])->group(function () {
+    // Show a user's application details
+    Route::get('/user/applications/{application}', [ApplicationController::class, 'show'])
+        ->name('user.application.details');
 });
 
-Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function() {
+// Admin-specific routes (auth + admin)
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(function() {
 
+    // View applicant's application
+    Route::get('applicants/{user}/{application}/view', [App\Http\Controllers\Admin\UserManagementController::class, 'viewApplication'])
+        ->name('applicants.viewApplication');
+
+    // Load chat page for a specific application
+    Route::get('additional-info/{application}/chat', [AdditionalInfoController::class, 'chat'])
+        ->name('additional-info.chat');
+
+    // Admin sends a new request to the user
+    Route::post('additional-info/{application}/send', [AdditionalInfoController::class, 'requestInfo'])
+        ->name('additional-info.send');
+
+    // User responds to request (if handled by admin panel)
+    Route::post('additional-info/respond/{infoRequest}', [AdditionalInfoController::class, 'respondInfo'])
+        ->name('user.additional-info.respond');
+
+    // Admin sends request for additional info
     Route::post('applicants/{application}/request-info', [ApplicationController::class, 'requestInfo'])
         ->name('applicants.requestInfo');
-
 });
-Route::get('/admin/additional-info-chat/{application}', [ApplicationController::class, 'showAdditionalInfoChat'])
-    ->name('admin.additional-info.chat');
-    
-    
+
+// Admin routes outside prefix name grouping (optional, auth protected)
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/additional-info-chat/{application}', [ApplicationController::class, 'showAdditionalInfoChat'])
+        ->name('admin.additional-info.chat');
+});
     
 Route::middleware(['auth'])->group(function () {
     Route::get('/personal-info', [PersonalInformationController::class, 'showForm'])
         ->name('user.personal-info');
 
     Route::post('/personal-info', [PersonalInformationController::class, 'storeOrUpdate']);
-});
 
+    
  
 Route::get('/dashboard', function () {
     return view('user.dashboard');
 })->name('user.dashboard'); 
+
+});
 
 
 Route::middleware(['auth'])->group(function () {
@@ -291,34 +294,42 @@ Route::middleware(['auth'])->group(function () {
     // Save or update form
     Route::post('/personal-information', [PersonalInformationController::class, 'storeOrUpdate'])
         ->name('personal.storeOrUpdate');
-});
-Route::get('/profile', [PersonalInformationController::class, 'show'])->name('user.profile');
+});// User routes (authenticated)
+Route::middleware(['auth'])->group(function () {
+    // User profile
+    Route::get('/profile', [PersonalInformationController::class, 'show'])->name('user.profile');
 
-Route::get('/applications/{application}/pending-count', [ApplicationController::class, 'pendingCount'])
-    ->name('applications.pendingCount');
+    // User dashboard
+    Route::get('/user-dashboard', [ApplicationController::class, 'userDashboard'])->name('user.dashboard');
 
-    // routes/web.php
-Route::get('/notifications/read/{id}', function ($id) {
-    $notification = auth()->user()->unreadNotifications()->find($id);
-    if ($notification) {
-        $notification->markAsRead();
-    }
-    return response()->json(['status' => 'success']);
-});
+    // Personal information store/update
+    Route::post('/personal-information', [PersonalInformationController::class, 'storeOrUpdate'])
+        ->name('personal-information.storeOrUpdate');
 
- 
-Route::post('/personal-information', [PersonalInformationController::class, 'storeOrUpdate'])
-    ->name('personal-information.storeOrUpdate');
+    // Application pending count
+    Route::get('/applications/{application}/pending-count', [ApplicationController::class, 'pendingCount'])
+        ->name('applications.pendingCount');
 
-Route::get('/admin/dashboard', [UserManagementController::class, 'dashboard'])
-    ->name('admin.dashboard');
+    // Notifications read
+    Route::get('/notifications/read/{id}', function ($id) {
+        $notification = auth()->user()->unreadNotifications()->find($id);
+        if ($notification) {
+            $notification->markAsRead();
+        }
+        return response()->json(['status' => 'success']);
+    })->name('notifications.read');
 
-    Route::get('/user-dashboard', [ApplicationController::class, 'userDashboard'])
-    ->name('user.dashboard')
-    ->middleware(['auth']);
-
-    Route::patch('/admin/users/{user}/toggle-status', [UserManagementController::class, 'toggleStatus'])
-    ->name('admin.users.toggleStatus');
-
+    // Download user's application PDF
     Route::get('/application/{id}/download', [App\Http\Controllers\ApplicationController::class, 'downloadPDF'])
-    ->name('application.download');
+        ->name('application.download');
+});
+
+// Admin routes (authenticated + admin)
+Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
+    // Admin dashboard
+    Route::get('/dashboard', [UserManagementController::class, 'dashboard'])->name('admin.dashboard');
+
+    // Toggle user status
+    Route::patch('/users/{user}/toggle-status', [UserManagementController::class, 'toggleStatus'])
+        ->name('admin.users.toggleStatus');
+});

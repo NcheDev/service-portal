@@ -30,6 +30,9 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\PreventBackHistory::class,
+            // in Kernel.php under web middleware group
+            \App\Http\Middleware\NoCache::class,
+
         ],
 
         'api' => [
@@ -56,6 +59,8 @@ class Kernel extends HttpKernel
         // ✅ Custom middleware for roles
         'role' => \App\Http\Middleware\RoleMiddleware::class,
         'admin' => \App\Http\Middleware\AdminMiddleware::class,
+        'nocache' => \App\Http\Middleware\NoCache::class,
+
     ];
 
     
