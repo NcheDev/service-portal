@@ -42,8 +42,7 @@
         && $personalInfo->first_name 
         && $personalInfo->surname 
         && $personalInfo->primary_phone 
-        && $personalInfo->nationality 
-        && $personalInfo->date_of_birth 
+         && $personalInfo->date_of_birth 
         && $personalInfo->physical_address;
 @endphp
 
@@ -398,39 +397,7 @@ document.querySelectorAll('.file-input').forEach(input => {
     </div>
   </div>
 </div>
-
-    <!-- Confirmation Modal -->
-<div class="modal fade" id="consentModal" tabindex="-1" aria-labelledby="consentModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-0 shadow-lg">
-      <div class="modal-header" style="background-color:#52074f; color:white;">
-        <h5 class="modal-title fw-bold" id="consentModalLabel">Confirm Submission</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-
-      <div class="modal-body">
-        <p class="mb-3">
-          By submitting this application, you confirm that:
-        </p>
-        <ul>
-          <li>All information provided is accurate and true.</li>
-          <li>All attached documents are certified copies of originals.</li>
-          <li>You consent to NCHE verifying your records with relevant authorities.</li>
-        </ul>
-        <p class="fw-semibold text-nche-primary">
-          By continuing, you agree to the <strong>terms and conditions</strong> stated above.
-        </p>
-      </div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" id="confirmSubmit" class="btn btn-primary" style="background-color:#dd8027; border:none;">
-          Yes, Submit Application
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
+ 
 
 
 </div>
@@ -530,9 +497,7 @@ button.btn-primary:hover {
 
  </style>
  
-
  
-
 
  
 <script>
@@ -549,111 +514,8 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 });
-</script>
- <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const form = document.getElementById('application-form');
-    const modal = new bootstrap.Modal(document.getElementById('consentModal'));
-    const confirmButton = document.getElementById('confirmSubmit');
-
-    form.addEventListener('submit', function (e) {
-        e.preventDefault(); // stop immediate submission
-        modal.show(); // open modal
-    });
-
-    confirmButton.addEventListener('click', function () {
-        modal.hide(); // close modal
-        form.submit(); // now actually submit the form
-    });
-});
-</script>
-
-<script>
-document.getElementById('review-btn').addEventListener('click', function() {
-    const reviewContent = document.getElementById('review-content');
-    reviewContent.innerHTML = ''; // clear previous preview
-
-    const form = document.getElementById('application-form');
-
-    // 1️⃣ Processing Type
-    const processingType = form.querySelector('[name="processing_type"]').value; 
-    reviewContent.innerHTML += `
-        <div class="mb-3 p-2 rounded" style="background-color:#fff3e6; border-left: 4px solid #dd8027;">
-            <strong>Processing Type:</strong> ${processingType}
-        </div>
-    `;
-
-    // 2️⃣ Qualifications
-    const qualificationBlocks = form.querySelectorAll('[name^="qualifications"]');
-    let qualifications = {};
-    qualificationBlocks.forEach(input => {
-        const match = input.name.match(/qualifications\[(\d+)\]\[(\w+)\]/);
-        if (match) {
-            const index = match[1];
-            const field = match[2];
-            if(!qualifications[index]) qualifications[index] = {};
-            qualifications[index][field] = input.value;
-        }
-    });
-
-    reviewContent.innerHTML += `<h6 class="mt-3 mb-2">Qualifications / Awards:</h6>`;
-    Object.values(qualifications).forEach((qual, idx) => {
-        reviewContent.innerHTML += `
-            <div class="mb-2 p-2 rounded shadow-sm" style="background-color:white; border-left: 4px solid #52074f;">
-                <strong>Qualification ${idx+1}</strong><br>
-                <div><strong>Level:</strong> ${qual.name || '-'}</div>
-                <div><strong>Program:</strong> ${qual.program_name || '-'}</div>
-                <div><strong>Year:</strong> ${qual.year || '-'}</div>
-                <div><strong>Institution:</strong> ${qual.institution || '-'}</div>
-                <div><strong>Merit/Class:</strong> ${qual.merit || '-'}</div>
-                <div><strong>Country:</strong> ${qual.country || '-'}</div>
-            </div>
-        `;
-    });
-// 3️⃣ Attachments
-const attachmentInputs = Array.from(form.querySelectorAll('.file-input'));
-let anyFiles = false;
-let attachmentsHTML = '';
-
-attachmentInputs.forEach(input => {
-    if (input.files.length > 0) {
-        anyFiles = true;
-        const fieldLabel = input.closest('.col-md-6').querySelector('label').innerText;
-        const files = Array.from(input.files).map(f => f.name).join(', ');
-        attachmentsHTML += `
-            <div class="mb-2 p-2 rounded" style="background-color:#fff3e6; border-left: 4px solid #dd8027;">
-                <strong>${fieldLabel}:</strong> ${files}
-            </div>
-        `;
-    }
-});
-
-reviewContent.innerHTML += `<h6 class="mt-3 mb-2">Attachments:</h6>`;
-reviewContent.innerHTML += anyFiles ? attachmentsHTML : `
-    <div class="mb-2 p-2 rounded" style="background-color:#fff3e6; border-left: 4px solid #dd8027;">
-        No files uploaded
-    </div>
-`;
-
-
-    // 4️⃣ Consent
-    const consentChecked = form.querySelector('[name="consent_agree"]').checked;
-    reviewContent.innerHTML += `
-        <div class="mt-3 p-2 rounded" style="background-color:#ffe6e6; border-left:4px solid #dc3545;">
-            <strong>Consent Agreed:</strong> ${consentChecked ? 'Yes' : 'No'}
-        </div>
-    `;
-
-    // Show modal
-    const reviewModal = new bootstrap.Modal(document.getElementById('reviewModal'));
-    reviewModal.show();
-});
-
-// Submit form when Confirm clicked
-document.getElementById('submit-btn').addEventListener('click', function() {
-    document.getElementById('application-form').submit();
-});
-</script>
+</script> 
+ 
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -679,6 +541,168 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
+});
+</script>
+<script>
+document.getElementById('review-btn').addEventListener('click', function () {
+
+    const form = document.getElementById('application-form');
+    let valid = true;
+    const currentYear = new Date().getFullYear();
+
+    // Remove all previous errors
+    document.querySelectorAll('.validation-error-msg').forEach(e => e.remove());
+
+    // ------------------------------
+    // REQUIRED FIELDS
+    // ------------------------------
+    form.querySelectorAll('[required]').forEach(field => {
+        if (!field.value || field.value.trim() === '') {
+            valid = false;
+            showError(field, "This field is required.");
+        }
+    });
+
+    // ------------------------------
+    // YEAR VALIDATION
+    // ------------------------------
+    const yearInputs = form.querySelectorAll('input[name^="qualifications"][name$="[year]"]');
+    yearInputs.forEach(input => {
+        const year = parseInt(input.value, 10);
+
+        if (isNaN(year) || year < 1900 || year > currentYear) {
+            valid = false;
+            showError(input, `Enter a valid year (1900 - ${currentYear}).`);
+        }
+    });
+
+    // ------------------------------
+    // CERTIFICATE REQUIRED
+    // ------------------------------
+    const certInput = document.querySelector('input[name="certificates[]"]');
+    if (certInput && certInput.files.length === 0) {
+        valid = false;
+        showError(certInput, "At least one certificate is required.");
+    }
+
+    // ------------------------------
+    // CONSENT CHECK
+    // ------------------------------
+    const consent = document.getElementById('consent_agree');
+    if (!consent.checked) {
+        valid = false;
+        showError(consent, "You must agree before continuing.");
+    }
+
+    // ------------------------------
+    // STOP IF INVALID
+    // ------------------------------
+    if (!valid) {
+        scrollToFirstError();
+        return;
+    }
+
+    // =========================================================
+    // 🔥 BUILD THE REVIEW CONTENT HERE
+    // =========================================================
+    const reviewContent = document.getElementById('review-content');
+    reviewContent.innerHTML = "";  
+
+    // 1️⃣ Processing Type
+    const processingType = form.querySelector('[name="processing_type"]').value; 
+    reviewContent.innerHTML += `
+        <div class="mb-3 p-2 rounded" style="background-color:#fff3e6; border-left: 4px solid #dd8027;">
+            <strong>Processing Type:</strong> ${processingType}
+        </div>
+    `;
+
+    // 2️⃣ Qualifications
+    const qualificationBlocks = form.querySelectorAll('[name^="qualifications"]');
+    let qualifications = {};
+
+    qualificationBlocks.forEach(input => {
+        const match = input.name.match(/qualifications\[(\d+)\]\[(\w+)\]/);
+        if (match) {
+            const index = match[1];
+            const field = match[2];
+            if (!qualifications[index]) qualifications[index] = {};
+            qualifications[index][field] = input.value;
+        }
+    });
+
+    reviewContent.innerHTML += `<h6 class="mt-3 mb-2">Qualifications / Awards:</h6>`;
+    Object.values(qualifications).forEach((qual, idx) => {
+        reviewContent.innerHTML += `
+            <div class="mb-2 p-2 rounded shadow-sm" style="background-color:white; border-left: 4px solid #52074f;">
+                <strong>Qualification ${idx+1}</strong><br>
+                <div><strong>Level:</strong> ${qual.name || '-'}</div>
+                <div><strong>Program:</strong> ${qual.program_name || '-'}</div>
+                <div><strong>Year:</strong> ${qual.year || '-'}</div>
+                <div><strong>Institution:</strong> ${qual.institution || '-'}</div>
+                <div><strong>Merit/Class:</strong> ${qual.merit || '-'}</div>
+                <div><strong>Country:</strong> ${qual.country || '-'}</div>
+            </div>
+        `;
+    });
+
+    // 3️⃣ Attachments
+    const attachmentInputs = Array.from(form.querySelectorAll('.file-input'));
+    let attachmentsHTML = ``;
+    let anyFiles = false;
+
+    attachmentInputs.forEach(input => {
+        if (input.files.length > 0) {
+            anyFiles = true;
+            const label = input.closest('.col-md-6').querySelector('label').innerText;
+            const filenames = Array.from(input.files).map(f => f.name).join(', ');
+            attachmentsHTML += `
+                <div class="mb-2 p-2 rounded" style="background-color:#fff3e6; border-left: 4px solid #dd8027;">
+                    <strong>${label}:</strong> ${filenames}
+                </div>
+            `;
+        }
+    });
+
+    reviewContent.innerHTML += `<h6 class="mt-3 mb-2">Attachments:</h6>`;
+    reviewContent.innerHTML += anyFiles ? attachmentsHTML : `
+        <div class="mb-2 p-2 rounded" style="background-color:#fff3e6; border-left: 4px solid #dd8027;">
+            No files uploaded
+        </div>
+    `;
+
+    // 4️⃣ Consent
+    reviewContent.innerHTML += `
+        <div class="mt-3 p-2 rounded" style="background-color:#ffe6e6; border-left:4px solid #dc3545;">
+            <strong>Consent Agreed:</strong> Yes
+        </div>
+    `;
+
+    // =========================================================
+    // NOW OPEN THE MODAL (ONLY ONCE)
+    // =========================================================
+    const reviewModal = new bootstrap.Modal(document.getElementById('reviewModal'));
+    reviewModal.show();
+});
+
+// =============================
+// HELPER FUNCTIONS
+// =============================
+function showError(field, message) {
+    const div = document.createElement('div');
+    div.className = "text-danger small validation-error-msg mt-1";
+    div.innerText = message;
+    field.parentElement.appendChild(div);
+    field.classList.add('is-invalid');
+}
+
+function scrollToFirstError() {
+    const firstError = document.querySelector('.validation-error-msg');
+    if (firstError) {
+        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}
+document.getElementById('submit-btn').addEventListener('click', function () {
+    document.getElementById('application-form').submit();
 });
 </script>
 
