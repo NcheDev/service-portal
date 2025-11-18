@@ -3,138 +3,214 @@
 @section('title', 'Application Details')
 
 @section('content')
-<div class="main-card">
-    <div class="container py-4">
-        <h3 class="mb-4 text-center fw-bold" style="color:#52074f; letter-spacing:1px;">
-            <span>📄 Application Details</span>
-            <hr>
-        </h3>
+<div class="d-flex justify-content-between align-items-center mb-4">
+     
+    <div class="btn-group" role="group" aria-label="Application Actions">
+        <a href="{{ route('application.create') }}" 
+           class="btn btn-sm text-white" 
+           style="background-color:#52074f; border-radius:25px;">
+           ➕ New Application
+        </a>
 
-        {{-- ===== Application Summary ===== --}}
-        <form class="p-3 border rounded shadow-sm bg-white">
+        @if($application->status === 'pending')
+        <a href="{{ route('applications.edit', $application->id) }}" 
+           class="btn btn-sm btn-outline-secondary" 
+           style="border-radius:25px;">
+           ✏️ Edit Application
+        </a>
+        @endif
 
-            <div class="row mb-4">
-                <div class="col-md-4">
-                    <label class="form-label fw-bold text-secondary">Processing Type</label>
-                    <input type="text" class="form-control" value="{{ ucfirst($application->processing_type) }}" readonly>
-                </div>
-
-                <div class="col-md-4">
-                    <label class="form-label fw-bold text-secondary">Qualification Status</label>
-                    <div class="pt-1">
-                        @if($application->status === 'validated')
-                            <span class="badge bg-success rounded-pill px-3 py-2">Recognised</span>
-                        @elseif($application->status === 'invalid')
-                            <span class="badge bg-danger rounded-pill px-3 py-2">Unrecognised</span>
-                        @else
-                            <span class="badge bg-warning text-dark rounded-pill px-3 py-2">Pending</span>
-                        @endif
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <label class="form-label fw-bold text-secondary">Payment Status</label>
-                    <div class="pt-1">
-                        @if($application->invoice && $application->invoice->proof_path)
-                            <span class="badge rounded-pill px-3 py-2" style="background-color:#52074f;">Paid</span>
-                        @else
-                            <span class="badge rounded-pill px-3 py-2" style="background-color:#dd8027;">Not Paid</span>
-                        @endif
-                    </div>
-                </div>
-            </div>
-
-            {{-- ===== Certificate Section ===== --}}
-          <div class="document-section p-3 mb-4 border rounded shadow-sm">
-    <div class="d-flex align-items-center mb-3">
-        <i class="bi bi-mortarboard-fill fs-4 me-2" style="color:#52074f;"></i>
-        <h5 class="fw-bold text-uppercase mb-0" style="color:#52074f;">Certificate to be Verified</h5>
+        <a href="{{ route('applications.my') }}" 
+           class="btn btn-sm btn-outline-warning" 
+           style="border-radius:25px;">
+           📋 My Applications
+        </a>
     </div>
+</div>
 
-    @if($certificate = $application->documents->where('type', 'certificates')->first())
-        <div class="document-card d-flex flex-wrap align-items-center justify-content-between border rounded p-3 mb-2 shadow-sm bg-light">
-            <div class="d-flex align-items-center mb-2 mb-md-0">
-                <i class="bi bi-file-earmark-pdf-fill text-danger fs-3 me-3"></i>
-                <div>
-                    {{-- Use the database field or Blade input name instead of actual file name --}}
-                    <p class="mb-0 fw-bold text-dark">
-                        {{ $certificate->document_name ?? 'Certificate Document' }}
-                    </p>
-                    <small class="text-muted">Uploaded certificate document</small>
+<div class="container py-4">
+
+    {{-- Header --}}
+    <h3 class="text-center fw-bold mb-4" style="color:#52074f; letter-spacing:1px;">
+        📄 Application Details
+        <span class="d-block mt-2" style="border-bottom: 4px solid #dd8027; width: 100px; margin: 0 auto;"></span>
+    </h3>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+
+            {{-- ===== Application Summary ===== --}}
+            <div class="card shadow-sm mb-4 border-0">
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold text-secondary">Processing Type</label>
+                            <input type="text" class="form-control" value="{{ ucfirst($application->processing_type) }}" readonly>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold text-secondary">Qualification Status</label>
+                            <div class="pt-1">
+                                @if($application->status === 'validated')
+                                    <span class="badge bg-success rounded-pill px-3 py-2">Recognised</span>
+                                @elseif($application->status === 'invalid')
+                                    <span class="badge bg-danger rounded-pill px-3 py-2">Unrecognised</span>
+                                @else
+                                    <span class="badge bg-warning text-dark rounded-pill px-3 py-2">Under Review</span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold text-secondary">Payment Status</label>
+                            <div class="pt-1">
+                                @if($application->invoice && $application->invoice->proof_path)
+                                    <span class="badge rounded-pill px-3 py-2" style="background-color:#52074f;">Paid</span>
+                                @else
+                                    <span class="badge rounded-pill px-3 py-2" style="background-color:#dd8027;">Not Paid</span>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="d-flex gap-2">
-                <a href="{{ asset('storage/' . $certificate->file_path) }}" target="_blank" class="btn btn-sm text-white" style="background-color:#52074f;">View</a>
-                <a href="{{ asset('storage/' . $certificate->file_path) }}" download class="btn btn-sm btn-outline-secondary">Download</a>
+
+            {{-- ===== Qualifications ===== --}} 
+<div class="card shadow-sm mb-4 border-0">
+    <div class="card-header fw-bold d-flex align-items-center" 
+         style="background-color:#fdf5fa; color:#52074f; font-size:1.2rem;">
+        <i class="bi bi-mortarboard-fill fs-4 me-2"></i> 🎓 Qualifications
+    </div>
+    <div class="card-body">
+        @foreach($application->qualifications as $qual)
+            <div class="p-3 mb-3 border rounded shadow-sm bg-light">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <strong>Level:</strong> {{ $qual->name ?? 'N/A' }}
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Program:</strong> {{ $qual->program_name ?? 'N/A' }}
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Merit:</strong> {{ $qual->merit ?? 'N/A' }}
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Institution:</strong> {{ $qual->institution ?? 'N/A' }}
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Country:</strong> {{ $qual->country ?? 'N/A' }}
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Year Obtained:</strong> {{ $qual->year ?? 'N/A' }}
+                    </div>
+                </div>
             </div>
-        </div>
-    @else
-        <p class="text-muted">No certificate uploaded.</p>
-    @endif
+        @endforeach
+    </div>
+</div>
+
+<style>
+.card-header {
+    letter-spacing: 0.5px;
+}
+.card-body .p-3 {
+    transition: all 0.2s ease-in-out;
+}
+.card-body .p-3:hover {
+    box-shadow: 0 5px 12px rgba(82, 7, 79, 0.15);
+}
+</style>
+
+
+
+            {{-- ===== Attachments ===== --}}
+           <div class="card shadow-sm mb-4 border-0">
+    <div class="card-header fw-bold" style="background-color:#fdf5fa; color:#52074f;">
+        📎 Uploaded Documents
+    </div>
+    <div class="card-body">
+        @foreach([
+            'certificates' => 'Qualification Certificates', 
+            'academic_records' => 'Academic Records', 
+            'previous_evaluations' => 'Previous Evaluations', 
+            'syllabi' => 'Syllabi'
+        ] as $type => $label)
+
+            @php
+                $docs = $application->documents->where('type', $type);
+            @endphp
+
+            @if($docs->count())
+                <div class="mb-3">
+                    <h6 class="fw-bold text-secondary">{{ $label }}</h6>
+                    <ul class="list-group shadow-sm">
+                        @foreach($docs as $doc)
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <a href="{{ asset('storage/' . $doc->file_path) }}" target="_blank">
+                                {{ basename($doc->file_path) }}
+                            </a>
+                            <div>
+                                <a href="{{ asset('storage/' . $doc->file_path) }}" download class="btn btn-sm btn-outline-secondary">Download</a>
+                            </div>
+                        </li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+        @endforeach
+    </div>
 </div>
 
 
             {{-- ===== Admin Feedback ===== --}}
-           <div class="document-section p-3 mb-4 border rounded shadow-sm">
-    <div class="d-flex align-items-center mb-3">
-        <i class="bi bi-chat-left-text-fill fs-4 me-2 text-secondary"></i>
-        <h5 class="fw-bold text-uppercase mb-0" style="color:#52074f;">Admin Feedback Report</h5>
-    </div>
-
-    @if($application->response_report_path)
-        <div class="document-card d-flex flex-wrap align-items-center justify-content-between border rounded p-3 shadow-sm bg-light">
-            <div class="d-flex align-items-center mb-2 mb-md-0">
-                <i class="bi bi-file-earmark-arrow-down-fill text-dark fs-3 me-3"></i>
-                <div>
-                    {{-- Use the database field or user-friendly name instead of file name --}}
-                    <p class="mb-0 fw-bold text-dark">
-                        {{ $application->response_report_name ?? 'Feedback Report' }}
-                    </p>
-                    <small class="text-muted">Feedback report file</small>
+            <div class="card shadow-sm mb-4 border-0">
+                <div class="card-header fw-bold" style="background-color:#fdf5fa; color:#52074f;">
+                    💬 Admin Feedback
+                </div>
+                <div class="card-body">
+                    @if($application->response_report_path)
+                        <div class="d-flex justify-content-between align-items-center border rounded p-3 mb-2 shadow-sm bg-light">
+                            <div>
+                                <strong>{{ $application->response_report_name ?? 'Feedback Report' }}</strong>
+                                <p class="text-muted mb-0">Uploaded by admin</p>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <a href="{{ asset('storage/' . $application->response_report_path) }}" target="_blank" class="btn btn-sm text-white" style="background-color:#52074f;">View</a>
+                                <a href="{{ asset('storage/' . $application->response_report_path) }}" download class="btn btn-sm btn-outline-secondary">Download</a>
+                            </div>
+                        </div>
+                    @else
+                        <p class="text-muted">No feedback report available yet.</p>
+                    @endif
                 </div>
             </div>
-            <div class="d-flex gap-2">
-                <a href="{{ asset('storage/' . $application->response_report_path) }}" target="_blank" class="btn btn-sm text-white" style="background-color:#52074f;">View</a>
-                <a href="{{ asset('storage/' . $application->response_report_path) }}" download class="btn btn-sm btn-outline-secondary">Download</a>
-            </div>
-        </div>
-    @else
-        <p class="text-muted">No feedback report available yet.</p>
-    @endif
-</div>
 
             {{-- ===== Additional Info Requests ===== --}}
-            <div class="document-section p-3 mb-3 border rounded shadow-sm">
-                <div class="d-flex align-items-center mb-3">
-                    <i class="bi bi-info-circle-fill fs-4 me-2" style="color:#dd8027;"></i>
-                    <h5 class="fw-bold text-uppercase mb-0" style="color:#52074f;">Additional Information Requests</h5>
+            <div class="card shadow-sm mb-4 border-0">
+                <div class="card-header fw-bold" style="background-color:#fdf5fa; color:#52074f;">
+                    ℹ️ Additional Information Requests
                 </div>
-
-                <div class="p-3 border rounded-4" style="background:#f8f9fa; max-height:400px; overflow-y:auto;">
+                <div class="card-body" style="max-height:400px; overflow-y:auto;">
                     @forelse($application->additionalInfoRequests as $req)
-                        <div class="mb-4 p-3 bg-white rounded-4 shadow-sm">
+                        <div class="mb-3 p-3 bg-light rounded shadow-sm">
                             <p><strong style="color:#dd8027;">Admin:</strong> {{ $req->message }}</p>
                             <small class="text-muted">{{ $req->created_at->format('M d, H:i') }}</small>
 
                             @if($req->status != 'pending')
-                                <div class="mt-3 p-2 bg-light border rounded">
+                                <div class="mt-2 p-2 bg-white border rounded">
                                     <strong style="color:#52074f;">Your Response:</strong>
                                     <p>{{ $req->response ?? 'No response provided.' }}</p>
-
                                     @if($req->response_file_path)
                                         <a href="{{ asset('storage/'.$req->response_file_path) }}" target="_blank" class="btn btn-sm btn-outline-primary mt-1">📎 View Uploaded File</a>
                                     @endif
                                 </div>
                             @else
-                                <form action="{{ route('applications.respond-info', $req->id) }}" method="POST" enctype="multipart/form-data" class="mt-3">
+                                <form action="{{ route('applications.respond-info', $req->id) }}" method="POST" enctype="multipart/form-data" class="mt-2">
                                     @csrf
                                     @method('PUT')
-                                    <div class="mb-2">
-                                        <textarea name="response" class="form-control" rows="2" placeholder="Type your response..."></textarea>
-                                    </div>
-                                    <div class="mb-2">
-                                        <input type="file" name="response_file" class="form-control form-control-sm">
-                                    </div>
+                                    <textarea name="response" class="form-control mb-2" rows="2" placeholder="Type your response..."></textarea>
+                                    <input type="file" name="response_file" class="form-control form-control-sm mb-2">
                                     <button type="submit" class="btn btn-sm text-white" style="background-color:#52074f;">Send Response</button>
                                 </form>
                             @endif
@@ -144,55 +220,31 @@
                     @endforelse
                 </div>
             </div>
-            {{-- ===== Download Application PDF ===== --}}
-            <div class="text-center mt-4">
-    <a href="{{ route('application.download', $application->id) }}" 
-       class="btn btn-outline-nche-orange btn-lg">
-        <i class="bi bi-file-earmark-pdf me-2"></i> Download My Application PDF
-    </a>
-</div>
 
-        </form>
+            {{-- Download PDF --}}
+            <div class="text-center mt-4">
+                <a href="{{ route('application.download', $application->id) }}" class="btn btn-lg text-white" style="background-color:#dd8027;">
+                    <i class="bi bi-file-earmark-pdf me-2"></i> Download My Application PDF
+                </a>
+            </div>
+
+        </div>
     </div>
 </div>
 
 <style>
-.main-card {
-    max-width: 1100px;
-    margin: 30px auto;
-    border-radius: 10px;
-    padding: 25px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-    background-color: #fff;
+.card-header {
+    font-size: 1rem;
+    letter-spacing: 0.5px;
 }
-form {
-    background-color: #fff !important;
+.card-body p, .card-body strong {
+    font-size: 0.95rem;
 }
-.document-section {
-    background-color: #fff;
+.document-section, .document-card {
     transition: all 0.2s ease-in-out;
 }
-.document-section:hover {
-    box-shadow: 0 3px 10px rgba(82, 7, 79, 0.08);
+.document-section:hover, .document-card:hover {
+    box-shadow: 0 4px 12px rgba(82,7,79,0.08);
 }
-.document-card {
-    transition: background 0.2s ease;
-}
-.document-card:hover {
-    background-color: #faf5fc;
-}
-form label {
-    color: #52074f;
-}
-.btn-outline-secondary:hover,
-.btn-outline-primary:hover {
-    background-color: #52074f;
-    color: #fff;
-    border-color: #52074f;
-}
- span {
-    border-bottom: 5px solid #dd8027;
-    width: max-content;
- }
 </style>
 @endsection

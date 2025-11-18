@@ -124,5 +124,16 @@
     font-weight: 500;
 }
 </style>
+<script>
+    (function() {
+        // Force the page to reload from server if user navigates back
+        if (window.history && window.history.pushState) {
+            window.history.pushState(null, null, window.location.href);
+            window.onpopstate = function () {
+                window.location.reload();
+            };
+        }
+    })();
+</script>
 
 @endsection

@@ -11,11 +11,22 @@
  
 {{-- Header with My Applications link --}}
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h4 class="text-nche-primary fw-bold mb-0">New Application</h4>
-    <a href="{{ route('applications.my') }}" class="btn btn-outline-nche-orange">
-        <i class="mdi mdi-file-document-outline me-2"></i> View My Applications
-    </a>
+     
+    <div class="btn-group" role="group" aria-label="Application Actions">
+        <a href="{{ route('application.create') }}" 
+           class="btn btn-sm text-white" 
+           style="background-color:#52074f; border-radius:25px;">
+           ➕ New Application
+        </a>
+
+        <a href="{{ route('applications.my') }}" 
+           class="btn btn-sm btn-outline-warning" 
+           style="border-radius:25px;">
+           📋 My Applications
+        </a>
+    </div>
 </div>
+
 
 <div class="form-card">
 
@@ -518,6 +529,7 @@ button.btn-primary:hover {
 
 
  </style>
+ 
 
  
 

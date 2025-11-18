@@ -2,7 +2,19 @@
 
 @section('title', 'My Applications')
 
-@section('content')
+@section('content')<div class="d-flex justify-content-between align-items-center mb-4">
+     
+    <div class="btn-group" role="group" aria-label="Application Actions">
+        <a href="{{ route('application.create') }}" 
+           class="btn btn-sm text-white" 
+           style="background-color:#52074f; border-radius:25px;">
+           ➕ New Application
+        </a>
+
+         
+    </div>
+</div>
+
 <div class="container pt-5 pb-4">
     <h2 class="mb-4 text-center fw-bold" style="color:#52074f; letter-spacing:1px;">
         📄 My Applications
@@ -43,7 +55,7 @@
                                 @elseif ($app->status === 'invalid')
                                     <span class="badge rounded-pill" style="background-color:#dc3545; color:white;">Unrecognised</span>
                                 @else
-                                    <span class="badge rounded-pill" style="background-color:#ffc107; color:#52074f;">Pending</span>
+                                    <span class="badge rounded-pill" style="background-color:#ffc107; color:#52074f;">Under Review</span>
                                 @endif
                             </td>
                             <td>
@@ -51,8 +63,15 @@
                                    class="btn btn-sm" 
                                    style="background-color:#52074f; color:white; border:none;">
                                     View Details
-                                </a>
+                                                            </a><a href="{{ route('applications.edit', $app->id) }}" 
+                            class="btn btn-sm ms-1"
+                            style="background-color:#6f1e6e; color:white; border:none;">
+                                Edit
+                            </a>
+
+
                             </td>
+                            
                         </tr>
                     @endforeach
                 </tbody>

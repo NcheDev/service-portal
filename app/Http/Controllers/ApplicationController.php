@@ -291,4 +291,117 @@ public function downloadPDF($id)
     return $pdf->download($filename);
 }
 
+public function edit($id)
+{
+    $application = Application::with(['documents', 'qualifications'])->findOrFail($id);
+
+    if ($application->status !== 'pending') {
+        return redirect()
+            ->route('applications.index')
+            ->with('error', 'You can only edit an application that is Under Review.');
+    }
+
+    // Load qualifications from the qualifications table
+    $qualifications = $application->qualifications;
+
+    // Load documents by type
+    $certificates = $application->documents->where('type', 'certificates');
+    $academic_records = $application->documents->where('type', 'academic_records');
+    $previous_evaluations = $application->documents->where('type', 'previous_evaluations');
+    $syllabi = $application->documents->where('type', 'syllabi');
+
+    $countries = config('countries');
+
+    return view('user.edit-application', compact(
+        'application',
+        'qualifications',
+        'countries',
+        'certificates',
+        'academic_records',
+        'previous_evaluations',
+        'syllabi'
+    ));
+}
+
+
+
+
+public function update(Request $request, $id)
+{
+    $application = Application::with('qualifications')->findOrFail($id);
+
+    if ($application->status !== 'pending') {
+        return back()->with('error', 'You cannot edit this application.');
+    }
+
+    $request->validate([
+        'processing_type' => 'required|string',
+
+        'qualifications.*.name'        => 'required|string',
+        'qualifications.*.program_name'=> 'required|string',
+        'qualifications.*.year'        => 'required|integer',
+        'qualifications.*.institution' => 'required|string',
+        'qualifications.*.country'     => 'required|string',
+        'qualifications.*.merit'       => 'nullable|string',
+    ]);
+
+    // Update processing type
+    $application->update([
+        'processing_type' => $request->processing_type,
+    ]);
+
+    // Update each qualification
+    foreach ($request->qualifications as $i => $qualData) {
+        $qual = $application->qualifications[$i];
+
+        if ($qual) {
+            $qual->update([
+                'name' => $qualData['name'],
+                'program_name' => $qualData['program_name'],
+                'year' => $qualData['year'],
+                'institution' => $qualData['institution'],
+                'country' => $qualData['country'],
+                'merit' => $qualData['merit'] ?? null,
+            ]);
+        }
+    }
+
+    // Files upload
+    foreach (['certificates', 'academic_records', 'previous_evaluations', 'syllabi'] as $type) {
+        if ($request->hasFile($type)) {
+            foreach ($request->file($type) as $file) {
+                $path = $file->store("documents", "public");
+
+                $application->documents()->create([
+                    'type' => $type,
+                    'file_path' => $path,
+                ]);
+            }
+        }
+    }
+
+    return back()->with('success', 'Application updated successfully.');
+}
+
+
+public function destroyDocument($id)
+{
+    $document = \App\Models\Document::findOrFail($id);
+
+    // Ensure the authenticated user owns this document via the application
+    if($document->application->user_id !== auth()->id()) {
+        return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+    }
+
+    // Delete file from storage
+    if(file_exists(storage_path('app/public/'.$document->file_path))){
+        unlink(storage_path('app/public/'.$document->file_path));
+    }
+
+    // Delete the DB record
+    $document->delete();
+
+    return response()->json(['success' => true]);
+}
+
 }

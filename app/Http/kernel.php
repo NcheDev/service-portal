@@ -30,9 +30,7 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\PreventBackHistory::class,
-            // in Kernel.php under web middleware group
-            \App\Http\Middleware\NoCache::class,
-
+            
         ],
 
         'api' => [
