@@ -94,15 +94,16 @@
                                required>
                     </div>
 
-                    {{-- Year --}}
-                    <div class="col-md-6">
-                        <label class="form-label fw-semibold">Year Obtained*</label>
-                        <input type="number" 
-                               name="qualifications[{{ $i }}][year]" 
-                               class="form-control shadow-sm" 
-                               value="{{ $qual['year'] }}"
-                               min="1900" max="{{ date('Y') }}" required>
-                    </div>
+                  {{-- Year --}}
+<div class="col-md-6">
+    <label class="form-label fw-semibold">Year Obtained*</label>
+    <input type="number" 
+           name="qualifications[{{ $i }}][year]" 
+           class="form-control shadow-sm year-input" 
+           value="{{ $qual['year'] }}"
+           min="1900" max="{{ date('Y') }}" required>
+    <small class="text-danger d-none year-error">Invalid year.</small>
+</div>
 
                     {{-- Institution --}}
                     <div class="col-md-6">
@@ -148,6 +149,9 @@
        <div class="card shadow-sm mb-4 border-0" style="border-left:4px solid #52074f;">
     <div class="card-header bg-white fw-bold" style="color:#52074f;">
         Attachments
+        <small class="d-block text-muted mt-1" style="font-weight:400; font-size:0.85rem;">
+        Allowed file types: PDF, PNG, JPG, JPEG | Max file size: 4MB
+    </small>
     </div>
 
     <div class="card-body">
@@ -270,6 +274,64 @@ document.addEventListener('DOMContentLoaded', function() {
                       alert('Failed to remove file.');
                   }
               });
+        });
+    });
+});
+</script> <script>
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const allowedExtensions = ['pdf', 'png', 'jpg', 'jpeg'];
+    const maxSize = 4 * 1024 * 1024; // 4MB
+
+    // Target all file inputs inside attachments card
+    const fileInputs = document.querySelectorAll('.card-body input[type="file"]');
+
+    fileInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            const files = Array.from(input.files);
+            if (!files.length) return;
+
+            for (const file of files) {
+                const ext = file.name.split('.').pop().toLowerCase();
+                if (!allowedExtensions.includes(ext)) {
+                    alert(`❌ Invalid file type: ${file.name}. Only PDF, PNG, JPG, JPEG allowed.`);
+                    input.value = '';
+                    return;
+                }
+                if (file.size > maxSize) {
+                    alert(`❌ File too large: ${file.name}. Max size is 4MB.`);
+                    input.value = '';
+                    return;
+                }
+            }
+
+            const fileNames = files.map(f => f.name).join('\n');
+            const proceed = confirm(`You are about to upload:\n${fileNames}\nProceed?`);
+            if (!proceed) {
+                input.value = '';
+            }
+        });
+    });
+});
+
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const yearInputs = document.querySelectorAll('.year-input');
+    const currentYear = new Date().getFullYear();
+
+    yearInputs.forEach(input => {
+        const errorMsg = input.nextElementSibling; // assumes <small> is next
+        input.addEventListener('input', function() {
+            const year = parseInt(input.value, 10);
+            if (isNaN(year) || year < 1900 || year > currentYear) {
+                errorMsg.classList.remove('d-none');
+                input.classList.add('is-invalid');
+            } else {
+                errorMsg.classList.add('d-none');
+                input.classList.remove('is-invalid');
+            }
         });
     });
 });
