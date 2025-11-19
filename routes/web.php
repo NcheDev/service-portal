@@ -51,9 +51,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 
-    Route::get('/user-dashboard', function () {
-        return view('user.dashboard');
-    });
+    
 });
 
  
@@ -313,9 +311,13 @@ Route::post('/personal-information', [PersonalInformationController::class, 'sto
 Route::get('/admin/dashboard', [UserManagementController::class, 'dashboard'])
     ->name('admin.dashboard');
 
+   Route::middleware(['auth', 'prevent-back-history'])->group(function () {
+
     Route::get('/user-dashboard', [ApplicationController::class, 'userDashboard'])
-    ->name('user.dashboard')
-    ->middleware(['auth']);
+        ->name('user.dashboard');
+
+});
+
 
     Route::patch('/admin/users/{user}/toggle-status', [UserManagementController::class, 'toggleStatus'])
     ->name('admin.users.toggleStatus');

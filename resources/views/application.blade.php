@@ -121,7 +121,7 @@
         <label class="form-label fw-bold" 
                data-bs-toggle="tooltip" 
                title="Specify the specific program title under the qualification">
-            Program Name  <span class="text-danger">*</span>
+            Field of Study  <span class="text-danger">*</span>
         </label>
         <input type="text" 
                name="qualifications[{{ $i }}][program_name]" 

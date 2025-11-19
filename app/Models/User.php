@@ -16,13 +16,14 @@ class User extends Authenticatable implements MustVerifyEmail
     use HasFactory, Notifiable, HasRoles;
 
 
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'role',
-         'profile_picture_path'
-    ];
+   protected $fillable = [
+    'first_name',
+    'surname',
+    'email',
+    'password',
+    'role',
+    'profile_picture_path'
+];
 
     protected $hidden = [
         'password',

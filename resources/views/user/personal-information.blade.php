@@ -48,6 +48,8 @@
             <option value="Individual" {{ old('application_type', $personalInfo?->application_type) === 'Individual' ? 'selected' : '' }}>Individual</option>
             <option value="Institution" {{ old('application_type', $personalInfo?->application_type) === 'Institution' ? 'selected' : '' }}>Institution</option>
         </select>
+       
+
     </div>
 
     <!-- Institution Name -->
@@ -69,13 +71,12 @@
                placeholder="Your Position ie HR"
                title="Enter your position in the institution">
     </div>
-
- <div class="col-md-3"></div>
-       <div class="col-md-6">
+<div class="col-md-3"></div>
+<div class="col-md-6">
     <label for="first_name" class="form-label">First Name <span class="text-danger">*</span></label>
     <input type="text" name="first_name" class="form-control" 
-           value="{{ old('first_name', $personalInfo?->first_name) }}" 
-           placeholder="  John"
+           value="{{ old('first_name', auth()->user()->first_name) }}" 
+           placeholder="John"
            title="Enter your first name" 
            required>
 </div>
@@ -83,11 +84,12 @@
 <div class="col-md-6">
     <label for="surname" class="form-label">Surname <span class="text-danger">*</span></label>
     <input type="text" name="surname" class="form-control" 
-           value="{{ old('surname', $personalInfo?->surname) }}" 
-           placeholder="  Banda"
+           value="{{ old('surname', auth()->user()->surname) }}" 
+           placeholder="Banda"
            title="Enter your surname" 
            required>
 </div>
+
 
         <div class="col-md-6">
             <label for="title" class="form-label">Title  <span class="text-danger">*</span></label>
@@ -98,14 +100,15 @@
                 <option value="Miss" {{ old('title', $personalInfo?->title) === 'Miss' ? 'selected' : '' }}>Miss</option>
                 <option value="Dr" {{ old('title', $personalInfo?->title) === 'Dr' ? 'selected' : '' }}>Dr</option>
             </select>
-        </div>
-<div class="col-md-6">
-    <label for="email" class="form-label">Email  <span class="text-danger">*</span></label>
+        </div><div class="col-md-6">
+    <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
     <input type="email" name="email" class="form-control" 
-           value="{{ old('email', $personalInfo?->email) }}"
-           placeholder="  user@example.com"
-           title="Enter a valid email address,   user@example.com">
+           value="{{ old('email', auth()->user()->email) }}"
+           placeholder="user@example.com"
+           title="Enter a valid email address, user@example.com"
+           required>
 </div>
+
 
         
 <div class="col-md-6">
@@ -151,9 +154,12 @@
                     </option>
                 @endforeach
             </select>
-            <input type="tel" name="primary_phone" class="form-control" 
-                   value="{{ old('primary_phone', $personalInfo?->primary_phone) }}" 
-                   placeholder="Enter phone number" required>
+            <input type="tel" name="primary_phone" class="form-control phone-input" 
+       value="{{ old('primary_phone', $personalInfo?->primary_phone) }}" 
+       placeholder="Enter phone number" required>
+<small class="text-danger error-message"></small>
+
+
         </div>
     </div>
 
@@ -168,10 +174,12 @@
                     </option>
                 @endforeach
             </select>
-            <input type="tel" name="secondary_phone" class="form-control" 
-                   value="{{ old('secondary_phone', $personalInfo?->secondary_phone) }}" 
-                   placeholder="Enter phone number">
-        </div>
+          <input type="tel" name="secondary_phone" class="form-control phone-input" 
+       value="{{ old('secondary_phone', $personalInfo?->secondary_phone) }}" 
+       placeholder="Enter phone number">
+<small class="text-danger error-message"></small>
+
+
     </div>
 
 </div>
@@ -205,16 +213,20 @@
         @endforeach
     </select>
 </div>
-
-<!-- Hidden by default, shown only if Malawian -->
 <div class="col-md-6" id="national_id_section" 
      style="display: {{ old('nationality', $personalInfo?->nationality) == 'Malawian' ? 'block' : 'none' }};">
     <label for="national_id_number" class="form-label">National ID Number <span class="text-danger">*</span></label>
-    <input type="text" name="national_id_number" id="national_id_number"
-           class="form-control"
+
+    <input type="text" 
+           name="national_id_number" 
+           id="national_id_number"
+           class="form-control national-id-input"
            value="{{ old('national_id_number', $personalInfo?->national_id_number) }}"
            placeholder="Enter National ID Number">
+
+    <small class="text-danger error-message"></small>
 </div>
+
 
     </div>
 
@@ -321,7 +333,112 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
-</script>
+</script> 
 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const phoneInputs = document.querySelectorAll(".phone-input");
+
+    phoneInputs.forEach(input => {
+        input.addEventListener("input", function () {
+
+            const errorMessage = this.closest(".input-group") 
+                ? this.closest(".input-group").querySelector(".error-message")
+                : this.parentElement.querySelector(".error-message");
+
+            let value = this.value.trim();
+            errorMessage.textContent = "";
+            this.classList.remove("is-invalid");
+
+            // ⚠ Rule: Must be 8–15 digits, optional +
+            const phonePattern = /^\+?[0-9]{8,15}$/;
+
+            // If primary phone is empty → error
+            if (this.name === "primary_phone" && value === "") {
+                errorMessage.textContent = "Primary phone number is required.";
+                this.classList.add("is-invalid");
+                return;
+            }
+
+            // Skip validation if secondary is empty
+            if (this.name === "secondary_phone" && value === "") {
+                return;
+            }
+
+            // Check ONLY if user typed something
+            if (!phonePattern.test(value)) {
+                this.classList.add("is-invalid");
+
+                if (!/^[0-9+]+$/.test(value)) {
+                    errorMessage.textContent = "Phone number must contain only digits (0–9) and optional +.";
+                } 
+                else if (value.replace("+", "").length < 8) {
+                    errorMessage.textContent = "Phone number is too short (min 8 digits).";
+                } 
+                else if (value.replace("+", "").length > 15) {
+                    errorMessage.textContent = "Phone number is too long (max 15 digits).";
+                } 
+                else {
+                    errorMessage.textContent = "Invalid phone number format.";
+                }
+            }
+        });
+    });
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const nationalitySelect = document.querySelector("#nationality");
+    const nationalIdSection = document.querySelector("#national_id_section");
+    const nationalIdInput = document.querySelector("#national_id_number");
+    const nationalIdError = nationalIdSection.querySelector(".error-message");
+
+    // Show/hide section when nationality changes
+    nationalitySelect.addEventListener("change", function () {
+        if (this.value === "Malawian") {
+            nationalIdSection.style.display = "block";
+        } else {
+            nationalIdSection.style.display = "none";
+            nationalIdInput.classList.remove("is-invalid");
+            nationalIdError.textContent = "";
+        }
+    });
+
+    // Realtime validation
+    nationalIdInput.addEventListener("input", function () {
+        let value = nationalIdInput.value.trim();
+        nationalIdError.textContent = "";
+        nationalIdInput.classList.remove("is-invalid");
+
+        // Only validate if field is visible (Malawian)
+        if (nationalitySelect.value !== "Malawian") {
+            return;
+        }
+
+        // Required check
+        if (value === "") {
+            nationalIdError.textContent = "National ID Number is required for Malawians.";
+            nationalIdInput.classList.add("is-invalid");
+            return;
+        }
+
+        // Length check (you can adjust minimum length)
+        if (value.length < 6) {
+            nationalIdError.textContent = "National ID Number is too short.";
+            nationalIdInput.classList.add("is-invalid");
+            return;
+        }
+
+        // Optional strict format (letters + numbers allowed)
+        const idPattern = /^[A-Za-z0-9\- ]+$/;
+        if (!idPattern.test(value)) {
+            nationalIdError.textContent = "National ID must contain only letters, numbers, spaces, or dashes.";
+            nationalIdInput.classList.add("is-invalid");
+        }
+    });
+
+});
+</script>
 
 @endsection
