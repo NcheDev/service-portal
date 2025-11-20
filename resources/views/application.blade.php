@@ -39,8 +39,7 @@
     $personalInfo = \App\Models\PersonalInformation::where('user_id', auth()->id())->first();
 
     $personalInfoComplete = $personalInfo 
-        && $personalInfo->first_name 
-        && $personalInfo->surname 
+       
         && $personalInfo->primary_phone 
          && $personalInfo->date_of_birth 
         && $personalInfo->physical_address;
@@ -219,12 +218,12 @@
 
 
      <div class="row g-4">
-    @foreach([
-        'certificates' => 'Qualification Certificates',
-        'academic_records' => 'Academic Records (optional)',
-        'previous_evaluations' => 'Previous Evaluations',
-        'syllabi' => 'Syllabi'
-    ] as $field => $label)
+   @foreach([
+    'certificates' => 'Qualification Certificates',
+    'academic_records' => 'Academic Records (optional)',
+] as $field => $label)
+
+
         <div class="col-md-6">
             <label class="form-label fw-bold text-dark">
                 {{ $label }}

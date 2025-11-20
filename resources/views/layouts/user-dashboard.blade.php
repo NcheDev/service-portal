@@ -151,7 +151,7 @@
       <div class="dropdown">
         <a class="d-flex align-items-center nav-link dropdown-toggle text-white" id="profileDropdown" href="#" data-bs-toggle="dropdown">
           <img src="{{ Auth::user()->personalInfo?->profile_picture ? Storage::url(Auth::user()->personalInfo->profile_picture) : 'https://via.placeholder.com/180' }}" class="profile-pic">
-          <span>{{ Auth::user()->name }}</span>
+          <span>{{ Auth::user()->firstname }}</span>
         </a>
         <ul class="dropdown-menu dropdown-menu-end">
           <li><a href="{{ route('user.profile') }}" class="dropdown-item"><i class="mdi mdi-account me-2 text-primary"></i> Profile</a></li>
@@ -171,7 +171,7 @@
   <nav class="sidebar" id="sidebarMenu">
     <a href="{{ route('user.dashboard') }}" class="nav-link"><i class="mdi mdi-home menu-icon me-2"></i>Dashboard</a>
     <a href="{{ route('user.personal-info') }}" class="nav-link"><i class="mdi mdi-contacts menu-icon me-2"></i>Applicant Details</a>
-    <a href="{{ route('application.create') }}" class="nav-link"><i class="mdi mdi-school menu-icon me-2"></i>Applications</a> 
+    <a href="{{ route('applications.my') }}" class="nav-link"><i class="mdi mdi-school menu-icon me-2"></i>Applications</a> 
     <a href="{{ route('faq') }}" class="nav-link"><i class="mdi mdi-help-circle  me-2"></i>Info</a>
   </nav>
 

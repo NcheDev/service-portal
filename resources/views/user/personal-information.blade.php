@@ -10,19 +10,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 @endif
-
-{{-- ❌ VALIDATION ERRORS --}}
-@if ($errors->any())
-    <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
-        <strong>There were some problems with your input:</strong>
-        <ul class="mb-0 mt-2">
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-@endif
+ 
  
 
 <form id="personal-info-form" action="{{ route('personal.storeOrUpdate') }}" method="POST" enctype="multipart/form-data">
@@ -145,7 +133,12 @@
 
     {{-- Primary Phone --}}
     <div class="col-md-6">
+
         <label for="primary_phone" class="form-label">Primary Phone <span class="text-danger">*</span></label>
+        
+        <small class="text-muted d-block mt-1">
+    Format: 8–15 digits 
+</small>
         <div class="input-group">
             <select name="primary_country_code" class="form-select" required>
                 @foreach(config('country_codes') as $code => $country)
@@ -165,7 +158,12 @@
 
     {{-- Secondary Phone --}}
     <div class="col-md-6">
+       
+
         <label for="secondary_phone" class="form-label">Secondary Phone <span class="text-danger">*</span></label>
+         <small class="text-muted d-block mt-1">
+    Format: 8–15 digits
+</small>
         <div class="input-group">
             <select name="secondary_country_code" class="form-select">
                 @foreach(config('country_codes') as $code => $country)
@@ -186,7 +184,7 @@
 
 
         <div class="col-md-6">
-            <label for="country" class="form-label">Country <span class="text-danger">*</span></label>
+            <label for="country" class="form-label">Country of Residence<span class="text-danger">*</span></label>
            @php
                 $countries = Symfony\Component\Intl\Countries::getNames();
            @endphp
@@ -237,6 +235,40 @@
         </button>
     </div>
 </form>
+<!-- ❗ Validation Error Modal -->
+<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="errorModalLabel">Validation Errors</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      
+      <div class="modal-body">
+        <p>Please correct the following errors:</p>
+        <ul class="text-danger fw-semibold">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+@if ($errors->any())
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+        errorModal.show();
+    });
+</script>
+@endif
 
 {{-- Inline Styles --}}
 <style>
