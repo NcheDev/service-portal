@@ -20,15 +20,34 @@ use Carbon\Carbon;
 
 class ApplicationController extends Controller
 {
-    public function showForm()
-    {
-        return view('application');
+ 
+
+public function create()
+{
+    $user = auth()->user();
+
+    // Ensure personal info exists
+    if (! $user->personalInformation) {
+        return redirect()->route('personal-info.form')
+            ->with('error', 'Please complete your personal information before starting an application.');
     }
 
-    public function create()
-    {
-        return view('application');
+    $type = $user->personalInformation->application_type; // Individual or Institution
+
+    if ($type === 'Institution') {
+        return view('user.applications.institution-create', [
+            'user' => $user,
+            'personalInfo' => $user->personalInformation,
+        ]);
     }
+
+    // Default: Individual
+    return view('application', [
+        'user' => $user,
+        'personalInfo' => $user->personalInformation,
+    ]);
+}
+
 
  public function store(Request $request)
 {
@@ -404,4 +423,7 @@ public function destroyDocument($id)
     return response()->json(['success' => true]);
 }
 
+
+
+ 
 }

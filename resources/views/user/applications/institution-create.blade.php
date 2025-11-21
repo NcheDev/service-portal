@@ -57,7 +57,68 @@
     <form id="application-form" action="{{ route('application.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
-        {{-- Applicant Information --}}
+
+        {{-- ========================= APPLICANT DETAILS ========================= --}}
+<div class="card shadow-sm mb-4">
+    <div class="card-header fw-bold" style="background-color: #f5f5f5; color:#52074f;">
+        <i class="bi bi-person-circle me-2"></i> Applicant Details
+    </div>
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label for="first_name" class="form-label fw-semibold">First Name <span class="text-danger">*</span></label>
+                <input type="text" name="first_name" id="first_name" class="form-control" value="{{ old('first_name') }}" required>
+                @error('first_name') <div class="text-danger small">{{ $message }}</div> @enderror
+            </div>
+
+            <div class="col-md-6">
+                <label for="surname" class="form-label fw-semibold">Surname <span class="text-danger">*</span></label>
+                <input type="text" name="surname" id="surname" class="form-control" value="{{ old('surname') }}" required>
+                @error('surname') <div class="text-danger small">{{ $message }}</div> @enderror
+            </div>
+
+            <div class="col-md-6">
+                <label for="email" class="form-label fw-semibold">Email <span class="text-danger">*</span></label>
+                <input type="email" name="email" id="email" class="form-control" value="{{ old('email') }}" required>
+                @error('email') <div class="text-danger small">{{ $message }}</div> @enderror
+            </div>
+
+            <div class="col-md-6">
+                <label for="nationality" class="form-label fw-semibold">Nationality <span class="text-danger">*</span></label>
+                <input type="text" name="nationality" id="nationality" class="form-control" value="{{ old('nationality') }}" required>
+                @error('nationality') <div class="text-danger small">{{ $message }}</div> @enderror
+            </div>
+
+            <div class="col-md-4">
+                <label for="title" class="form-label fw-semibold">Title</label>
+                <select name="title" id="title" class="form-select">
+                    <option value="">-- Select Title --</option>
+                    <option value="Mr" {{ old('title') == 'Mr' ? 'selected' : '' }}>Mr</option>
+                    <option value="Mrs" {{ old('title') == 'Mrs' ? 'selected' : '' }}>Mrs</option>
+                    <option value="Ms" {{ old('title') == 'Ms' ? 'selected' : '' }}>Ms</option>
+                    <option value="Dr" {{ old('title') == 'Dr' ? 'selected' : '' }}>Dr</option>
+                </select>
+                @error('title') <div class="text-danger small">{{ $message }}</div> @enderror
+            </div>
+
+            <div class="col-md-4">
+                <label for="dob" class="form-label fw-semibold">Date of Birth <span class="text-danger">*</span></label>
+                <input type="date" name="dob" id="dob" class="form-control" value="{{ old('dob') }}" required>
+                @error('dob') <div class="text-danger small">{{ $message }}</div> @enderror
+            </div>
+
+            <div class="col-md-4">
+                <label for="phone" class="form-label fw-semibold">Primary Phone Number <span class="text-danger">*</span></label>
+                <input type="text" name="phone" id="phone" class="form-control" value="{{ old('phone') }}" required>
+                @error('phone') <div class="text-danger small">{{ $message }}</div> @enderror
+            </div>
+        </div>
+    </div>
+</div>
+<hr>
+
+        {{-- ========================= ACADEMIC INFORMATION ========================= --}}
+
         <div class="mb-4 " style="border-color:#dd8027;">
          </div>
         <div class="row g-4 mb-4">
