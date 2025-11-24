@@ -149,10 +149,16 @@
       <!-- Profile -->
       @auth
       <div class="dropdown">
-        <a class="d-flex align-items-center nav-link dropdown-toggle text-white" id="profileDropdown" href="#" data-bs-toggle="dropdown">
-          <img src="{{ Auth::user()->personalInfo?->profile_picture ? Storage::url(Auth::user()->personalInfo->profile_picture) : 'https://via.placeholder.com/180' }}" class="profile-pic">
-          <span>{{ Auth::user()->firstname }}</span>
-        </a>
+       <a class="d-flex align-items-center nav-link dropdown-toggle text-white" 
+   id="profileDropdown" href="#" data-bs-toggle="dropdown">
+
+    <img src="{{ Auth::user()->personalInfo?->profile_picture 
+        ? Storage::url(Auth::user()->personalInfo->profile_picture) 
+        : 'https://via.placeholder.com/180' }}" class="profile-pic">
+
+    <span>{{ Auth::user()->first_name }} {{ Auth::user()->surname }}</span>
+</a>
+
         <ul class="dropdown-menu dropdown-menu-end">
           <li><a href="{{ route('user.profile') }}" class="dropdown-item"><i class="mdi mdi-account me-2 text-primary"></i> Profile</a></li>
           <li>

@@ -15,6 +15,7 @@ use App\Models\AdditionalInfoRequest;
 use App\Notifications\ResponseReportUploaded;
 use App\Notifications\AdditionalInfoNotification;
 use Carbon\Carbon;
+use App\Models\InstitutionApplicant;
 
  
 
@@ -130,20 +131,38 @@ public function create()
 
         return view('user.my-applications', compact('applications', 'applicationCount'));
     }
+public function show($id)
+{
+    $application = Application::with([
+        'documents',
+        'invoice',
+        'qualifications',
+        'user.personalInformation',
+        'institutionApplicants' // relation to fetch extra personal info if institution
+    ])->findOrFail($id);
 
-    public function show($id)
-    {
-        $application = Application::with([
-            'documents',
-            'invoice',
-        ])->findOrFail($id);
-
-        if (auth()->id() !== $application->user_id) {
-            abort(403, 'Unauthorized action.');
-        }
-
-        return view('user.application-details', compact('application'));
+    if (auth()->id() !== $application->user_id) {
+        abort(403, 'Unauthorized action.');
     }
+
+    $user = $application->user;
+    $personalInfo = $user->personalInformation;
+
+    $institutionApplicants = null;
+    if ($personalInfo && $personalInfo->application_type === 'Institution') {
+        $institutionApplicants = $application->institutionApplicants; // collection of extra applicants
+    }
+
+    return view('user.application-details', compact(
+        'application',
+        'user',
+        'personalInfo',
+        'institutionApplicants'
+    ));
+}
+
+
+
 
     public function generateValidationLetter($applicationId)
     {
@@ -290,22 +309,29 @@ public function userDashboard()
 
 public function downloadPDF($id)
 {
-    $application = Application::with(['user.personalInformation', 'qualifications'])->findOrFail($id);
+    $application = Application::with([
+        'documents',
+        'qualifications',
+        'user.personalInformation',
+        'institutionApplicants'
+    ])->findOrFail($id);
 
-    $pdf = Pdf::loadView('pdfs.application', [
-        'application' => $application,
-        'user' => $application->user,
-        'qualifications' => $application->qualifications,
-    ]);
+    $user = $application->user;
+    $qualifications = $application->qualifications;
+    $institutionApplicants = null;
 
-    // Get user full name or fallback to user name
-    $userName = $application->user->personalInformation->full_name ?? $application->user->name;
+    if ($user->personalInformation->application_type === 'Institution') {
+        $institutionApplicants = $application->institutionApplicants;
+    }
 
-    // Clean up the name for a safe filename
-    $safeName = preg_replace('/[^A-Za-z0-9_\-]/', '', $userName);
+    $pdf = PDF::loadView('pdfs.application', compact(
+        'application',
+        'user',
+        'qualifications',
+        'institutionApplicants'
+    ));
 
-    // Generate filename
-    $filename = $safeName . '_Application_' . $application->id . '.pdf';
+    $filename = preg_replace('/[^A-Za-z0-9_\-]/', '', $user->name) . '_Application_' . $application->id . '.pdf';
 
     return $pdf->download($filename);
 }
@@ -423,7 +449,111 @@ public function destroyDocument($id)
     return response()->json(['success' => true]);
 }
 
+public function storeInstitution(Request $request)
+{
+    // Validation: institution applicant + qualifications + files
+    $request->validate([
+        // Institution applicant
+        'first_name'   => 'required|string|max:255',
+        'surname'      => 'required|string|max:255',
+        'email'        => 'required|email|max:255',
+        'nationality'  => 'required|string|max:100',
+        'title'        => 'nullable|string|max:50',
+        'dob'          => 'required|date',
+        'phone'        => ['required','regex:/^\+?[0-9]{8,15}$/'],
+
+        // Application
+        'processing_type' => 'required|in:normal,express',
+        'consent_agree'   => 'accepted',
+
+        // Qualifications (same structure as individual)
+        'qualifications' => 'required|array|min:1',
+        'qualifications.*.name' => 'required|string',
+        'qualifications.*.program_name' => 'required|string|max:255',
+        'qualifications.*.year' => 'required|digits:4',
+        'qualifications.*.institution' => 'required|string|max:255',
+        'qualifications.*.country' => 'required|string|max:255',
+        'qualifications.*.custom_name' => 'nullable|required_if:qualifications.*.name,Other|string|max:255',
+        'qualifications.*.merit' => 'nullable|string|max:255',
+
+        // Files (same groups as individual)
+        'certificates' => 'required|array|min:1',
+        'certificates.*' => 'file|mimes:pdf,png,jpg,jpeg,doc,docx|max:5120',
+        'academic_records.*' => 'nullable|file|mimes:pdf,png,jpg,jpeg,doc,docx|max:5120',
+        'previous_evaluations.*' => 'nullable|file|mimes:pdf,png,jpg,jpeg,doc,docx|max:5120',
+        'syllabi.*' => 'nullable|file|mimes:pdf,png,jpg,jpeg,doc,docx|max:5120',
+    ]);
+
+    // 1) Create application
+    $application = Application::create([
+        'user_id' => Auth::id(),
+        'processing_type' => $request->processing_type,
+        'application_type' => 'Institution',
+        'consent_agree' => $request->has('consent_agree'),
+        'status' => 'pending',
+    ]);
+
+    // 2) Save institution applicant (separate table)
+    $institutionApplicant = InstitutionApplicant::create([
+        'application_id' => $application->id,
+        'first_name' => $request->first_name,
+        'surname' => $request->surname,
+        'email' => $request->email,
+        'nationality' => $request->nationality,
+        'title' => $request->title,
+        'dob' => $request->dob,
+        'phone' => $request->phone,
+    ]);
+
+    // 3) Save qualifications (reuse your Qualification model)
+    foreach ($request->qualifications as $q) {
+        Qualification::create([
+            'application_id' => $application->id,
+            'user_id' => Auth::id(), // representative user
+            'name' => $q['name'],
+            'custom_name' => $q['custom_name'] ?? null,
+            'program_name' => $q['program_name'],
+            'year' => $q['year'],
+            'institution' => $q['institution'],
+            'country' => $q['country'],
+            'merit' => $q['merit'] ?? null,
+        ]);
+    }
+
+    // 4) Save documents (same groups)
+    foreach (['certificates', 'academic_records', 'previous_evaluations', 'syllabi'] as $type) {
+        if ($request->hasFile($type)) {
+            foreach ($request->file($type) as $file) {
+                $path = $file->store('documents', 'public');
+                $application->documents()->create([
+                    'type' => $type,
+                    'file_path' => $path,
+                ]);
+            }
+        }
+    }
+
+    // 5) Return success (same success view as individual)
+    return view('user.success', [
+        'application' => $application,
+    ]);
+}
 
 
+public function downloadPDFInstitution($applicantId)
+{
+    // Fetch the institution applicant along with related qualifications and documents
+    $applicant = InstitutionApplicant::with(['qualifications', 'documents'])
+        ->findOrFail($applicantId);
+
+    // Create a full name property on the fly
+    $applicant->full_name = $applicant->first_name . ' ' . $applicant->surname;
+
+    // Generate PDF using the Blade view for institution applications
+    $pdf = PDF::loadView('pdfs.institution', compact('applicant'));
+
+    // Download the PDF with applicant's full name
+    return $pdf->download($applicant->full_name . '_Application.pdf');
+}
  
 }

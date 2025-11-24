@@ -34,11 +34,31 @@
     <h3 class="text-center fw-bold mb-4" style="color:#52074f; letter-spacing:1px;">
         📄 Application Details
         <span class="d-block mt-2" style="border-bottom: 4px solid #dd8027; width: 100px; margin: 0 auto;"></span>
-    </h3>
-
+    </h3> 
     <div class="row justify-content-center">
         <div class="col-lg-10">
 
+<div class="card shadow-sm mb-4 border-0">
+   
+    @if($institutionApplicants)
+        @foreach($institutionApplicants as $applicant)
+        
+    <div class="card-body">
+         <div class="card-header fw-bold" style="background-color:#fdf5fa; color:#52074f;">
+        👤 Personal Information
+    </div>
+            <p><strong>Name:</strong> {{ $applicant->first_name }} {{ $applicant->surname }}</p>
+            <p><strong>Title:</strong> {{ $applicant->title ?? 'N/A' }}</p>
+            <p><strong>Email:</strong> {{ $applicant->email ?? 'N/A' }}</p>
+            <p><strong>Phone:</strong> {{ $applicant->phone ?? 'N/A' }}</p>
+            <p><strong>Date of Birth:</strong> {{ $applicant->dob ? \Carbon\Carbon::parse($applicant->dob)->format('d M, Y') : 'N/A' }}</p>
+            <p><strong>Nationality:</strong> {{ $applicant->nationality ?? 'N/A' }}</p>
+            <hr>
+        @endforeach
+    @endif
+</div>
+
+</div>
             {{-- ===== Application Summary ===== --}}
             <div class="card shadow-sm mb-4 border-0">
                 <div class="card-body">
@@ -222,11 +242,16 @@
             </div>
 
             {{-- Download PDF --}}
-            <div class="text-center mt-4">
-                <a href="{{ route('application.download', $application->id) }}" class="btn btn-lg text-white" style="background-color:#dd8027;">
-                    <i class="bi bi-file-earmark-pdf me-2"></i> Download My Application PDF
-                </a>
-            </div>
+           @if($application->application_type === 'Institution')
+    <a href="{{ route('institution-applicants.download', $applicant->id) }}" class="btn btn-primary">
+        Download PDF
+    </a>
+@else
+    <a href="{{ route('application.download', $application->id) }}" class="btn btn-primary">
+        Download PDF
+    </a>
+@endif
+
 
         </div>
     </div>

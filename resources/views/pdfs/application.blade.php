@@ -167,31 +167,66 @@ h2 {
 </footer>
 
 <main>
-    <h2>Application Overview</h2>
-    <table>
+   <h2>Application Overview</h2>
+<table>
+    <tr>
+        <th>Application ID</th>
+        <td>NCHE/2025/{{ $application->id }}</td>
+    </tr>
+    <tr>
+        <th>Date Submitted</th>
+        <td>{{ $application->created_at->format('d M Y') }}</td>
+    </tr>
+    <tr>
+        <th>Processing Type</th>
+        <td class="text-capitalize">
+            <span class="badge badge-purple">{{ ucfirst($application->processing_type) }}</span>
+        </td>
+    </tr>
+    @if($user->personalInformation->application_type === 'Institution')
         <tr>
-            <th>Application ID</th>
-            <td>NCHE/2025/{{ $application->id }}</td>
+            <th>Institution Name</th>
+            <td>{{ $user->personalInformation->institution_name ?? 'N/A' }}</td>
         </tr>
-        <tr>
-            <th>Date Submitted</th>
-            <td>{{ $application->created_at->format('d M Y') }}</td>
-        </tr>
-        <tr>
-            <th>Processing Type</th>
-            <td class="text-capitalize">
-                <span class="badge badge-purple">{{ ucfirst($application->processing_type) }}</span>
-            </td>
-        </tr>
-    </table>
+    @endif
+</table>
+
 
     <h2>Applicant Details</h2>
     <table>
-        <tr><th>Full Name</th><td>{{ $user->personalInformation->full_name ?? $user->name }}</td></tr>
-        <tr><th>Email</th><td>{{ $user->email }}</td></tr>
-        <tr><th>Gender</th><td>{{ $user->personalInformation->gender ?? 'N/A' }}</td></tr>
-        <tr><th>Country</th><td>{{ $user->personalInformation->country ?? 'N/A' }}</td></tr>
-        <tr><th>Physical Address</th><td>{{ $user->personalInformation->physical_address ?? 'N/A' }}</td></tr>
+        @if($user->personalInformation->application_type === 'Institution' && $institutionApplicants)
+        @foreach($institutionApplicants as $applicant)
+            <tr>
+                <th>First Name</th>
+                <td>{{ $applicant->first_name }}</td>
+            </tr>
+            <tr>
+                <th>Surname</th>
+                <td>{{ $applicant->surname }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ $applicant->email ?? 'N/A' }}</td>
+            </tr>
+        @endforeach
+    @else
+        <tr>
+    <th>First Name</th>
+    <td>{{ $user->first_name }}</td>
+</tr>
+
+<tr>
+    <th>Surname</th>
+    <td>{{ $user->surname }}</td>
+</tr>
+
+<tr>
+    <th>Email</th>
+    <td>{{ $user->email }}</td>
+</tr>
+
+        
+    @endif
     </table>
 
     <h2>Qualification Details</h2>

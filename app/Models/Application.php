@@ -53,6 +53,12 @@ public function qualification()
     public function additionalInfoRequests()
 {
     return $this->hasMany(AdditionalInfoRequest::class, 'application_id');
+}// app/Models/Application.php
+
+public function institutionApplicants()
+{
+    return $this->hasMany(\App\Models\InstitutionApplicant::class, 'application_id');
 }
+
 
 }

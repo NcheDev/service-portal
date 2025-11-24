@@ -30,10 +30,17 @@
 
 <div class="form-card">
 
-    <h2 class="form-header fw-bold" 
-        style="color:#52074f; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; letter-spacing:1px;">
-        Qualification Evaluation Application
-    </h2>
+    @php
+    $institutionName = $personalInfo->institution_name ?? 'Your Institution';
+@endphp
+
+<h2 class="form-header fw-bold" 
+    style="color:#52074f; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; letter-spacing:1px; text-align:center;">
+    Qualification Evaluation Application
+    <div style="color:#dd8027; font-style:italic; font-size:1.2rem; margin-top:5px;">
+        {{ $institutionName }}
+    </div>
+</h2>
 
     @php
     $personalInfo = \App\Models\PersonalInformation::where('user_id', auth()->id())->first();
@@ -54,7 +61,7 @@
         before applying.
     </div>
 @else
-    <form id="application-form" action="{{ route('application.store') }}" method="POST" enctype="multipart/form-data">
+    <form id="application-form" action="{{ route('application.institution.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
 
@@ -697,7 +704,23 @@ document.getElementById('review-btn').addEventListener('click', function () {
     // 🔥 BUILD THE REVIEW CONTENT HERE
     // =========================================================
     const reviewContent = document.getElementById('review-content');
-    reviewContent.innerHTML = "";  
+    reviewContent.innerHTML = "";   
+    // -----------------------
+    // PERSONAL DETAILS
+    // -----------------------
+    const personalDetailsHTML = `
+        <h6 class="mt-3 mb-2">Applicant Details:</h6>
+        <div class="mb-2 p-3 rounded shadow-sm" style="background-color:white; border-left: 4px solid #52074f;">
+            <div><strong>First Name:</strong> ${document.getElementById('first_name')?.value || '-'}</div>
+            <div><strong>Surname:</strong> ${document.getElementById('surname')?.value || '-'}</div>
+            <div><strong>Title:</strong> ${document.getElementById('title')?.value || '-'}</div>
+            <div><strong>Date of Birth:</strong> ${document.getElementById('dob')?.value || '-'}</div>
+            <div><strong>Email:</strong> ${document.getElementById('email')?.value || '-'}</div>
+            <div><strong>Phone Number:</strong> ${document.getElementById('phone')?.value || '-'}</div>
+            <div><strong>Nationality:</strong> ${document.getElementById('nationality')?.value || '-'}</div>
+        </div>
+    `;
+    reviewContent.innerHTML += personalDetailsHTML;
 
     // 1️⃣ Processing Type
     const processingType = form.querySelector('[name="processing_type"]').value; 

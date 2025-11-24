@@ -313,3 +313,16 @@ Route::middleware(['auth', 'prevent-back-history'])->group(function () {
 Route::get('/error/database', function () {
     return view('errors.database');
 })->name('error.database');
+
+Route::middleware(['auth'])->group(function () {
+ 
+    // INSTITUTION Application
+    Route::post('/applications/institution/store', 
+        [ApplicationController::class, 'storeInstitution']
+    )->name('application.institution.store');
+
+  Route::get('institution-applicants/{id}/download', [PersonalInformationController::class, 'downloadPDF'])
+     ->name('institution-applicants.download');
+
+});
+
