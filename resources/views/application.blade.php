@@ -176,7 +176,7 @@
         <label class="form-label fw-bold" 
                data-bs-toggle="tooltip" 
                title="Select your qualification class or merit (if applicable)">
-            Merit / Class <span class="text-danger">*</span>
+            Merit / Class 
         </label>
         <select name="qualifications[{{ $i }}][merit]" class="form-select">
             <option value="">-- Select Merit / Class --</option>
