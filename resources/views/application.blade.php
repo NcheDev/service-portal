@@ -24,15 +24,17 @@
            style="border-radius:25px;">
            📋 My Applications
         </a>
+        
     </div>
 </div>
+
 
 
 <div class="form-card">
 
     <h2 class="form-header fw-bold" 
         style="color:#52074f; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; letter-spacing:1px;">
-        Qualification Evaluation Application
+       Application Qualification Table
     </h2>
 
     @php

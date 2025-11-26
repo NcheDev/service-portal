@@ -9,15 +9,14 @@
     </div>
 @endif 
  
-{{-- Header with My Applications link --}}
-<div class="d-flex justify-content-between align-items-center mb-4">
-     
+{{-- Header with My Applications link --}}<div class="d-flex justify-content-between align-items-center mb-4">
     <div class="btn-group" role="group" aria-label="Application Actions">
-        <a href="{{ route('application.create') }}" 
-           class="btn btn-sm text-white" 
-           style="background-color:#52074f; border-radius:25px;">
-           ➕ New Application
-        </a>
+ <a href="{{ route('application.select') }}" 
+   class="btn btn-primary px-4 py-2 fw-semibold shadow">
+   ➕ New Application
+</a>
+
+
 
         <a href="{{ route('applications.my') }}" 
            class="btn btn-sm btn-outline-warning" 
@@ -25,7 +24,8 @@
            📋 My Applications
         </a>
     </div>
-</div>
+
+</div> 
 
 
 <div class="form-card">
@@ -72,15 +72,18 @@
     </div>
     <div class="card-body">
         <div class="row g-3">
+                            <p class="mb-3 fw-bold" style="color:#52074f;">👤 Name of awardee <small>as indicated on certificate</small></p>
+
             <div class="col-md-6">
                 <label for="first_name" class="form-label fw-semibold">First Name <span class="text-danger">*</span></label>
                 <input type="text" name="first_name" id="first_name" class="form-control" value="{{ old('first_name') }}" required>
-                @error('first_name') <div class="text-danger small">{{ $message }}</div> @enderror
+                 @error('first_name') <div class="text-danger small">{{ $message }}</div> @enderror
             </div>
 
             <div class="col-md-6">
                 <label for="surname" class="form-label fw-semibold">Surname <span class="text-danger">*</span></label>
                 <input type="text" name="surname" id="surname" class="form-control" value="{{ old('surname') }}" required>
+
                 @error('surname') <div class="text-danger small">{{ $message }}</div> @enderror
             </div>
 

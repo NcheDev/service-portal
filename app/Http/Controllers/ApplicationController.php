@@ -15,7 +15,10 @@ use App\Models\AdditionalInfoRequest;
 use App\Notifications\ResponseReportUploaded;
 use App\Notifications\AdditionalInfoNotification;
 use Carbon\Carbon;
-use App\Models\InstitutionApplicant;
+use App\Models\InstitutionApplicant; 
+use League\Csv\Reader;
+use League\Csv\Statement;
+use Illuminate\Support\Facades\DB;
 
  
 
@@ -540,20 +543,121 @@ public function storeInstitution(Request $request)
 }
 
 
-public function downloadPDFInstitution($applicantId)
-{
-    // Fetch the institution applicant along with related qualifications and documents
-    $applicant = InstitutionApplicant::with(['qualifications', 'documents'])
-        ->findOrFail($applicantId);
 
-    // Create a full name property on the fly
-    $applicant->full_name = $applicant->first_name . ' ' . $applicant->surname;
-
-    // Generate PDF using the Blade view for institution applications
-    $pdf = PDF::loadView('pdfs.institution', compact('applicant'));
-
-    // Download the PDF with applicant's full name
-    return $pdf->download($applicant->full_name . '_Application.pdf');
-}
  
+public function bulkUpload(Request $request)
+{
+    $request->validate([
+        'applicants_csv' => 'required|file|mimes:csv,txt',
+    ]);
+
+    $path = $request->file('applicants_csv')->getRealPath();
+    $csv = Reader::createFromPath($path, 'r');
+    $csv->setHeaderOffset(0);
+
+    $records = $csv->getRecords();
+
+    $errors = [];
+    $rowNumber = 1;
+
+    foreach ($records as $row) {
+        $rowNumber++;
+
+        DB::beginTransaction();
+
+        try {
+            // 1️⃣ REQUIRED FIELDS CHECK
+            $required = ['first_name', 'surname', 'nationality', 'processing_type'];
+            foreach ($required as $field) {
+                if (empty($row[$field])) {
+                    throw new \Exception("Missing required field '$field' in row $rowNumber");
+                }
+            }
+
+           
+
+            // 2️⃣ Create Application
+            $application = Application::create([
+                'user_id' => auth()->id(),
+                'processing_type' => $row['processing_type'],
+            ]);
+
+            // 3️⃣ Create Institution Applicant
+            InstitutionApplicant::create([
+                'application_id' => $application->id,
+                'first_name' => $row['first_name'],
+                'surname' => $row['surname'],
+                 'nationality' => $row['nationality'],
+            ]);
+
+            // 4️⃣ Create Qualifications
+            $i = 1;
+            while (isset($row["qualification_{$i}_name"])) {
+                $application->qualifications()->create([
+                    'user_id' => auth()->id(),
+                    'application_id' => $application->id,
+                    'name' => $row["qualification_{$i}_name"],
+                    'program_name' => $row["qualification_{$i}_program_name"] ?? null,
+                    'year' => $row["qualification_{$i}_year"] ?? null,
+                    'institution' => $row["qualification_{$i}_institution"] ?? null,
+                    'merit' => $row["qualification_{$i}_merit"] ?? null,
+                    'country' => $row["qualification_{$i}_country"] ?? null,
+                ]);
+                $i++;
+            }
+
+            DB::commit();
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $errors[] = $e->getMessage();
+        }
+    }
+
+    if (!empty($errors)) {
+        return redirect()->back()->with('error', $errors);
+    }
+return redirect()->route('application.review')->with('success', 'CSV uploaded successfully!');
+
+}
+public function downloadCsvTemplate()
+{
+    $template = "first_name,surname,nationality,processing_type,qualification_1_name,qualification_1_program_name,qualification_1_year,qualification_1_institution,qualification_1_merit,qualification_1_country\n";
+
+    return response($template)
+        ->header('Content-Type', 'text/csv')
+        ->header('Content-Disposition', 'attachment; filename=applicants_template.csv');
+} 
+public function reviewUpload()
+{
+    $applications = Application::with('institutionApplicants', 'qualifications')
+        ->where('user_id', auth()->id()) // only current user
+        ->latest()
+        ->get();
+
+    return view('application.review-upload', compact('applications'));
+}
+
+
+public function uploadAttachments(Request $request, $id)
+{
+    $application = Application::findOrFail($id);
+
+    if ($request->hasFile('certificates')) {
+        foreach ($request->file('certificates') as $file) {
+            $path = $file->store('attachments', 'public'); // stores in storage/app/public/attachments
+
+            $application->documents()->create([
+                'type' => 'certificates',
+                'file_path' => $path,
+                'uploaded_by' => auth()->id(), // optional
+            ]);
+        }
+    }
+
+    return back()->with('success', 'Files uploaded successfully!');
+}
+
+
+
 }

@@ -6,7 +6,7 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
      
     <div class="btn-group" role="group" aria-label="Application Actions">
-        <a href="{{ route('application.create') }}" 
+        <a href="{{ route('application.select') }}" 
            class="btn btn-sm text-white" 
            style="background-color:#52074f; border-radius:25px;">
            ➕ New Application
@@ -48,10 +48,7 @@
         👤 Personal Information
     </div>
             <p><strong>Name:</strong> {{ $applicant->first_name }} {{ $applicant->surname }}</p>
-            <p><strong>Title:</strong> {{ $applicant->title ?? 'N/A' }}</p>
-            <p><strong>Email:</strong> {{ $applicant->email ?? 'N/A' }}</p>
-            <p><strong>Phone:</strong> {{ $applicant->phone ?? 'N/A' }}</p>
-            <p><strong>Date of Birth:</strong> {{ $applicant->dob ? \Carbon\Carbon::parse($applicant->dob)->format('d M, Y') : 'N/A' }}</p>
+            
             <p><strong>Nationality:</strong> {{ $applicant->nationality ?? 'N/A' }}</p>
             <hr>
         @endforeach
@@ -241,16 +238,11 @@
                 </div>
             </div>
 
-            {{-- Download PDF --}}
-           @if($application->application_type === 'Institution')
-    <a href="{{ route('institution-applicants.download', $applicant->id) }}" class="btn btn-primary">
-        Download PDF
-    </a>
-@else
+            {{-- Download PDF --}} 
     <a href="{{ route('application.download', $application->id) }}" class="btn btn-primary">
         Download PDF
     </a>
-@endif
+ 
 
 
         </div>

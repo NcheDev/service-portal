@@ -111,8 +111,22 @@ Route::middleware(['auth'])->group(function () {
         return back()->with('message', 'Verification link sent!');
     })->middleware('throttle:6,1')->name('verification.send');
 });
-
+//bulk upload routes
 Route::middleware(['auth', 'prevent-back-history'])->group(function () {
+Route::get('/applications/select', function () {
+    return view('application.select');
+})->name('application.select');
+
+Route::get('/applications/bulk-upload', function () {
+    return view('application.bulk-upload');
+})->name('application.bulk.upload.page');
+Route::get('/applications/bulk/review', function () {
+    $applicants = session('uploaded_applicants', []);
+    return view('application.bulk-review', compact('applicants'));
+})->name('application.bulk.review');
+Route::get('/applications/review', [ApplicationController::class, 'reviewUpload'])->name('application.review');
+Route::post('/applications/{id}/attachments', [ApplicationController::class, 'uploadAttachments'])->name('application.upload.attachments');
+
 
     // Dashboard
     Route::get('/user-dashboard', [ApplicationController::class, 'userDashboard'])
@@ -320,9 +334,14 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/applications/institution/store', 
         [ApplicationController::class, 'storeInstitution']
     )->name('application.institution.store');
+Route::post('/applications/bulk-upload', [ApplicationController::class, 'bulkUpload'])
+    ->name('application.bulk.upload');
+    Route::get('/application/csv-template', [App\Http\Controllers\ApplicationController::class, 'downloadCsvTemplate'])
+    ->name('application.csv.template');
 
-  Route::get('institution-applicants/{id}/download', [PersonalInformationController::class, 'downloadPDF'])
-     ->name('institution-applicants.download');
+    // Show new application type selection bulk upload// web.php
+
+ 
 
 });
 

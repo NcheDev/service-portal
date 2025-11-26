@@ -205,9 +205,7 @@ h2 {
                 <td>{{ $applicant->surname }}</td>
             </tr>
             <tr>
-                <th>Email</th>
-                <td>{{ $applicant->email ?? 'N/A' }}</td>
-            </tr>
+                
         @endforeach
     @else
         <tr>
@@ -220,10 +218,7 @@ h2 {
     <td>{{ $user->surname }}</td>
 </tr>
 
-<tr>
-    <th>Email</th>
-    <td>{{ $user->email }}</td>
-</tr>
+ 
 
         
     @endif

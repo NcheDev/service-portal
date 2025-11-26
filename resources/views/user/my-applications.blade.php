@@ -4,14 +4,25 @@
 
 @section('content')<div class="d-flex justify-content-between align-items-center mb-4">
      
+ 
     <div class="btn-group" role="group" aria-label="Application Actions">
-        <a href="{{ route('application.create') }}" 
+        <a href="{{ route('application.select') }}" 
            class="btn btn-sm text-white" 
            style="background-color:#52074f; border-radius:25px;">
            ➕ New Application
-        </a>
+        </a> 
 
-         
+        <a href="{{ route('applications.my') }}" 
+           class="btn btn-sm btn-outline-warning" 
+            style="background-color:#f99437; color:#52074f;  border-radius:25px;">
+           📋View My Applications
+        </a>
+        <a href="{{ route('application.review') }}" 
+   class="btn btn-sm text-white" 
+   style="background-color:#52074f; border-radius:25px;">
+   📋 View Uploaded CSV
+</a>
+      
     </div>
 </div>
 
