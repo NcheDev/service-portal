@@ -27,7 +27,8 @@
     </div>
 
     <h5>Applicant Details</h5>
-    
+    <small class="text-muted mt-1">
+Application Type: Select “Individual” for personal applications or “Institution” when applying as an organization to validate employee certificates.            </small>
 
     <div class="row g-3">  <div class="col-md-3">
         <label for="application_type" class="form-label">Application Type <span class="text-danger">*</span></label>
