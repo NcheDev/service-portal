@@ -23,6 +23,14 @@
                 </div>
             </div>
 
+              <!-- Pending Applications -->
+            <div class="col-md-3 mx-auto">
+                <div class="card stats-card shadow-sm p-4 h-100">
+                    <i class="mdi mdi-timer-sand text-warning mb-3"></i>
+                    <h5 class="fw-bold">Pending</h5>
+                    <p class="fs-4 mb-0">{{ $pendingApplications ?? 0 }}</p>
+                </div>
+            </div>
             <!-- Approved Applications -->
             <div class="col-md-3 mx-auto">
                 <div class="card stats-card shadow-sm p-4 h-100">
@@ -32,14 +40,7 @@
                 </div>
             </div>
 
-            <!-- Pending Applications -->
-            <div class="col-md-3 mx-auto">
-                <div class="card stats-card shadow-sm p-4 h-100">
-                    <i class="mdi mdi-timer-sand text-warning mb-3"></i>
-                    <h5 class="fw-bold">Pending</h5>
-                    <p class="fs-4 mb-0">{{ $pendingApplications ?? 0 }}</p>
-                </div>
-            </div>
+          
 
             <!-- Rejected / Unrecognized Applications -->
             <div class="col-md-3 mx-auto">
