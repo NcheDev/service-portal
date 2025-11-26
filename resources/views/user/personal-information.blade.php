@@ -119,13 +119,20 @@
             <input type="text" name="contact_address" class="form-control" 
                    value="{{ old('contact_address', $personalInfo?->contact_address) }}">
         </div>
+<div class="col-md-6">
+    <label for="physical_address" class="form-label d-flex justify-content-between align-items-center">
+        <span>Postal Address <span class="text-danger">*</span></span>
+        <small class="text-muted ms-2">
+            e.g., Private Bag B371, Lilongwe, Malawi
+        </small>
+    </label>
+    <input type="text" 
+           name="physical_address" 
+           class="form-control" 
+           value="{{ old('physical_address', $personalInfo?->physical_address) }}"
+           placeholder="Private Bag B371, Lilongwe, Malawi">
+</div>
 
-        <div class="col-md-6">
-            <label for="physical_address" class="form-label">Postal Address <span class="text-danger">*</span></label>
-            <input type="text" name="physical_address" class="form-control" 
-                   value="{{ old('physical_address', $personalInfo?->physical_address) }}">
-        </div> 
-        
 
 
 <div class="row g-3">
