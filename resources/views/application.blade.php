@@ -218,18 +218,16 @@
     and each file is clearly labeled. <strong>Maximum file size: 4 MB per file.</strong>
 </p>
 
-
-     <div class="row g-4">
-   @foreach([
-    'certificates' => 'Qualification Certificates',
-    'academic_records' => 'Academic Records (optional)',
-] as $field => $label)
-
+<div class="row g-4">
+    @foreach([
+        'certificate' => 'Qualification Certificate',
+        'academic_records' => 'Acadamic Transcripts',
+    ] as $field => $label)
 
         <div class="col-md-12">
             <label class="form-label fw-bold text-dark">
                 {{ $label }}
-                @if($field === 'certificates') <span class="text-danger">*</span> @endif
+                @if($field === 'certificate') <span class="text-danger">*</span> @endif
             </label>
 
             <input type="file"
@@ -237,17 +235,19 @@
                    class="form-control border-secondary file-input @error($field) is-invalid @enderror"
                    multiple
                    data-type="{{ $field }}"
-                   @if($field === 'certificates') required @endif>
+                   @if($field === 'certificate') required @endif>
 
             <ul class="list-group mt-2" id="{{ $field }}-list"></ul>
 
-            {{-- Inline validation error message under the file list --}}
+            {{-- Inline validation error message --}}
             @error($field)
                 <div class="invalid-feedback d-block small mt-1">{{ $message }}</div>
             @enderror
         </div>
+
     @endforeach
 </div>
+
 
 <div class="mt-4">
     <div class="alert alert-warning mb-0 py-2 small">
