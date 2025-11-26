@@ -220,7 +220,7 @@
 
 <div class="row g-4">
     @foreach([
-        'certificate' => 'Qualification Certificate',
+        'certificate' => 'Copy of certificate (to be verified)',
         'academic_records' => 'Acadamic Transcripts',
     ] as $field => $label)
 
