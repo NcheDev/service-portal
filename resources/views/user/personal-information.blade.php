@@ -115,7 +115,7 @@
         </div>
 
         <div class="col-md-6">
-            <label for="contact_address" class="form-label">Contact Address  <span class="text-danger">*</span></label>
+            <label for="contact_address" class="form-label">physical Address  <span class="text-danger">*</span></label>
             <input type="text" name="contact_address" class="form-control" 
                    value="{{ old('contact_address', $personalInfo?->contact_address) }}">
         </div>
