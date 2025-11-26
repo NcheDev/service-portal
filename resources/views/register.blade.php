@@ -89,10 +89,13 @@
         <span class="text-danger small">{{ $message }}</span>
     @enderror
 </div>
-
 <!-- Password -->
 <div class="mb-3">
-    <label for="password" class="form-label">Password</label>
+    <label for="password" class="form-label">
+        Password
+        <small class="text-muted d-block mt-1">   Minimum 8 characters, include letters, numbers, and at least one symbol.</small>
+    </label>
+
     <input 
         type="password" 
         id="password" 
@@ -101,6 +104,7 @@
         placeholder="Enter your password" 
         required
     />
+
     @error('password')
         <span class="text-danger small">{{ $message }}</span>
     @enderror
