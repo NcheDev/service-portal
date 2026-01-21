@@ -1,24 +1,59 @@
-*.log
-.DS_Store
-.env
-.env.backup
-.env.production
-.phpactor.json
-.phpunit.result.cache
-/.fleet
-/.idea
-/.nova
-/.phpunit.cache
-/.vscode
-/.zed
-/auth.json
+# Laravel / PHP
+/vendor
 /node_modules
-/public/build
 /public/hot
 /public/storage
 /storage/*.key
-/storage/pail
-/vendor
+.env
+.phpunit.result.cache
 Homestead.json
 Homestead.yaml
+.env.backup
+/.vscode
+
+# Composer
+composer.phar
+
+# Laravel IDE helper
+/_ide_helper.php
+/_ide_helper_models.php
+/_ide_helper_annotations.php
+
+# Laravel Mix
+/public/mix-manifest.json
+/public/css/app.css
+/public/js/app.js
+
+# NPM / Yarn
+npm-debug.log
+yarn-error.log
+yarn-debug.log
+package-lock.json
+yarn.lock
+
+# OS / Editor files
+.DS_Store
 Thumbs.db
+*.swp
+*.swo
+*.bak
+*.tmp
+*.log
+
+# PHPUnit
+.phpunit.result.cache
+
+# IDEs
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Storage logs and framework cache
+/storage/logs/*.log
+/storage/framework/cache/data/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+
+# Optional: ignore node_modules if using front-end
+node_modules/
