@@ -59,11 +59,7 @@
                                 @endif
                             </td>
                             <td>
-                                @if($app->status != 'submitted')
-                                    <a href="{{ route('applications.individual.edit', $app) }}" class="btn btn-sm" style="background-color:#d96c19; color:white;">
-                                        Edit
-                                    </a>
-                                @endif
+                                
                                 <a href="{{ route('applications.documents.create', $app) }}" class="btn btn-sm" style="background-color:#600061; color:white;">
                                     Upload Documents
                                 </a>
