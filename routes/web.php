@@ -125,4 +125,11 @@ Route::get(
     [ApplicationController::class, 'resume']
 )->name('applications.resume');
 
+Route::middleware(['auth'])->group(function () {
+    Route::get(
+        '/applications/individual/{application}',
+        [IndividualApplicationController::class, 'show']
+    )->name('applications.individual.show');
+});
+
 require __DIR__.'/auth.php';

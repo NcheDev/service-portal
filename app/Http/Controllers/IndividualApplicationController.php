@@ -24,6 +24,10 @@ class IndividualApplicationController extends Controller
             'countries'   => Country::orderBy('name')->get(),
         ]);
     }
+public function show(Application $application)
+{
+    return view('applications.individual.show', compact('application'));
+}
 
     /**
      * Store individual application
@@ -39,6 +43,8 @@ class IndividualApplicationController extends Controller
             'qualification_name'=> 'required|string|max:255',
             'award'             => 'required|string|max:255',
             'nationality_id'    => 'required|exists:countries,id',
+            'awarding_institution' => 'required|string|max:255',
+            'year_obtained' => 'required|integer|min:1950|max:' . now()->year,
         ]);
 
         IndividualApplication::create([
@@ -47,6 +53,8 @@ class IndividualApplicationController extends Controller
             'qualification_name' => $request->qualification_name,
             'award'              => $request->award,
             'nationality_id'     => $request->nationality_id,
+            'awarding_institution' => $request->awarding_institution,
+            'year_obtained'      => $request->year_obtained,
         ]);
  $application->update([
         'current_step' => 'documents'

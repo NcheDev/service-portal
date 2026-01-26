@@ -10,6 +10,10 @@
 
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/6.6.6/css/flag-icons.min.css" rel="stylesheet">
+
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/6.6.6/css/flag-icons.min.css" rel="stylesheet">
 
     <style>
         body {
@@ -85,6 +89,7 @@
     </style>
 </head>
 <body>
+ 
 
 <!-- SIDEBAR -->
 <aside class="sidebar p-3 d-flex flex-column">

@@ -4,6 +4,7 @@
 
 @section('content')
 <div class="container py-4">
+    
 
     <!-- Progress Bar Partial -->
     @include('applications.partials.progress', ['application' => $application])

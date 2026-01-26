@@ -15,62 +15,63 @@
             Start New Application
         </a>
     @else
-        <div class="table-responsive">
-            <table class="table table-bordered align-middle">
-                <thead style="background-color:#600061; color:white;">
-                    <tr>
-                        <th>#</th>
-                        <th>Studied At</th>
-                        <th>Qualification</th>
-                        <th>Award</th>
-                        <th>Nationality</th>
-                        <th>Status</th>
-                        <th>Documents</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($applications as $index => $app)
-                        @if($app->application_type == 'individual')
-                        <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ $app->individualApplication?->studied_at ?? '-' }}</td>
-                            <td>{{ $app->individualApplication?->qualification_name ?? '-' }}</td>
-                            <td>{{ $app->individualApplication?->award ?? '-' }}</td>
-                            <td>{{ $app->individualApplication?->nationality?->name ?? '-' }}</td>
-                            <td>
-                                <span class="badge" style="background-color: {{ $app->status == 'submitted' ? '#d96c19' : '#600061' }}; color:white;">
-                                    {{ ucfirst($app->status) }}
-                                </span>
-                            </td>
-                            <td>
-                                @if($app->documents->count() > 0)
-                                    <ul class="mb-0">
-                                        @foreach($app->documents as $doc)
-                                            <li>
-                                                <a href="{{ route('documents.download', $doc) }}" style="color:#600061;">
-                                                    {{ ucfirst(str_replace('_',' ',$doc->document_type)) }}
-                                                </a>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                @else
-                                    No documents
-                                @endif
-                            </td>
-                            <td>
-                                
-                                <a href="{{ route('applications.documents.create', $app) }}" class="btn btn-sm" style="background-color:#600061; color:white;">
-                                    Upload Documents
-                                </a>
-                            </td>
-                        </tr>
+
+        @foreach($applications as $app)
+            @if($app->application_type == 'individual')
+            <div class="card mb-3 shadow-sm">
+                <div class="card-body d-flex justify-content-between flex-wrap">
+
+                    {{-- LEFT SIDE: Application Info --}}
+                    <div class="mb-2 mb-md-0">
+                        <h6 class="fw-bold mb-1">
+                            {{ $app->individualApplication?->qualification_name ?? 'Qualification pending' }}
+                        </h6>
+                        <div class="text-muted small">
+                            Studied At: {{ $app->individualApplication?->studied_at ?? '-' }}
+                        </div>
+                        <div class="text-muted small">
+                            Award: {{ $app->individualApplication?->award ?? '-' }}
+                        </div>
+                        <div class="text-muted small">
+                            Nationality: {{ $app->individualApplication?->nationality?->name ?? '-' }}
+                        </div>
+                        <div class="text-muted small mt-1">
+                            Status:
+                            <span class="badge" style="background-color: {{ $app->status == 'submitted' ? '#d96c19' : '#600061' }}; color:white;">
+                                {{ ucfirst($app->status) }}
+                            </span>
+                        </div>
+                    </div>
+
+                    {{-- RIGHT SIDE: Actions --}}
+                    <div class="text-end">
+                        @if($app->status != 'submitted')
+                            <a href="{{ route('applications.resume', $app) }}" class="btn btn-sm btn-warning">
+                                <i class="bi bi-arrow-repeat"></i> Continue Application
+                            </a>
+                        @else
+                          <a href="{{ route('applications.individual.show', $app) }}" class="btn btn-sm btn-outline-primary">
+    <i class="bi bi-eye"></i> View Application
+</a>
+
                         @endif
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+                    </div>
+
+                </div>
+            </div>
+            @endif
+        @endforeach
+
     @endif
 
 </div>
+
+{{-- MOBILE FRIENDLY POLISH --}}
+<style>
+    .fw-bold { font-weight: 600; }
+    .card { border-radius: 0.75rem; }
+    @media (max-width: 576px) {
+        .text-end { text-align: left !important; margin-top: 0.75rem; }
+    }
+</style>
 @endsection

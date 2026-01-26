@@ -118,8 +118,9 @@ public function submit(Application $application)
     ]);
 
     return redirect()
-        ->route('dashboard')
-        ->with('success', 'Application submitted successfully.');
+    ->route('applications.preview', $application)
+    ->with('success', 'Application submitted successfully. You will be notified after review.');
+
 }
 
 public function resume(Application $application)

@@ -3,6 +3,7 @@
 @section('title', 'Application Preview')
 
 @section('content')
+ 
 <div class="container py-4">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -35,6 +36,8 @@
                 <p><strong>Institution Studied At:</strong> {{ $application->individualApplication->studied_at }}</p>
                 <p><strong>Qualification:</strong> {{ $application->individualApplication->qualification_name }}</p>
                 <p><strong>Award:</strong> {{ $application->individualApplication->award }}</p>
+                <p><strong>Awarding Institution:</strong> {{ $application->individualApplication->awarding_institution }}</p>
+                <p><strong>Year Obtained:</strong> {{ $application->individualApplication->year_obtained }}</p>
                 <p><strong>Nationality:</strong>
                     {{ $application->individualApplication->nationality->name ?? '-' }}
                 </p>
@@ -134,4 +137,52 @@
     </div>
 
 </div>
+@if(session('success'))
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-check-circle-fill"></i> Success
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body text-center">
+                <p class="fs-5 mb-3">
+                    {{ session('success') }}
+                </p>
+
+                <i class="bi bi-check2-circle text-success" style="font-size: 3rem;"></i>
+            </div>
+
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal">
+                    Continue
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+@endif
+@if(session('success'))
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const successModal = new bootstrap.Modal(
+            document.getElementById('successModal')
+        );
+        successModal.show();
+    });
+</script>
+@endif
+<script>
+    document.getElementById('successModal')
+        .addEventListener('hidden.bs.modal', function () {
+            window.location.href = "{{ route('dashboard') }}";
+        });
+</script>
+
 @endsection
